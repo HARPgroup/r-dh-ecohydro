@@ -248,3 +248,36 @@ vahydro_fe_data <- function (Watershed_Hydrocode,x_metric_code,y_metric_code,bun
   print(paste("Using ", uri, sep=''));
   data <- read.csv(uri, header = TRUE, sep = ",")
 }
+
+vahydro_prop_matrix <- function (featureid,varkey) {
+  
+  library(jsonlite) #required for transforming json data to dataframe format 
+  library(dplyr) #required for renaming dataframe columns 
+  
+  #featureid <- '397299'
+  #varkey <- 'ifim_habitat_table'
+  matrix_url <- paste(site,"dh-properties-json/dh_feature",featureid,varkey, sep="/")
+  
+  print(paste("Using ", matrix_url, sep=''));
+  
+  raw_data <- fromJSON(matrix_url) #return entire property 
+  prop_matrix_json <- raw_data$entity_properties$property$prop_matrix #return property prop_matrix only 
+  json_file <- fromJSON(prop_matrix_json) #convert to json list 
+  
+  #unlist json objects 
+  json_file <- lapply(json_file, function(x) {
+    x[sapply(x, is.null)] <- NA
+    unlist(x)
+  })
+  
+  matrix_dataframe <- do.call("rbind", json_file) #bind objects into rows 
+  matrix_dataframe <- data.frame(matrix_dataframe) #convert rows of objects to dataframe 
+  
+  #transform all dataframe values to numeric 
+  for (z in 1:length(matrix_dataframe)) {
+    matrix_dataframe[,z] <-as.numeric(as.character(matrix_dataframe[,z]))
+  }
+  
+  matrix_dataframe <- matrix_dataframe #return dataframe object
+}
+
