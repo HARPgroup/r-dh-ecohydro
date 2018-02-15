@@ -6,9 +6,9 @@ site <- "http://deq1.bse.vt.edu/d.dh"    #Specify the site of interest, either d
 #----------------------------------------------
 
 #----FOR RUNNING LOCALLY:
-fxn_locations <- "C:\\usr\\local\\home\\git\\r-dh-ecohydro\\ELFGEN\\internal\\"         #Specify location of supporting function .R files
-save_directory <- "C:\\Users\\nrf46657\\Desktop\\VAHydro Development\\GitHub\\plots"                                    #Specify location for storing plot images locally
-fxn_vahydro <- "C:\\usr\\local\\home\\git\\r-dh-ecohydro\\Analysis\\fn_vahydro-2.0\\"   #Specify location of supporting REST functions file
+fxn_locations <- "C:\\Users\\nrf46657\\Desktop\\IFIM\\"         #Specify location of supporting function .R files
+save_directory <- "C:\\Users\\nrf46657\\Desktop\\IFIM\\plots"                                    #Specify location for storing plot images locally
+fxn_vahydro <- "C:\\Users\\nrf46657\\Desktop\\IFIM\\"   #Specify location of supporting REST functions file
 
 #----FOR RUNNING FROM SERVER:
 #fxn_locations <- "/var/www/R/r-dh-ecohydro/ELFGEN/internal/"
@@ -16,12 +16,13 @@ fxn_vahydro <- "C:\\usr\\local\\home\\git\\r-dh-ecohydro\\Analysis\\fn_vahydro-2
 #fxn_vahydro <- "/var/www/R/r-dh-ecohydro/Analysis/fn_vahydro-2.0/"
 
 #Load Functions               
-source(paste(fxn_locations,"elf_retrieve_data.R", sep = ""));  #loads function used to retrieve F:E data from VAHydro
+#source(paste(fxn_locations,"elf_retrieve_data.R", sep = ""));  #loads function used to retrieve F:E data from VAHydro
+source(paste(fxn_locations,"elf_assemble_batch.R", sep = ""));  #loads function used to retrieve F:E data from VAHydro
 source(paste(fxn_vahydro,"rest_functions.R", sep = ""));       #loads file containing function that retrieves REST token
 rest_uname = FALSE;
 rest_pw = FALSE;
 source(paste(fxn_locations,"rest.private", sep = ""));         #load rest username and password, contained in rest.private file
-token <- rest_token(site, token, rest_uname, rest_upass);
+token <- rest_token(site, token, rest_uname, rest_pw);
 
 #------------------------------------------------------------------------------------------------
 #User inputs 
@@ -49,7 +50,7 @@ inputs <- list(
     'erom_q0001e_nov',
     'erom_q0001e_dec'
   ),		
-  x_metric = 'nhdp_drainage_sqmi', #Flow metric to be plotted on the x-axis
+  x_metric = 'erom_q0001e_mean', #Flow metric to be plotted on the x-axis
   not_y_metric = c(
                'nhdp_drainage_sqmi',
                'aqbio_nt_bival',
@@ -68,7 +69,7 @@ inputs <- list(
     'ecoiii_huc6'
   ),#this can be used to process by multiple region types at once 
   ws_ftype = c('nhd_huc6'),		     #Options: state, hwi_region, nhd_huc8, nhd_huc6, ecoregion_iii, ecoregion_iv, ecoiii_huc6
-  target_hydrocode = '',           #Leave blank to process all, individual examples: usa_state_virginia for all of VA, atl_non_coastal_plain_usgs,ohio_river_basin_nhdplus,nhd_huc8_05050001...
+  target_hydrocode = '020802',           #Leave blank to process all, individual examples: usa_state_virginia for all of VA, atl_non_coastal_plain_usgs,ohio_river_basin_nhdplus,nhd_huc8_05050001...
   quantile = .80,                  #Specify the quantile to use for quantile regresion plots 
   xaxis_thresh = 15000,            #Leave at 15000 so all plots have idential axis limits 
   #analysis_timespan = '1990-2000',#used to subset data on date range 
@@ -86,12 +87,13 @@ inputs <- list(
                                    #   maj_species...........majority species (Benthics only)
   
   quantreg = "NO",   #Plot using quantile regression method (YES or NO)
-  pw_it = "YES",      #Plot using breakpoint determined by piecewise iterative function (YES or NO)
+  pw_it = "NO",      #Plot using breakpoint determined by piecewise iterative function (YES or NO)
   ymax = "NO",       #Plot using breakpoint at x-value corresponding to max y-value (YES or NO)
   twopoint = "NO",   #Plot using basic two-point ELF method (YES or NO)
-  pw_it_RS = "NO",   #Plot using PWIT *with the regression to the right of the breakpoint included (YES or NO)
-  glo = 10,   # PWIT Breakpoint lower guess (sqmi/cfs)
-  ghi = 1000, # PWIT Breakpoint upper guess (sqmi/cfs) - also used as DA breakpoint for elf_quantreg method
+  pw_it_RS = "YES",   #Plot using PWIT *with the regression to the right of the breakpoint included (YES or NO)
+  pw_it_RS_IFIM = "NO",
+  glo = 65,   # PWIT Breakpoint lower guess (sqmi/cfs)
+  ghi = 265, # PWIT Breakpoint upper guess (sqmi/cfs) - also used as DA breakpoint for elf_quantreg method
              # ghi values determined from ymax analyses,  q25 = 72 
              #                                            q50 = 205 
              #                                            q75 = 530
@@ -100,6 +102,6 @@ inputs <- list(
 ) 
 
 #------------------------------------------------------------------------------------------------
-elf_retrieve_data (inputs) 
+plt <- elf_retrieve_data (inputs) 
 
 ##############################################################################
