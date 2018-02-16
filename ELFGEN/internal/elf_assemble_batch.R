@@ -7,16 +7,20 @@ library(httr);
 library(data.table);
 library(scales);
 
-elf_cleandata <- function (data, inputs, search_code, startdate, enddate) {
+elf_cleandata <- function (data, inputs, startdate = FALSE, enddate = FALSE) {
   
   #makes sure all metric values are numeric and not factorial (fixes error with ni, total)
   data$y_value <- as.numeric(data$y_value)
   #Subset by date range 
   data$tstime <- as.Date(data$tstime,origin="1970-01-01")
   
+  if (typeof(startdate) != 'logical') {
+    data <- subset(data, tstime > startdate)
+  }
+  if (typeof(enddate) != 'logical') {
+    data <- subset(data, tstime < enddate)
+  }
   
-  
-  data <- subset(data, tstime > startdate & tstime < enddate)
   #ADD COLUMN OF RATIO OF DRAINAGE AREA TO MEAN FLOW 
   data["ratio"] <- (data$drainage_area)/(data$qmean_annual)
   #REMOVE ALL STATIONS WHERE THE RATIO OF DA:Q IS GREATER THAN 1000
@@ -39,7 +43,7 @@ elf_cleandata <- function (data, inputs, search_code, startdate, enddate) {
   print(paste("Found ", nrow(data), sep=''));
   #If statement needed in case geographic region does not contain more than 3 points
   if(nrow(data) <= 3) {
-    print(paste("... Skipping (fewer than 3 datapoints in ", search_code,")",sep=''))
+    print("... Skipping (fewer than 3 datapoints)")
     return(FALSE)
   } 
   
@@ -48,7 +52,7 @@ elf_cleandata <- function (data, inputs, search_code, startdate, enddate) {
   station_x_value <- data$x_value
   remove_da_duplicates <- unique(station_x_value, incomparables = FALSE)
   if(length(remove_da_duplicates) == 1 | length(remove_da_duplicates) == 2) {
-    print(paste("... Skipping (the points are all organized in 1 or 2 vertical lines in ", search_code,")", sep=''));
+    print("... Skipping (the points are all organized in 1 or 2 vertical lines in )");
     return(FALSE) 
   } #closes bar of points skip if-statement (rare)
   
@@ -56,10 +60,10 @@ elf_cleandata <- function (data, inputs, search_code, startdate, enddate) {
   station_y_value <- data$y_value
   remove_metric_duplicates <- unique(station_y_value, incomparables = FALSE)
   if(length(remove_metric_duplicates) == 1 | length(remove_metric_duplicates) == 2) {
-    print(paste("... Skipping (the points are all organized in 1 or 2 horizontal lines in ", search_code,")", sep=''));
+    print("... Skipping (the points are all organized in 1 or 2 horizontal lines in )");
     return(FALSE) 
   } #closes bar of points skip if-statement (rare)
-  return(list(data,startdate,enddate))
+  return(data)
   
 }
 
@@ -153,7 +157,8 @@ for (k in offset_y_metric:length(y_metric)) {
         print ("done min function")
         date_label = "full timespan: "
       }
-      data <- elf_cleandata(data, inputs, search_code, startdate, enddate)
+      
+      data <- elf_cleandata(data, inputs, startdate, enddate)
       startdate <- paste(date_label,startdate,sep="")
       startdate <- paste(date_label,startdate,sep="") #if plotting for full timespan, display start and end dates above plot
       

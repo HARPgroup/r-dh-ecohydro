@@ -1,28 +1,3 @@
-rm(list = ls())  #clear variables
-options(timeout=240); # set timeout to twice default level to avoid abort due to high traffic
- 
-#----------------------------------------------
-site <- "http://deq1.bse.vt.edu/d.dh"    #Specify the site of interest, either d.bet OR d.dh
-#----------------------------------------------
-
-#----FOR RUNNING LOCALLY:
-fxn_locations <- "C:\\Users\\nrf46657\\Desktop\\IFIM\\"         #Specify location of supporting function .R files
-save_directory <- "C:\\Users\\nrf46657\\Desktop\\IFIM\\plots"                                    #Specify location for storing plot images locally
-fxn_vahydro <- "C:\\Users\\nrf46657\\Desktop\\IFIM\\"   #Specify location of supporting REST functions file
-
-#----FOR RUNNING FROM SERVER:
-#fxn_locations <- "/var/www/R/r-dh-ecohydro/ELFGEN/internal/"
-#save_directory <- "/var/www/html/files/fe/plots"
-#fxn_vahydro <- "/var/www/R/r-dh-ecohydro/Analysis/fn_vahydro-2.0/"
-
-#Load Functions               
-#source(paste(fxn_locations,"elf_retrieve_data.R", sep = ""));  #loads function used to retrieve F:E data from VAHydro
-source(paste(fxn_locations,"elf_assemble_batch.R", sep = ""));  #loads function used to retrieve F:E data from VAHydro
-source(paste(fxn_vahydro,"rest_functions.R", sep = ""));       #loads file containing function that retrieves REST token
-rest_uname = FALSE;
-rest_pw = FALSE;
-source(paste(fxn_locations,"rest.private", sep = ""));         #load rest username and password, contained in rest.private file
-token <- rest_token(site, token, rest_uname, rest_pw);
 
 #------------------------------------------------------------------------------------------------
 #User inputs 
@@ -34,41 +9,19 @@ inputs <- list(
   offset_hydrocode = 1,                     #Leave at 1 to start from begining of Watershed_Hydrocode for-loop
   pct_chg = 10,                             #Percent decrease in flow for barplots (keep at 10 for now)
   save_directory = save_directory, 
-  not_x_metric = c(
-    'nhdp_drainage_sqmi',
-    'erom_q0001e_mean',
-    'erom_q0001e_jan',
-    'erom_q0001e_feb',
-    'erom_q0001e_mar', 
-    'erom_q0001e_apr', 
-    'erom_q0001e_may',
-    'erom_q0001e_june',
-    'erom_q0001e_july',
-    'erom_q0001e_aug',
-    'erom_q0001e_sept',
-    'erom_q0001e_oct',
-    'erom_q0001e_nov',
-    'erom_q0001e_dec'
-  ),		
   x_metric = 'erom_q0001e_mean', #Flow metric to be plotted on the x-axis
-  not_y_metric = c(
-               'nhdp_drainage_sqmi',
-               'aqbio_nt_bival',
-               'aqbio_nt_cypr_native'
-              ), #this can be used to process by multiple biometrics at once 
+  # options are:
+  # c('nhdp_drainage_sqmi', 'erom_q0001e_mean', 'erom_q0001e_jan','erom_q0001e_feb',
+  # 'erom_q0001e_mar',  'erom_q0001e_apr', 'erom_q0001e_may', 'erom_q0001e_june',
+  # 'erom_q0001e_july', 'erom_q0001e_aug','erom_q0001e_sept',  'erom_q0001e_oct',
+  # 'erom_q0001e_nov',  'erom_q0001e_dec'),		
   y_metric = 'aqbio_nt_total',	   #Biometric to be plotted on the y-axis, see "dh variable key" column for options: https://docs.google.com/spreadsheets/d/1PnxY4Rxfk9hkuaXy7tv8yl-mPyJuHdQhrOUWx_E1Y_w/edit#gid=0
-  not_ws_ftype = c(
-    'state',
-    'hwi_region',
-    'nhd_huc6',
-    'nhd_huc8',
-    'nhd_huc10',
-    'nhd_huc12',
-    'ecoregion_iii',
-    'ecoregion_iv',
-    'ecoiii_huc6'
-  ),#this can be used to process by multiple region types at once 
+  # options  = c('aqbio_nt_total',  'aqbio_nt_bival', 'aqbio_nt_cypr_native'),
   ws_ftype = c('nhd_huc6'),		     #Options: state, hwi_region, nhd_huc8, nhd_huc6, ecoregion_iii, ecoregion_iv, ecoiii_huc6
+  # options
+  #  c('state','hwi_region','nhd_huc6', 'nhd_huc8', 'nhd_huc10',
+  #   'nhd_huc12','ecoregion_iii','ecoregion_iv',  'ecoiii_huc6'  ),
+  #this can be used to process by multiple region types at once 
   target_hydrocode = '020802',           #Leave blank to process all, individual examples: usa_state_virginia for all of VA, atl_non_coastal_plain_usgs,ohio_river_basin_nhdplus,nhd_huc8_05050001...
   quantile = .80,                  #Specify the quantile to use for quantile regresion plots 
   xaxis_thresh = 15000,            #Leave at 15000 so all plots have idential axis limits 
@@ -102,6 +55,6 @@ inputs <- list(
 ) 
 
 #------------------------------------------------------------------------------------------------
-plt <- elf_retrieve_data (inputs) 
+
 
 ##############################################################################

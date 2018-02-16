@@ -13,10 +13,18 @@ library(scales);
 site <- "http://deq1.bse.vt.edu/d.dh"    #Specify the site of interest, either d.bet OR d.dh
 #----------------------------------------------
 #----FOR RUNNING LOCALLY:
-source("config.local.private");
-source(paste(fxn_vahydro,"rest_functions.R", sep = ""));
-source(paste(fxn_locations,"rest.private", sep=""));
-source(paste(fxn_locations,"ELFGEN\\internal\\elf_pw_it.R", sep = ""));
+# Only need to change 1 path here - set to wherever this code is located
+basepath='/usr/local/home/git/r-dh-ecohydro';
+# set your local directory paths in config.local.private
+# this file will NOT be sent to git, so it should persist
+# so, edit config.local.private once and you should be good to go
+source(paste(basepath,'config.local.private',sep='/'));
+# all these rely on variables set in config.local.private
+source(paste(fxn_vahydro,"rest_functions.R", sep = "/"));
+source(paste(auth_rest,"rest.private", sep="/"));
+source(paste(fxn_locations,"ELFGEN/internal/elf_quantreg.R", sep = "/"));
+source(paste(fxn_locations,"ELFGEN/internal/elf_pct_chg.R", sep = "/"));
+source(paste(fxn_locations,"ELFGEN/internal/elf_pw_it.R", sep = "/"));
 
 token <- rest_token(site, token, rest_uname, rest_pw);
 
@@ -37,21 +45,36 @@ inputs <- list(
   glo = 1,  
   ghi = 530,
   dataset_tag = 'ymax75',
-  token = token
+  token = token,
+  startdate = '1900-01-01',
+  enddate = '2100-01-01'
 );
 
 mydata <- vahydro_fe_data(
   '030101', "erom_q0001e_mean", "aqbio_nt_total", 
   'watershed',  "nhd_huc6", "species"
 );
+data <- elf_cleandata(mydata, inputs);
+elf_quantreg(
+ inputs, data, x_metric_code = inputs$x_metric, 
+ y_metric_code = inputs$y_metric, 
+ ws_ftype_code = NULL, 
+ Feature.Name_code = 'test feature', 
+ Hydroid_code = NULL, 
+ search_code = NULL, token, 
+ min(data$tstime), max(data$tstime)
+)
+
+
 inputs$ghi <- max(mydata$attribute_value);
 
 # modify elf_pwit to do analysis and return results (not graph)
 elf_pw_it (
-  inputs, mydata, inputs$x_metric, 
-  inputs$x_metric, inputs$ws_ftype, 
+  inputs, data, inputs$x_metric, 
+  inputs$y_metric, ws_ftype_code = NULL, 
   '020802', '020802', 
-  '020802', token, '1900-01-01', '2010-12-31'
+  '020802', token, 
+  min(data$tstime), max(data$tstime)
 );
 # add new function
 # plot_elf_pwit()
