@@ -171,6 +171,75 @@ postProperty <- function(inputs,fxn_locations,base_url,prop){
   
 }
 
+getVarDef <- function(inputs, token, base_url, vardef){
+  
+  pbody = list(
+  );
+  if (!is.null(inputs$hydroid)) {
+    pbody$hydroid = inputs$hydroid;
+  }
+  if (!is.null(inputs$varname)) {
+    pbody$varname = inputs$varname;
+  }
+  if (!is.null(inputs$varkey)) {
+    pbody$varkey = inputs$varkey;
+  }
+  if (!is.null(inputs$varcode)) {
+    pbody$varcode = inputs$varcode;
+  }
+  if (!is.null(inputs$varunits)) {
+    pbody$varunits = inputs$varunits;
+  }
+  if (!is.null(inputs$vocabulary)) {
+    pbody$vocabulary = inputs$vocabulary;
+  }
+  if (!is.null(inputs$vardesc)) {
+    pbody$vardesc = inputs$vardesc;
+  }
+  
+  vardef <- GET(
+    paste(base_url,"/dh_variabledefinition.json",sep=""), 
+    add_headers(HTTP_X_CSRF_TOKEN = token),
+    query = pbody, 
+    encode = "json"
+  );
+  vardef_cont <- content(vardef);
+  print(vardef)
+  
+  if (length(vardef_cont$list) != 0) {
+    print(paste("Number of variables found: ",length(vardef_cont$list),sep=""))
+    
+    vardef <- data.frame(
+      hydroid=character(),
+      varname=character(),
+      varcode=character(),
+      varkey=character(), 
+      vardesc=character(),
+      varunits=character(),
+      vocabulary=character(),
+      stringsAsFactors=FALSE
+    ) 
+    
+    i <- 1
+    for (i in 1:length(vardef_cont$list)) {
+      
+      vardef_i <- data.frame(
+        hydroid = vardef_cont$list[[i]]$hydroid,
+        varname = vardef_cont$list[[i]]$varname,
+        varcode = vardef_cont$list[[i]]$varcode,
+        varkey = vardef_cont$list[[i]]$varkey,
+        vardesc = vardef_cont$list[[i]]$vardesc,
+        varunits = vardef_cont$list[[i]]$varunits,
+        vocabulary = vardef_cont$list[[i]]$vocabulary
+      )
+      vardef <- rbind(vardef, vardef_i)
+    }
+  } else {
+    print("This variable does not exist")
+  }
+  vardef <- vardef
+}
+
 
 getFeature <- function(inputs, token, base_url, feature){
   

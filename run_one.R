@@ -27,7 +27,7 @@ source(paste(fxn_locations,"ELFGEN/internal/elf_pct_chg.R", sep = "/"));
 source(paste(fxn_locations,"ELFGEN/internal/elf_pw_it.R", sep = "/"));
 
 token <- rest_token(site, token, rest_uname, rest_pw);
-
+#####
 inputs <- list(
   site = site,
   pct_chg = 10,                             #Percent decrease in flow for barplots (keep at 10 for now)
@@ -50,6 +50,7 @@ inputs <- list(
   enddate = '2100-01-01'
 );
 
+##### Data Acquisition #####
 mydata <- vahydro_fe_data(
   '030101', "erom_q0001e_mean", "aqbio_nt_total", 
   'watershed',  "nhd_huc6", "species"
@@ -59,15 +60,15 @@ elf_quantreg(
  inputs, data, x_metric_code = inputs$x_metric, 
  y_metric_code = inputs$y_metric, 
  ws_ftype_code = NULL, 
- Feature.Name_code = 'test feature', 
+ Feature.Name_code = 'Roanoke ELF', 
  Hydroid_code = NULL, 
  search_code = NULL, token, 
  min(data$tstime), max(data$tstime)
 )
 
-
 inputs$ghi <- max(mydata$attribute_value);
 
+##### Plot PWIT ####
 # modify elf_pwit to do analysis and return results (not graph)
 elf_pw_it (
   inputs, data, inputs$x_metric, 
