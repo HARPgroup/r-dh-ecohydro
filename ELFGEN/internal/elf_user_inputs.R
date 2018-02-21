@@ -6,9 +6,11 @@ site <- "http://deq1.bse.vt.edu/d.dh"    #Specify the site of interest, either d
 #----------------------------------------------
 
 #----FOR RUNNING LOCALLY:
-fxn_locations <- "C:\\usr\\local\\home\\git\\r-dh-ecohydro\\ELFGEN\\internal\\"         #Specify location of supporting function .R files
-save_directory <- "C:\\Users\\nrf46657\\Desktop\\VAHydro Development\\GitHub\\plots"                                    #Specify location for storing plot images locally
-fxn_vahydro <- "C:\\usr\\local\\home\\git\\r-dh-ecohydro\\Analysis\\fn_vahydro-2.0\\"   #Specify location of supporting REST functions file
+basepath='C:\\Users\\nrf46657\\Desktop\\VAHydro Development\\GitHub\\r-dh-ecohydro\\ELFGEN\\internal\\';
+# set your local directory paths in config.local.private located in filepath above
+# this file will NOT be sent to git, so it should persist
+# so, edit config.local.private once and you should be good to go
+source(paste(basepath,'config.local.private',sep='/'));
 
 #----FOR RUNNING FROM SERVER:
 #fxn_locations <- "/var/www/R/r-dh-ecohydro/ELFGEN/internal/"
@@ -21,7 +23,7 @@ source(paste(fxn_vahydro,"rest_functions.R", sep = ""));       #loads file conta
 rest_uname = FALSE;
 rest_pw = FALSE;
 source(paste(fxn_locations,"rest.private", sep = ""));         #load rest username and password, contained in rest.private file
-token <- rest_token(site, token, rest_uname, rest_upass);
+token <- rest_token(site, token, rest_uname, rest_pw);
 
 #------------------------------------------------------------------------------------------------
 #User inputs 

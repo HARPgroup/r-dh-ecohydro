@@ -13,13 +13,22 @@ library(scales);
 site <- "http://deq1.bse.vt.edu/d.dh"    #Specify the site of interest, either d.bet OR d.dh
 #----------------------------------------------
 #----FOR RUNNING LOCALLY:
-source("config.local.private");
-source(paste(fxn_vahydro,"rest_functions.R", sep = ""));
-source(paste(fxn_locations,"rest.private", sep=""));
-source(paste(fxn_locations,"ELFGEN\\internal\\elf_pw_it.R", sep = ""));
+# Only need to change 1 path here - set to wherever this code is located
+basepath='C:\\Users\\nrf46657\\Desktop\\VAHydro Development\\GitHub\\r-dh-ecohydro\\ELFGEN\\internal\\';
+# set your local directory paths in config.local.private located in filepath above
+# this file will NOT be sent to git, so it should persist
+# so, edit config.local.private once and you should be good to go
+source(paste(basepath,'config.local.private',sep='/'));
+# all these rely on variables set in config.local.private
+source(paste(fxn_vahydro,"rest_functions.R", sep = "/"));
+source(paste(auth_rest,"rest.private", sep="/"));
+source(paste(fxn_locations,"elf_assemble_batch.R", sep = "/"));
+source(paste(fxn_locations,"elf_quantreg.R", sep = "/"));
+source(paste(fxn_locations,"elf_pct_chg.R", sep = "/"));
+source(paste(fxn_locations,"elf_pw_it.R", sep = "/"));
 
 token <- rest_token(site, token, rest_uname, rest_pw);
-
+#####
 inputs <- list(
   site = site,
   pct_chg = 10,                             #Percent decrease in flow for barplots (keep at 10 for now)
@@ -37,22 +46,43 @@ inputs <- list(
   glo = 1,  
   ghi = 530,
   dataset_tag = 'ymax75',
-  token = token
+  token = token,
+  startdate = '1900-01-01',
+  enddate = '2100-01-01'
 );
 
+##### Data Acquisition #####
+#retrieve raw data
 mydata <- vahydro_fe_data(
   '030101', "erom_q0001e_mean", "aqbio_nt_total", 
   'watershed',  "nhd_huc6", "species"
 );
-inputs$ghi <- max(mydata$attribute_value);
+#clean data using inputs above 
+data <- elf_cleandata(mydata, inputs);
 
-# modify elf_pwit to do analysis and return results (not graph)
+#perform quantile regression calculation and plot 
+elf_quantreg(
+ inputs, data, x_metric_code = inputs$x_metric, 
+ y_metric_code = inputs$y_metric, 
+ ws_ftype_code = NULL, 
+ Feature.Name_code = 'Roanoke ELF', 
+ Hydroid_code = NULL, 
+ search_code = NULL, token, 
+ min(data$tstime), max(data$tstime)
+)
+
+#for setting ghi = max x_value
+inputs$ghi <- max(mydata$x_value);
+
+##### Plot PWIT ####
+# modify elf_pwit to do analysis and return results
 elf_pw_it (
-  inputs, mydata, inputs$x_metric, 
-  inputs$x_metric, inputs$ws_ftype, 
+  inputs, data, inputs$x_metric, 
+  inputs$y_metric, ws_ftype_code = NULL, 
   '020802', '020802', 
-  '020802', token, '1900-01-01', '2010-12-31'
-);
+  '020802', token, 
+  min(data$tstime), max(data$tstime)
+)
 # add new function
 # plot_elf_pwit()
 # add new function store_elf_pwit() (if SEND_TO_REST = TRUE)
