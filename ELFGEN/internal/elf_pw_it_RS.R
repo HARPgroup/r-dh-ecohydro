@@ -9,8 +9,6 @@ library(scales);
 
 elf_pw_it_RS <- function(inputs, data, x_metric_code, y_metric_code, ws_ftype_code, Feature.Name_code, Hydroid_code, search_code, token, startdate, enddate){
   
-  a = FALSE
-  
   #Load inputs
   x_metric <- x_metric_code
   y_metric <- y_metric_code
@@ -225,11 +223,8 @@ elf_pw_it_RS <- function(inputs, data, x_metric_code, y_metric_code, ws_ftype_co
       EDAS_lower_legend <- paste("Data Subset (Lower ",(100-((1 - quantile)*100)),"%)",sep="");
       
       print (paste("Plotting ELF"));
-      
-      
-      my.plot <- function() {
       # START - plotting function
-        result <- ggplot(data, aes(x=x_value,y=y_value)) + ylim(0,yaxis_thresh) + 
+      plt <- ggplot(data, aes(x=x_value,y=y_value)) + ylim(0,yaxis_thresh) + 
         
         #Full Dataset (Gray Points)
         geom_point(data = full_dataset,aes(colour="aliceblue")) +
@@ -277,12 +272,6 @@ elf_pw_it_RS <- function(inputs, data, x_metric_code, y_metric_code, ws_ftype_co
           )
         ); 
       
-      
-      }
-      
-      a <- my.plot()
-      print(class(a))
-      
       # END plotting function
       filename <- paste(adminid,"elf.png", sep="_")
       ggsave(file=filename, path = save_directory, width=8, height=6)
@@ -308,8 +297,6 @@ elf_pw_it_RS <- function(inputs, data, x_metric_code, y_metric_code, ws_ftype_co
           
           filename <- paste(adminid,"pctchg.png", sep="_")
           ggsave(file=filename, path = save_directory, width=8, height=5)
-
-          
         } else {
           print (paste("Y-Intercept is negative, not generating barplot"));        
         }  
@@ -345,5 +332,4 @@ elf_pw_it_RS <- function(inputs, data, x_metric_code, y_metric_code, ws_ftype_co
     print(paste("... Skipping (No breaks are found using this piece-wise method in ", search_code,")", sep=''));
   }
   
-  return(a)
 } #close function
