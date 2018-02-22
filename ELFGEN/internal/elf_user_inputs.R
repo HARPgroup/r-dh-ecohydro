@@ -10,19 +10,27 @@ site <- "http://deq1.bse.vt.edu/d.dh"    #Specify the site of interest, either d
 #Specify location for storing plot images locally
 fxn_locations <- "D:\\Jkrstolic\\R\\deqEcoflows\\GitHub\\r-dh-ecohydro\\ELFGEN\\internal\\"  
 save_directory <- "D:\\Jkrstolic\\R\\deqEcoflows\\Breakpoints\\ELFs_PlotsReview\\BreakPointCompare\\"
-
 fxn_vahydro <- "D:\\Jkrstolic\\R\\deqEcoflows\\GitHub\\r-dh-ecohydro\\Analysis\\fn_vahydro-2.0\\" 
+basepath='D:\\Jkrstolic\\R\\deqEcoflows\\GitHub\\r-dh-ecohydro\\ELFGEN\\internal\\';
+# set your local directory paths in config.local.private located in filepath above
+# this file will NOT be sent to git, so it should persist
+# so, edit config.local.private once and you should be good to go
+source(paste(basepath,'config.local.private',sep='/'));
+
 
 #----FOR RUNNING FROM SERVER:
-#fxn_locations <- "/var/www/R/r-dh-ecohydro/ELFGEN/"
+#fxn_locations <- "/var/www/R/r-dh-ecohydro/ELFGEN/internal/"
 #save_directory <- "/var/www/html/files/fe/plots"
 #fxn_vahydro <- "/var/www/R/r-dh-ecohydro/Analysis/fn_vahydro-2.0/"
 
-#retrieve rest token
-source(paste(fxn_locations,"elf_rest_token.R", sep = ""));     #loads function used to generate rest session token
-elf_rest_token (site, token)
-token <- elf_rest_token(site, token)
-print(token)
+#Load Functions               
+source(paste(fxn_locations,"elf_retrieve_data.R", sep = ""));  #loads function used to retrieve F:E data from VAHydro
+source(paste(fxn_vahydro,"rest_functions.R", sep = ""));       #loads file containing function that retrieves REST token
+rest_uname = FALSE;
+rest_pw = FALSE;
+source(paste(fxn_locations,"rest.private", sep = ""));         #load rest username and password, contained in rest.private file
+token <- rest_token(site, token, rest_uname, rest_pw);
+
 
 #------------------------------------------------------------------------------------------------
 #User inputs 
@@ -72,8 +80,9 @@ inputs <- list(
   ),#this can be used to process by multiple region types at once 
 
   ws_ftype = c('nhd_huc6'),		     #Options: state, hwi_region, nhd_huc8, nhd_huc6, ecoregion_iii, ecoregion_iv, ecoiii_huc6
-  target_hydrocode = c('050500'),  #,  #Leave blank to process all, individual examples: usa_state_virginia for all of VA, atl_non_coastal_plain_usgs,ohio_river_basin_nhdplus,nhd_huc8_05050001...
-  quantile = .80,                 #Specify the quantile to use for quantile regresion plots 
+  target_hydrocode = '',           #Leave blank to process all, individual examples: usa_state_virginia for all of VA, atl_non_coastal_plain_usgs,ohio_river_basin_nhdplus,nhd_huc8_05050001...
+  quantile = .80,                  #Specify the quantile to use for quantile regresion plots 
+  
   xaxis_thresh = 15000,            #Leave at 15000 so all plots have idential axis limits 
   #analysis_timespan = '1990-2000',#used to subset data on date range 
   analysis_timespan = 'full',      #used to plot for entire timespan 
@@ -100,15 +109,11 @@ inputs <- list(
              # ghi values determined from ymax analyses,  q25 = 72 
              #                                            q50 = 205 
              #                                            q75 = 530
-  # full_ymax_da75
-  # full_ymax_da530
-  token = token
+  token = token,
+  dataset_tag = ""
 ) 
 
 #------------------------------------------------------------------------------------------------
-#Load Functions               
-source(paste(fxn_locations,"elf_retrieve_data.R", sep = ""));  #loads function used to retrieve F:E data from VAHydro
-source(paste(fxn_vahydro,"rest_functions.R", sep = "")); 
 elf_retrieve_data (inputs) 
 
 ##############################################################################

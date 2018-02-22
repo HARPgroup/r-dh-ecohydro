@@ -7,7 +7,67 @@ library(httr);
 library(data.table);
 library(scales);
 
-elf_retrieve_data <- function(inputs = list()){
+elf_cleandata <- function (data, inputs, startdate = FALSE, enddate = FALSE) {
+  
+  #makes sure all metric values are numeric and not factorial (fixes error with ni, total)
+  data$y_value <- as.numeric(data$y_value)
+  #Subset by date range 
+  data$tstime <- as.Date(data$tstime,origin="1970-01-01")
+  
+  if (typeof(startdate) != 'logical') {
+    data <- subset(data, tstime > startdate)
+  }
+  if (typeof(enddate) != 'logical') {
+    data <- subset(data, tstime < enddate)
+  }
+  
+  #ADD COLUMN OF RATIO OF DRAINAGE AREA TO MEAN FLOW 
+  data["ratio"] <- (data$drainage_area)/(data$qmean_annual)
+  #REMOVE ALL STATIONS WHERE THE RATIO OF DA:Q IS GREATER THAN 1000
+  data<-data[!(data$ratio > 1000),]
+  
+  #USE ONLY MAX NT VALUE FOR EACH STATION
+  if(inputs$station_agg == "max"){ 
+    aa <- data[order(data$hydrocode, data$y_value, decreasing=TRUE),]
+    aa <- aa[!duplicated(aa$hydrocode),]
+    aa <- aa[order(aa$hydrocode, aa$y_value),]
+    data <- aa
+  }
+  
+  #subsets data to exclude anything with a flowmetric value greater than the "xaxis_thresh" specified in the user inputs file
+  data <- subset(data, x_value >= .001 & x_value < inputs$xaxis_thresh);
+  
+  #Export data as spreadsheet
+  ##write.table(data, paste(save_directory,"data.tsv",sep=""), sep="\t")
+  
+  print(paste("Found ", nrow(data), sep=''));
+  #If statement needed in case geographic region does not contain more than 3 points
+  if(nrow(data) <= 3) {
+    print("... Skipping (fewer than 3 datapoints)")
+    return(FALSE)
+  } 
+  
+  
+  #Skip if there is only 1 or 2 unique flow metric values for this watershed (either only a single EDAS station, or multiple with the same flow metric, which would result in a vertical bar of points in the plot)
+  station_x_value <- data$x_value
+  remove_da_duplicates <- unique(station_x_value, incomparables = FALSE)
+  if(length(remove_da_duplicates) == 1 | length(remove_da_duplicates) == 2) {
+    print("... Skipping (the points are all organized in 1 or 2 vertical lines in )");
+    return(FALSE) 
+  } #closes bar of points skip if-statement (rare)
+  
+  #Skip if there is only 1 or 2 unique biometric values for this watershed
+  station_y_value <- data$y_value
+  remove_metric_duplicates <- unique(station_y_value, incomparables = FALSE)
+  if(length(remove_metric_duplicates) == 1 | length(remove_metric_duplicates) == 2) {
+    print("... Skipping (the points are all organized in 1 or 2 horizontal lines in )");
+    return(FALSE) 
+  } #closes bar of points skip if-statement (rare)
+  return(data)
+  
+}
+
+elf_assemble_batch <- function(inputs = list()){
   
   #Load inputs
   x_metric <- inputs$x_metric 
@@ -26,13 +86,10 @@ elf_retrieve_data <- function(inputs = list()){
   quantreg <- inputs$quantreg 
   ymax <- inputs$ymax   
   pw_it <- inputs$pw_it  
-  pw_it_RS <- inputs$pw_it_RS  
+  pw_it_RS <- inputs$pw_it_RS 
+  pw_it_RS_IFIM <- inputs$pw_it_RS_IFIM  
   twopoint <- inputs$twopoint
   token <- inputs$token
-<<<<<<< HEAD
- # DA_Flow <- inputs$DA_Flow
-=======
->>>>>>> e74430f8554919723e1c9259d85ec8d2a23b6a32
 
 for (l in offset_ws_ftype:length(ws_ftype)) {
      
@@ -79,73 +136,35 @@ for (k in offset_y_metric:length(y_metric)) {
       y_metric_code <-  y_metric[k];
 
       data <- vahydro_fe_data(
-        Watershed_Hydrocode[i],
+        search_code,
         x_metric_code,y_metric_code,
         bundle,ws_ftype_code,sampres
       );
-      
-      #makes sure all metric values are numeric and not factorial (fixes error with ni, total)
-      data$y_value <- as.numeric(data$y_value)
-      #Subset by date range 
       data$tstime <- as.Date(data$tstime,origin="1970-01-01")
+      # clean up data
       
-      if (analysis_timespan != 'full') {
-      #Need to convert timespan paramteter into startdate and endate format for subsetting data 
-      startdate <- paste(unlist(strsplit(analysis_timespan, "[-]"))[[1]],"-01-01",sep="")
-      enddate <- paste(unlist(strsplit(analysis_timespan, "[-]"))[[2]],"-12-31",sep="")
+      if (inputs$analysis_timespan != 'full') {
+        #Need to convert timespan paramteter into startdate and endate format for subsetting data 
+        startdate <- paste(unlist(strsplit(inputs$analysis_timespan, "[-]"))[[1]],"-01-01",sep="")
+        enddate <- paste(unlist(strsplit(inputs$analysis_timespan, "[-]"))[[2]],"-12-31",sep="")
         print(paste("startdate: ", startdate))
         print(paste("enddate: ", enddate))
-      data <- subset(data, tstime > startdate & tstime < enddate)
-        startdate <- paste("subset: ",startdate,sep="")
+        date_label = "subset: "
       } else {        
-        startdate <- paste("full timespan: ",min(data$tstime),sep="") #if plotting for full timespan, display start and end dates above plot
+        print ("min function")
+        startdate <- min(data$tstime)
         enddate <- max(data$tstime)   #no dates set with REST, only "full" for analysis_timespan propcode
+        print ("done min function")
+        date_label = "full timespan: "
       }
       
+      data <- elf_cleandata(data, inputs, startdate, enddate)
+      startdate <- paste(date_label,startdate,sep="")
+      startdate <- paste(date_label,startdate,sep="") #if plotting for full timespan, display start and end dates above plot
       
-      #ADD COLUMN OF RATIO OF DRAINAGE AREA TO MEAN FLOW 
-      data["ratio"] <- (data$drainage_area)/(data$qmean_annual)
-      #REMOVE ALL STATIONS WHERE THE RATIO OF DA:Q IS GREATER THAN 1000
-      data<-data[!(data$ratio > 1000),]
-
-      #USE ONLY MAX NT VALUE FOR EACH STATION
-      if(station_agg == "max"){ 
-        aa <- data[order(data$hydrocode, data$y_value, decreasing=TRUE),]
-        aa <- aa[!duplicated(aa$hydrocode),]
-        aa <- aa[order(aa$hydrocode, aa$y_value),]
-        data <- aa
-      }
-      
-      #subsets data to exclude anything with a flowmetric value greater than the "xaxis_thresh" specified in the user inputs file
-      data <- subset(data, x_value >= .001 & x_value < xaxis_thresh);
-      
-      #Export data as spreadsheet
-      ##write.table(data, paste(save_directory,"data.tsv",sep=""), sep="\t")
-      
-      print(paste("Found ", nrow(data), sep=''));
-      #If statement needed in case geographic region does not contain more than 3 points
-      if(nrow(data) <= 3) {
-        print(paste("... Skipping (fewer than 3 datapoints in ", Watershed_Hydrocode[i],")",sep=''))
+      if (typeof(data) == 'logical') {
         next
-      } 
-      
-      
-      #Skip if there is only 1 or 2 unique flow metric values for this watershed (either only a single EDAS station, or multiple with the same flow metric, which would result in a vertical bar of points in the plot)
-      station_x_value <- data$x_value
-      remove_da_duplicates <- unique(station_x_value, incomparables = FALSE)
-      if(length(remove_da_duplicates) == 1 | length(remove_da_duplicates) == 2) {
-        print(paste("... Skipping (the points are all organized in 1 or 2 vertical lines in ", Watershed_Hydrocode[i],")", sep=''));
-        next 
-      } #closes bar of points skip if-statement (rare)
-      
-      #Skip if there is only 1 or 2 unique biometric values for this watershed
-      station_y_value <- data$y_value
-      remove_metric_duplicates <- unique(station_y_value, incomparables = FALSE)
-      if(length(remove_metric_duplicates) == 1 | length(remove_metric_duplicates) == 2) {
-        print(paste("... Skipping (the points are all organized in 1 or 2 horizontal lines in ", Watershed_Hydrocode[i],")", sep=''));
-        next 
-      } #closes bar of points skip if-statement (rare)
-
+      }
 #---------------------------------------------------------------------     
       
       #Load Functions               
@@ -156,7 +175,7 @@ for (k in offset_y_metric:length(y_metric)) {
       source(paste(fxn_locations,"elf_pw_it_RS.R", sep = ""));       #loads ef_pw_it_RS function
       source(paste(fxn_locations,"elf_pct_chg.R", sep =""));         #loads percent change barplot function
       source(paste(fxn_locations,"elf_store_data.R", sep = ""));     #loads function used to store ELF stats to VAHydro
-      #source(paste(fxn_locations,"elf_DA_Flow.R", sep = ""));            #loads function used to plot DA and Flow
+      source(paste(fxn_locations,"elf_pw_it_RS_IFIM.R", sep = ""));  #loads elf_pw_it_RS_IFIM function for overlaying WUA curves on ELFs
       
       if(quantreg == "YES") {print(paste("PLOTTING - method quantreg breakpoint ...",sep="")) 
                             elf_quantreg (inputs, data, x_metric_code, y_metric_code, ws_ftype_code, Feature.Name_code, Hydroid_code, search_code, token, startdate, enddate)}
@@ -166,12 +185,16 @@ for (k in offset_y_metric:length(y_metric)) {
                             elf_pw_it (inputs, data, x_metric_code, y_metric_code, ws_ftype_code, Feature.Name_code, Hydroid_code, search_code, token, startdate, enddate)}
       if(twopoint == "YES") {print(paste("PLOTTING - method two-point function...",sep=""))
                             elf_twopoint (inputs, data, x_metric_code, y_metric_code, ws_ftype_code, Feature.Name_code, Hydroid_code, search_code, token, startdate, enddate)}
-      #if(DA_Flow == "YES")  {print(paste("PLOTTING - method DA_Flow function...",sep=""))
-      #                      elf_DA_Flow (inputs, data, x_metric_code, y_metric_code, ws_ftype_code, Feature.Name_code, Hydroid_code, search_code, token, startdate, enddate)}
+
       if(pw_it_RS == "YES") {print(paste("PLOTTING - method quantreg breakpoint using piecewise function (Including regression to the right of breakpoint)...",sep=""))
-                             elf_pw_it_RS (inputs, data, x_metric_code, y_metric_code, ws_ftype_code, Feature.Name_code, Hydroid_code, search_code, token, startdate, enddate)}
+                            plt <- elf_pw_it_RS (inputs, data, x_metric_code, y_metric_code, ws_ftype_code, Feature.Name_code, Hydroid_code, search_code, token, startdate, enddate)}
+      print(class(plt))
+      if(pw_it_RS_IFIM == "YES") {print(paste("PLOTTING - method quantreg breakpoint using piecewise function (Including regression to the right of breakpoint)...",sep=""))
+                                  elf_pw_it_RS_IFIM (inputs, data, x_metric_code, y_metric_code, ws_ftype_code, Feature.Name_code, Hydroid_code, search_code, token, startdate, enddate)}
+      
+      return(plt)
         } #closes watershed for loop  
       } #closes x_metric for loop
-    } #closes y_metric for loop 
+    } #closes y_metric for loop
   } #closes ws_ftype for loop
 } #close function

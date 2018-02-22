@@ -1,45 +1,51 @@
 library(httr);
 library(stringr);
 
-rest_token <- function(base_url, token, rest_uname = FALSE, rest_pw = FALSE){
+rest_token <- function(base_url, token, rest_uname = FALSE, rest_pw = FALSE) {
   #Cross-site Request Forgery Protection (Token required for POST and PUT operations)
   csrf_url <- paste(base_url,"restws/session/token/",sep="/");
-  if (interactive()) {
-    print("Is interactive");
-  } else {
-    print("Is NOT interactive");
-  }
-  
-  #currently set up to allow infinite login attempts, but this can easily be restricted to a set # of attempts
-  token <- c("rest_uname","rest_pw")
-  login_attempts <- 1
-  if (!is.character(rest_uname)) {
-    while(length(token) == 2  && login_attempts <= 5){
-      print(paste("login attempt #",login_attempts,sep=""))
-      
-      rest_uname <- readline(prompt="Enter REST user name: ")
-      rest_pw <- readline(prompt="Password: ")
-      csrf <- GET(url=csrf_url,authenticate(rest_uname,rest_pw));
-      token <- content(csrf);
-      print(token)
-      
-      if (length(token)==2){
-        print("Sorry, unrecognized username or password")
-      }
+
+  #IF THE OBJECTS 'rest_uname' or 'rest_pw' DONT EXIST, USER INPUT REQUIRED
+  if (!is.character(rest_uname) | !(is.character(rest_pw))){
+    
+    rest_uname <- c() #initialize username object
+    rest_pw <- c()    #initialize password object
+    
+    #currently set up to allow infinite login attempts, but this can easily be restricted to a set # of attempts
+    token <- c("rest_uname","rest_pw") #used in while loop below, "length of 2"
+    login_attempts <- 1
+    if (!is.character(rest_uname)) {
+      print(paste("REST AUTH INFO MUST BE SUPPLIED",sep=""))
+      while(length(token) == 2  && login_attempts <= 5){
+        print(paste("login attempt #",login_attempts,sep=""))
+        
+        rest_uname <- readline(prompt="Enter REST user name: ")
+        rest_pw <- readline(prompt="Password: ")
+        csrf <- GET(url=csrf_url,authenticate(rest_uname,rest_pw));
+        token <- content(csrf);
+        #print(token)
+        
+          if (length(token)==2){
+            print("Sorry, unrecognized username or password")
+            }
       login_attempts <- login_attempts + 1
+      }
+      if (login_attempts > 5){print(paste("ALLOWABLE NUMBER OF LOGIN ATTEMPTS EXCEEDED"))}
     }
-  } else {
+    
+   } else {
+    print(paste("REST AUTH INFO HAS BEEN SUPPLIED",sep=""))
+    print(paste("RETRIEVING REST TOKEN",sep=""))
     csrf <- GET(url=csrf_url,authenticate(rest_uname,rest_pw));
     token <- content(csrf);
-    print(token)
   }
   
-  if (length(token)==1){
-    print("Login attempt successful")
-    print(paste("token = ",token,sep=""))
-  } else {
-    print("Login attempt unsuccessful")
-  }
+   if (length(token)==1){
+     print("Login attempt successful")
+     print(paste("token = ",token,sep=""))
+   } else {
+     print("Login attempt unsuccessful")
+   }
   token <- token
 } #close function
 
@@ -165,6 +171,75 @@ postProperty <- function(inputs,fxn_locations,base_url,prop){
   
 }
 
+getVarDef <- function(inputs, token, base_url, vardef){
+  
+  pbody = list(
+  );
+  if (!is.null(inputs$hydroid)) {
+    pbody$hydroid = inputs$hydroid;
+  }
+  if (!is.null(inputs$varname)) {
+    pbody$varname = inputs$varname;
+  }
+  if (!is.null(inputs$varkey)) {
+    pbody$varkey = inputs$varkey;
+  }
+  if (!is.null(inputs$varcode)) {
+    pbody$varcode = inputs$varcode;
+  }
+  if (!is.null(inputs$varunits)) {
+    pbody$varunits = inputs$varunits;
+  }
+  if (!is.null(inputs$vocabulary)) {
+    pbody$vocabulary = inputs$vocabulary;
+  }
+  if (!is.null(inputs$vardesc)) {
+    pbody$vardesc = inputs$vardesc;
+  }
+  
+  vardef <- GET(
+    paste(base_url,"/dh_variabledefinition.json",sep=""), 
+    add_headers(HTTP_X_CSRF_TOKEN = token),
+    query = pbody, 
+    encode = "json"
+  );
+  vardef_cont <- content(vardef);
+  print(vardef)
+  
+  if (length(vardef_cont$list) != 0) {
+    print(paste("Number of variables found: ",length(vardef_cont$list),sep=""))
+    
+    vardef <- data.frame(
+      hydroid=character(),
+      varname=character(),
+      varcode=character(),
+      varkey=character(), 
+      vardesc=character(),
+      varunits=character(),
+      vocabulary=character(),
+      stringsAsFactors=FALSE
+    ) 
+    
+    i <- 1
+    for (i in 1:length(vardef_cont$list)) {
+      
+      vardef_i <- data.frame(
+        hydroid = vardef_cont$list[[i]]$hydroid,
+        varname = vardef_cont$list[[i]]$varname,
+        varcode = vardef_cont$list[[i]]$varcode,
+        varkey = vardef_cont$list[[i]]$varkey,
+        vardesc = vardef_cont$list[[i]]$vardesc,
+        varunits = vardef_cont$list[[i]]$varunits,
+        vocabulary = vardef_cont$list[[i]]$vocabulary
+      )
+      vardef <- rbind(vardef, vardef_i)
+    }
+  } else {
+    print("This variable does not exist")
+  }
+  vardef <- vardef
+}
+
 
 getFeature <- function(inputs, token, base_url, feature){
   
@@ -242,3 +317,36 @@ vahydro_fe_data <- function (Watershed_Hydrocode,x_metric_code,y_metric_code,bun
   print(paste("Using ", uri, sep=''));
   data <- read.csv(uri, header = TRUE, sep = ",")
 }
+
+vahydro_prop_matrix <- function (featureid,varkey) {
+  
+  library(jsonlite) #required for transforming json data to dataframe format 
+  library(dplyr) #required for renaming dataframe columns 
+  
+  #featureid <- '397299'
+  #varkey <- 'ifim_habitat_table'
+  matrix_url <- paste(site,"dh-properties-json/dh_feature",featureid,varkey, sep="/")
+  
+  print(paste("Using ", matrix_url, sep=''));
+  
+  raw_data <- fromJSON(matrix_url) #return entire property 
+  prop_matrix_json <- raw_data$entity_properties$property$prop_matrix #return property prop_matrix only 
+  json_file <- fromJSON(prop_matrix_json) #convert to json list 
+  
+  #unlist json objects 
+  json_file <- lapply(json_file, function(x) {
+    x[sapply(x, is.null)] <- NA
+    unlist(x)
+  })
+  
+  matrix_dataframe <- do.call("rbind", json_file) #bind objects into rows 
+  matrix_dataframe <- data.frame(matrix_dataframe) #convert rows of objects to dataframe 
+  
+  #transform all dataframe values to numeric 
+  for (z in 1:length(matrix_dataframe)) {
+    matrix_dataframe[,z] <-as.numeric(as.character(matrix_dataframe[,z]))
+  }
+  
+  matrix_dataframe <- matrix_dataframe #return dataframe object
+}
+
