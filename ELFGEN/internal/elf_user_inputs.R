@@ -51,7 +51,7 @@ inputs <- list(
     'erom_q0001e_nov',
     'erom_q0001e_dec'
   ),		
-  x_metric = 'nhdp_drainage_sqmi', #Flow metric to be plotted on the x-axis
+  x_metric = 'erom_q0001e_mean', #Flow metric to be plotted on the x-axis
   not_y_metric = c(
                'nhdp_drainage_sqmi',
                'aqbio_nt_bival',
@@ -69,8 +69,12 @@ inputs <- list(
     'ecoregion_iv',
     'ecoiii_huc6'
   ),#this can be used to process by multiple region types at once 
-  ws_ftype = c('nhd_huc6'),		     #Options: state, hwi_region, nhd_huc8, nhd_huc6, ecoregion_iii, ecoregion_iv, ecoiii_huc6
-  target_hydrocode = '',           #Leave blank to process all, individual examples: usa_state_virginia for all of VA, atl_non_coastal_plain_usgs,ohio_river_basin_nhdplus,nhd_huc8_05050001...
+  ws_ftype = c('nhd_huc8'),		     #Options: state, hwi_region, nhd_huc8, nhd_huc6, ecoregion_iii, ecoregion_iv, ecoiii_huc6
+  target_hydrocode = c('nhd_huc8_02070001 nhd_huc8_02070004 nhd_huc8_02070005 nhd_huc8_02070006 nhd_huc8_02070007 nhd_huc8_02070008 nhd_huc8_02070010 nhd_huc8_02070011'),           #Leave blank to process all, individual examples: usa_state_virginia for all of VA, atl_non_coastal_plain_usgs,ohio_river_basin_nhdplus,nhd_huc8_05050001...
+
+  
+  
+  
   quantile = .80,                  #Specify the quantile to use for quantile regresion plots 
   xaxis_thresh = 15000,            #Leave at 15000 so all plots have idential axis limits 
   #analysis_timespan = '1990-2000',#used to subset data on date range 
