@@ -25,6 +25,7 @@ rest_pw = FALSE;
 source(paste(fxn_locations,"rest.private", sep = ""));         #load rest username and password, contained in rest.private file
 token <- rest_token(site, token, rest_uname, rest_pw);
 
+source(paste(fxn_locations,"huc8_groupings.txt", sep = "")); 
 #------------------------------------------------------------------------------------------------
 #User inputs 
 inputs <- list(
@@ -51,7 +52,7 @@ inputs <- list(
     'erom_q0001e_nov',
     'erom_q0001e_dec'
   ),		
-  x_metric = 'erom_q0001e_july', #Flow metric to be plotted on the x-axis
+  x_metric = 'erom_q0001e_mean', #Flow metric to be plotted on the x-axis
   not_y_metric = c(
                'nhdp_drainage_sqmi',
                'aqbio_nt_bival',
@@ -69,11 +70,9 @@ inputs <- list(
     'ecoregion_iv',
     'ecoiii_huc6'
   ),#this can be used to process by multiple region types at once 
-  ws_ftype = c('nhd_huc6'),		     #Options: state, hwi_region, nhd_huc8, nhd_huc6, ecoregion_iii, ecoregion_iv, ecoiii_huc6
-  #target_hydrocode = c('nhd_huc8_02070001 nhd_huc8_02070004 nhd_huc8_02070005 nhd_huc8_02070006 nhd_huc8_02070007 nhd_huc8_02070008 nhd_huc8_02070010 nhd_huc8_02070011'),           #Leave blank to process all, individual examples: usa_state_virginia for all of VA, atl_non_coastal_plain_usgs,ohio_river_basin_nhdplus,nhd_huc8_05050001...
-
-  target_hydrocode = '020700',
-  
+  ws_ftype = c('nhd_huc8'),		     #Options: state, hwi_region, nhd_huc8, nhd_huc6, ecoregion_iii, ecoregion_iv, ecoiii_huc6
+  target_hydrocode = 'nhd_huc8_02070011 nhd_huc8_02070010',
+  #target_hydrocode = atl_new, 
   quantile = .80,                  #Specify the quantile to use for quantile regresion plots 
   xaxis_thresh = 15000,            #Leave at 15000 so all plots have idential axis limits 
   #analysis_timespan = '1990-2000',#used to subset data on date range 
@@ -95,8 +94,8 @@ inputs <- list(
   ymax = "NO",       #Plot using breakpoint at x-value corresponding to max y-value (YES or NO)
   twopoint = "NO",   #Plot using basic two-point ELF method (YES or NO)
   pw_it_RS = "NO",   #Plot using PWIT *with the regression to the right of the breakpoint included (YES or NO)
-  glo = 10,   # PWIT Breakpoint lower guess (sqmi/cfs)
-  ghi = 1000, # PWIT Breakpoint upper guess (sqmi/cfs) - also used as DA breakpoint for elf_quantreg method 
+  glo = 1,   # PWIT Breakpoint lower guess (sqmi/cfs)
+  ghi = 408, # PWIT Breakpoint upper guess (sqmi/cfs) - also used as DA breakpoint for elf_quantreg method 
   token = token,
   dataset_tag = "bpj_rcc"
 ) 
