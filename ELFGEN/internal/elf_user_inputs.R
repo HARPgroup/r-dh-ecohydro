@@ -95,7 +95,7 @@ inputs <- list(
   twopoint = "NO",   #Plot using basic two-point ELF method (YES or NO)
   pw_it_RS = "NO",   #Plot using PWIT *with the regression to the right of the breakpoint included (YES or NO)
   glo = 1,   # PWIT Breakpoint lower guess (sqmi/cfs)
-  ghi = 408, # PWIT Breakpoint upper guess (sqmi/cfs) - also used as DA breakpoint for elf_quantreg method 
+  ghi = 408, # PWIT Breakpoint upper guess (sqmi/cfs) - also used as DA or MAF breakpoint for elf_quantreg method 
   token = token,
   dataset_tag = "bpj_rcc"
 ) 
