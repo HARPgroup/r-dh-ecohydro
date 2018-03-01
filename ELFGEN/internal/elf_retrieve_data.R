@@ -59,7 +59,7 @@ for (l in offset_ws_ftype:length(ws_ftype)) {
   #print(HUClist_url_full)
   HUClist <- read.table(HUClist_url_full,header = TRUE, sep = ",")
   Watershed_Hydrocode <- HUClist$Hydrocode
-  print(Watershed_Hydrocode)
+  #print(Watershed_Hydrocode)
   Feature.Name <- HUClist$Feature.Name
   Hydroid <- HUClist$HydroID
   
