@@ -39,7 +39,7 @@ source(paste(path,"query_elf_statistics.R", sep = ""))
 #*****************************************************
 # EXAMPLE FOR RETRIEVING DATASETS BY dataset_tag
 #dataframe <- fn_dh_elfstats(feature_ftype = 'nhd_huc6', yvar = 'aqbio_nt_total', sampres = 'species', dataset_tag = 'test_tag_1')
-dataframe <- fn_dh_elfstats(dataset_tag = 'test_tag_1')
+dataframe <- fn_dh_elfstats(dataset_tag = 'bpj_rcc')
 #*****************************************************
 #*****************************************************
 
