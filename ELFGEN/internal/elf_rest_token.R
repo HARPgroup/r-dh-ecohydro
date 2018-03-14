@@ -6,7 +6,7 @@ elf_rest_token <- function(site, token){
 csrf_url <- paste(site,"/restws/session/token/",sep="");
 #source("./rest_user.private");
 csrf <- GET(url=csrf_url,authenticate("PRIVATE","PRIVATE"));
-csrf <- GET(url=csrf_url,authenticate("restws_admin","@dminREST123"));
+csrf <- GET(url=csrf_url,authenticate("restws_admin","itsasecret")); #@dminREST123
 token <- content(csrf);
 
 } #close function

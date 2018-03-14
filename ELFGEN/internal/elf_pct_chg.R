@@ -16,17 +16,18 @@ elf_pct_chg <- function(pct_inputs = list()){
   slope_table <- data.frame(xvalues=xvalues,
                             stringsAsFactors=FALSE)
   
+  
   #i <- 1
   for (i in 1:length(pct_list)) {
     pct <- (its -((pct_list[i]/100)*its))
-    sb <- (ruslope*log(pct))+ruint
+    sb <- (ruslope*log(pct))+ruint    #this is solving for Y = mx+b for the new value of taxa
     pct_chgb <- (((sa-sb)/sa)*100)
     pct_chgs = c(pct_chgb)
     slope_table_i = data.frame(pct_chgs)
     names(slope_table_i) <- c(paste("pct_chg_",pct_list[i],sep=""))
     slope_table <- cbind(slope_table, slope_table_i)
   }
-  
+  # potentially export the Slope table?
 title_projname <- sampres
 
 #Plot titles

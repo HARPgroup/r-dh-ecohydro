@@ -29,10 +29,6 @@ elf_retrieve_data <- function(inputs = list()){
   pw_it_RS <- inputs$pw_it_RS  
   twopoint <- inputs$twopoint
   token <- inputs$token
-<<<<<<< HEAD
- # DA_Flow <- inputs$DA_Flow
-=======
->>>>>>> e74430f8554919723e1c9259d85ec8d2a23b6a32
 
 for (l in offset_ws_ftype:length(ws_ftype)) {
      
