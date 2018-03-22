@@ -14,8 +14,8 @@ site <- "http://deq1.bse.vt.edu/d.dh"    #Specify the site of interest, either d
 #----------------------------------------------
 #----FOR RUNNING LOCALLY:
 # Only need to change 1 path here - set to wherever this code is located
-basepath='/usr/local/home/git/r-dh-ecohydro';
-# set your local directory paths in config.local.private
+basepath='C:\\Users\\nrf46657\\Desktop\\VAHydro Development\\GitHub\\r-dh-ecohydro\\ELFGEN\\internal\\';
+# set your local directory paths in config.local.private located in filepath above
 # this file will NOT be sent to git, so it should persist
 # so, edit config.local.private once and you should be good to go
 source(paste(basepath,'config.local.private',sep='/'));
@@ -52,15 +52,14 @@ inputs <- list(
 );
 
 ##### Data Acquisition #####
+#retrieve raw data
 mydata <- vahydro_fe_data(
   '030101', "erom_q0001e_mean", "aqbio_nt_total", 
   'watershed',  "nhd_huc6", "species"
 );
-mydata <- vahydro_fe_data(
-  'nhd_huc8_02070004', "erom_q0001e_mean", "aqbio_nt_total", 
-  'watershed',  "nhd_huc8", "species"
-);
 data <- elf_cleandata(mydata, inputs);
+
+#perform quantile regression calculation and plot 
 elf_quantreg(
  inputs, data, x_metric_code = inputs$x_metric, 
  y_metric_code = inputs$y_metric, 
@@ -71,17 +70,18 @@ elf_quantreg(
  min(data$tstime), max(data$tstime)
 )
 
-inputs$ghi <- max(mydata$attribute_value);
+#for setting ghi = max x_value
+inputs$ghi <- max(mydata$x_value);
 
 ##### Plot PWIT ####
-# modify elf_pwit to do analysis and return results (not graph)
+# modify elf_pwit to do analysis and return results
 elf_pw_it (
   inputs, data, inputs$x_metric, 
   inputs$y_metric, ws_ftype_code = NULL, 
   '020802', '020802', 
   '020802', token, 
   min(data$tstime), max(data$tstime)
-);
+)
 # add new function
 # plot_elf_pwit()
 # add new function store_elf_pwit() (if SEND_TO_REST = TRUE)

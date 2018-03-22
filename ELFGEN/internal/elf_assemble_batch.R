@@ -67,7 +67,7 @@ elf_cleandata <- function (data, inputs, startdate = FALSE, enddate = FALSE) {
   
 }
 
-elf_retrieve_data <- function(inputs = list()){
+elf_assemble_batch <- function(inputs = list()){
   
   #Load inputs
   x_metric <- inputs$x_metric 

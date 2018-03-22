@@ -27,21 +27,21 @@ elf_pct_chg <- function(pct_inputs = list()){
     slope_table <- cbind(slope_table, slope_table_i)
   }
   
-  title_projname <- sampres
+title_projname <- sampres
+
+#Plot titles
+ptitle <- paste("Change in ",biometric_title," at Various % Flow Reductions","\n", Feature.Name," (",startdate," to ",enddate,")\n",title_projname," grouping",sep="")
+xaxis_title <- paste("\n",flow_title,sep="");
+yaxis_title <- paste("% Decrease in ", biometric_title,"\n", sep="");
+
+plt2 <- ggplot(slope_table, aes(x=xvalues, y=pct_chgs_20)) + 
   
-  #Plot titles
-  ptitle <- paste("Change in ",biometric_title," at Various % Flow Reductions","\n", Feature.Name," (",startdate," to ",enddate,")\n",title_projname," grouping",sep="")
-  xaxis_title <- paste("\n",flow_title,sep="");
-  yaxis_title <- paste("% Decrease in ", biometric_title,"\n", sep="");
-  
-  plt2 <- ggplot(slope_table, aes(x=xvalues, y=pct_chgs_20)) + 
-    
-    geom_line(data = slope_table, aes(x=xvalues,y=pct_chg_50,color = "black")) + 
-    geom_line(data = slope_table, aes(x=xvalues,y=pct_chg_40,color = "blue")) + 
-    geom_line(data = slope_table, aes(x=xvalues,y=pct_chg_30,color = "green"))+
-    geom_line(data = slope_table, aes(x=xvalues,y=pct_chg_20,color = "red"))+
-    geom_line(data = slope_table, aes(x=xvalues,y=pct_chg_10,color = "violet"))+
-    geom_line(data = slope_table, aes(x=xvalues,y=pct_chg_5,color = "wheat"))+
+  geom_line(data = slope_table, aes(x=xvalues,y=pct_chg_50,color = "black")) + 
+  geom_line(data = slope_table, aes(x=xvalues,y=pct_chg_40,color = "blue")) + 
+  geom_line(data = slope_table, aes(x=xvalues,y=pct_chg_30,color = "green"))+
+  geom_line(data = slope_table, aes(x=xvalues,y=pct_chg_20,color = "red"))+
+  geom_line(data = slope_table, aes(x=xvalues,y=pct_chg_10,color = "violet"))+
+  geom_line(data = slope_table, aes(x=xvalues,y=pct_chg_5,color = "wheat"))+
   
   scale_color_manual(
     "Flow Reduction",
