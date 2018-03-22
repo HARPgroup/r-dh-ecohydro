@@ -25,6 +25,7 @@ source(paste(auth_rest,"rest.private", sep="/"));
 source(paste(fxn_locations,"ELFGEN/internal/elf_quantreg.R", sep = "/"));
 source(paste(fxn_locations,"ELFGEN/internal/elf_pct_chg.R", sep = "/"));
 source(paste(fxn_locations,"ELFGEN/internal/elf_pw_it.R", sep = "/"));
+source(paste(fxn_locations,"ELFGEN/internal/elf_assemble_batch.R", sep = "/"));
 
 token <- rest_token(site, token, rest_uname, rest_pw);
 #####
@@ -54,6 +55,10 @@ inputs <- list(
 mydata <- vahydro_fe_data(
   '030101', "erom_q0001e_mean", "aqbio_nt_total", 
   'watershed',  "nhd_huc6", "species"
+);
+mydata <- vahydro_fe_data(
+  'nhd_huc8_02070004', "erom_q0001e_mean", "aqbio_nt_total", 
+  'watershed',  "nhd_huc8", "species"
 );
 data <- elf_cleandata(mydata, inputs);
 elf_quantreg(

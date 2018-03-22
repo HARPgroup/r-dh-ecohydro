@@ -5,64 +5,156 @@ output: word_document
 
 ```{r, echo=FALSE}
 # install.packages('gdata')
+options(timeout=480);
 library('gdata')
-fxn_locations = '/usr/local/home/git/r-dh-ecohydro/Analysis';
+source("/var/www/R/config.local.private");
 source(paste(fxn_locations,"query_elf_statistics.R", sep = "/")); 
 
+
+plot_monthly <- function (data, subname = 'all', metric = "out_rsq_adj") {
+  # dataset_tag: bpj-530, bpj-rcc
+  data.da <- subset(data, in_xvar == 'nhdp_drainage_sqmi');
+  data.mean <- subset(data, in_xvar == 'erom_q0001e_mean');
+  data.jan <- subset(data, in_xvar == 'erom_q0001e_jan');
+  data.feb <- subset(data, in_xvar == 'erom_q0001e_feb');
+  data.mar <- subset(data, in_xvar == 'erom_q0001e_mar');
+  data.apr <- subset(data, in_xvar == 'erom_q0001e_apr');
+  data.may <- subset(data, in_xvar == 'erom_q0001e_may');
+  data.jun <- subset(data, in_xvar == 'erom_q0001e_june');
+  data.jul <- subset(data, in_xvar == 'erom_q0001e_july');
+  data.aug <- subset(data, in_xvar == 'erom_q0001e_aug');
+  data.sep <- subset(data, in_xvar == 'erom_q0001e_sept');
+  data.oct <- subset(data, in_xvar == 'erom_q0001e_oct');
+  data.nov <- subset(data, in_xvar == 'erom_q0001e_nov');
+  data.dec <- subset(data, in_xvar == 'erom_q0001e_dec');
+  n = c('DA', 'Mean', 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December')
+  title <- paste("R^2 of upper ", 100.*(1.0 - quantile), subname, "% for \n", metric, " = f(DA), f(Qmean), f(Qjan),..., f(Qdec) for ", ftype);
+  if (length(data.da$s_adminid) > 1) {
+    ns <- cbind(
+       'DA' = length(data.da[,metric]), 
+       'Qmean' = length(data.mean[,metric]), 
+       'Qjan' = length(data.jan[,metric]), 
+       'Qfeb' = length(data.feb[,metric]),  
+       'Qmar' = length(data.mar[,metric]),  
+       'Qapr' = length(data.apr[,metric]),  
+       'Qmay' = length(data.may[,metric]),  
+       'Qjun' = length(data.jun[,metric]),  
+       'Qjul' = length(data.jul[,metric]),  
+       'Qaug' = length(data.aug[,metric]), 
+       'Qsep' = length(data.sep[,metric]),  
+       'Qoct' = length(data.oct[,metric]),  
+       'Qnov' = length(data.nov[,metric]),  
+       'Qdec' = length(data.dec[,metric])
+    )
+    boxplot(
+      data.da[,metric], data.mean[,metric], data.jan[,metric], data.feb[,metric], data.mar[,metric], 
+        data.apr[,metric], data.may[,metric], data.jun[,metric], data.jul[,metric], data.aug[,metric], 
+        data.sep[,metric], data.oct[,metric], data.nov[,metric], data.dec[,metric],
+      names = n, 
+      main = title
+    );
+    
+    # this is an example of labelling the bars with the n's
+    #b <- boxplot(xvar ~ f1, data=frame, plot=0)
+    #text(1:length(b$n), b$stats[5,]+1, paste("n=", b$n))
+    #boxplot(xvar ~ f1, data=frame, xlab="input values", names=paste(b$names, "(n=", b$n, ")"))
+    barplot(ns, names.arg=n, main=paste("# of Sig. Relationships", subname), 
+            xlab="DA/Flow Variable")
+  } else {
+    # we are running a single watershed, so use a bar chart
+    nms = strsplit(as.vector(data$in_xvar), '_', fixed = TRUE);
+    xs = matrix(unlist(nms),ncol=3,byrow=TRUE)
+    labs = xs[,3]
+    par(las=1) # make label text perpendicular to axis
+    barplot(data[,metric], names.arg=labs, main=paste("R# for region", selected), 
+            xlab="DA/Flow Variable",)
+    
+  }
+}
+
+
 bundle <- 'watershed';
-ftype <- 'nhd_huc8';
-metric <- 'aqbio_nt_total';
+ftype <- 'nhd_huc10';
+metric <- 'aqbio_nt_total'; # aqbio_nt_total, aqbio_nt_cent, aqbio_nt_darter, aqbio_nt_benins
 q_ftype <- "fe_quantreg";
 analysis_timespan = "full";
 sampres = "species";
 selected <- 'all'; # all or hydrocode
 quantile <- 0.8;
-stat_quantreg_glo <- 0; # use 1 for pwit, 0 for quantreg
+stat_quantreg_glo <- 0; 
+stat_quantreg_ghi <- 530; 
 # ftype = fe_quantreg, fe_quantreg_pwit, fe_quantreg_ymax, fe_twopoint
 # analysis_timespan = full, 1990-2010, 1970-1980, ...
-data = fn_dh_elfstats (
+# this is BS - save_directory should be fixed
+save_directory = paste(file_directory,"/",sep='');
+rawdata = fn_dh_elfstats (
     ftype = q_ftype,
     analysis_timespan = analysis_timespan,
     yvar = metric,
-    sampres = sampres,
-    stat_quantreg_qu = quantile,
+    sampres = sampres, # e.g. species, e.
+    stat_quantreg_qu = quantile, # upper quantile to use
     feature_ftype = ftype,
-    stat_quantreg_glo = 0
+    stat_quantreg_ghi = stat_quantreg_ghi, #
+    stat_quantreg_glo = stat_quantreg_glo, # use 1 for pwit, 0 for quantreg
+    dataset_tag = 'bpj-530'
 );
-data.da <- subset(data, in_xvar == 'nhdp_drainage_sqkm');
-data.mean <- subset(data, in_xvar == 'erom_q0001e_mean');
-data.jan <- subset(data, in_xvar == 'erom_q0001e_jan');
-data.feb <- subset(data, in_xvar == 'erom_q0001e_feb');
-data.mar <- subset(data, in_xvar == 'erom_q0001e_mar');
-data.apr <- subset(data, in_xvar == 'erom_q0001e_apr');
-data.may <- subset(data, in_xvar == 'erom_q0001e_may');
-data.jun <- subset(data, in_xvar == 'erom_q0001e_june');
-data.jul <- subset(data, in_xvar == 'erom_q0001e_july');
-data.aug <- subset(data, in_xvar == 'erom_q0001e_aug');
-data.sep <- subset(data, in_xvar == 'erom_q0001e_sept');
-data.oct <- subset(data, in_xvar == 'erom_q0001e_oct');
-data.nov <- subset(data, in_xvar == 'erom_q0001e_nov');
-data.dec <- subset(data, in_xvar == 'erom_q0001e_dec');
-n = c('DA', 'Mean', 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December')
-title <- paste("R^2 of upper ", 100.*(1.0 - quantile), "% for \n", metric, " = f(DA), f(Qmean), f(Qjan),..., f(Qdec) for ", ftype);
-if (length(data.da$s_adminid) > 1) {
-  boxplot(
-    data.da$out_rsq_adj, data.mean$out_rsq_adj, data.jan$out_rsq_adj, data.feb$out_rsq_adj, data.mar$out_rsq_adj, 
-      data.apr$out_rsq_adj, data.may$out_rsq_adj, data.jun$out_rsq_adj, data.jul$out_rsq_adj, data.aug$out_rsq_adj, 
-      data.sep$out_rsq_adj, data.oct$out_rsq_adj, data.nov$out_rsq_adj, data.dec$out_rsq_adj,
-    names = n, 
-    main = title
-  );
-} else {
-  # we are running a single watershed, so use a bar chart
-  nms = strsplit(as.vector(data$in_xvar), '_', fixed = TRUE);
-  xs = matrix(unlist(nms),ncol=3,byrow=TRUE)
-  labs = xs[,3]
-  par(las=1) # make label text perpendicular to axis
-  barplot(data$out_rsq_adj, names.arg=labs, main=paste("R# for region", selected), 
-          xlab="DA/Flow Variable")
-  
-}
+nsall <- cbind(
+ 'DA' = nrow(subset(rawdata, in_xvar == 'nhdp_drainage_sqmi')),
+ 'Qmean' = nrow(subset(rawdata, in_xvar == 'erom_q0001e_mean')),
+ 'Qjan' = nrow(subset(rawdata, in_xvar == 'erom_q0001e_jan')),
+ 'Qfeb' = nrow(subset(rawdata, in_xvar == 'erom_q0001e_feb')),
+ 'Qmar' = nrow(subset(rawdata, in_xvar == 'erom_q0001e_mar')),
+ 'Qapr' = nrow(subset(rawdata, in_xvar == 'erom_q0001e_apr')),
+ 'Qmay' = nrow(subset(rawdata, in_xvar == 'erom_q0001e_may')),
+ 'Qjun' = nrow(subset(rawdata, in_xvar == 'erom_q0001e_june')),
+ 'Qjul' = nrow(subset(rawdata, in_xvar == 'erom_q0001e_july')),
+ 'Qaug' = nrow(subset(rawdata, in_xvar == 'erom_q0001e_aug')),
+ 'Qsep' = nrow(subset(rawdata, in_xvar == 'erom_q0001e_sept')),
+ 'Qoct' = nrow(subset(rawdata, in_xvar == 'erom_q0001e_oct')),
+ 'Qnov' = nrow(subset(rawdata, in_xvar == 'erom_q0001e_nov')),
+ 'Qdec' = nrow(subset(rawdata, in_xvar == 'erom_q0001e_dec'))
+);
+
+# filter our data?
+data = rawdata; # make a copy to start so we can compare raw to filtered if desired
+#data = subset(data, out_n >= 20)
+#data = subset(data, out_m > 0)
+data = subset(data, out_p < 0.01); # 
+data = subset(data, out_rsq_adj > 0)
+#data = subset(data, isheadwater > 0)
+# render it
+plot_monthly(data, '( p<0.01, R>0 )', metric = 'out_rsq_adj');
+plot_monthly(data, '( p<0.01, R>0 )', metric = 'out_m');
+
+# filter our data?
+data = rawdata; # make a copy to start so we can compare raw to filtered if desired
+#data = subset(data, out_n >= 20)
+#data = subset(data, out_m > 0)
+data = subset(data, out_p < 0.01); # 
+data = subset(data, out_rsq_adj > 0)
+data = subset(data, isheadwater > 0)
+plot_monthly(data, '( headwaters, p<0.01, R>0 )');
+
+
+# Monthly m
+data = rawdata; # make a copy to start so we can compare raw to filtered if desired
+#data = subset(data, out_n >= 20)
+#data = subset(data, out_m > 0)
+data = subset(data, out_p < 0.01); # 
+data = subset(data, out_rsq_adj > 0)
+#data = subset(data, isheadwater > 0)
+# render it
+plot_monthly(data, '( p<0.01, R>0 )');
+
+# filter our data?
+data = rawdata; # make a copy to start so we can compare raw to filtered if desired
+#data = subset(data, out_n >= 20)
+#data = subset(data, out_m > 0)
+data = subset(data, out_p < 0.01); # 
+data = subset(data, out_rsq_adj > 0)
+data = subset(data, isheadwater > 0)
+plot_monthly(data, '( headwaters, p<0.01, R>0 )');
+
 ```
 * Location: `r selected`
 * quantile: `r quantile`
@@ -71,13 +163,13 @@ if (length(data.da$s_adminid) > 1) {
 * Analysis Type: `r q_ftype`
 * Timespan: `r analysis_timespan`
 ```{r, echo=FALSE,fig.width=3, fig.show='hold'}
-cs = c( 'sqkm', 'mean', 'jan', 'feb', 'mar', 'apr', 'may', 'june', 'july', 'aug', 'sept', 'oct', 'nov', 'dec');
+cs = c( 'sqmi', 'mean', 'jan', 'feb', 'mar', 'apr', 'may', 'june', 'july', 'aug', 'sept', 'oct', 'nov', 'dec');
 # coloring bar plots: https://stackoverflow.com/questions/16121903/r-barplot-y-axis-scale-too-short
   for (i in 1:nrow(data.da)) {
   hc = data.da$containing_hydrocode[i]
-  data.hc = subset(data, containing_hydrocode == hc)
+  data.hc = subset(data, containing_hydrocode == hc & in_xvar != 'nhdp_drainage_sqkm')
   data.sorted = c(
-    subset(data.hc, in_xvar == 'nhdp_drainage_sqkm')$out_rsq_adj,
+    subset(data.hc, in_xvar == 'nhdp_drainage_sqmi')$out_rsq_adj,
     subset(data.hc, in_xvar == 'erom_q0001e_mean')$out_rsq_adj,
     subset(data.hc, in_xvar == 'erom_q0001e_jan')$out_rsq_adj,
     subset(data.hc, in_xvar == 'erom_q0001e_feb')$out_rsq_adj,
