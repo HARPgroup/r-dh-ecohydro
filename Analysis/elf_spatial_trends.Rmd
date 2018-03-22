@@ -1,0 +1,85 @@
+---
+title: "ELF Regional Comparisons"
+output: word_document
+---
+  
+```{r, echo=FALSE,warning=FALSE,message=FALSE,error=FALSE,results='hide'}
+# install.packages('gdata')
+options(timeout=1024);
+library('gdata')
+source("/var/www/R/config.local.private");
+source(paste(fxn_locations,"query_elf_statistics.R", sep = "/"));
+save_directory = paste(file_directory,"/",sep='');
+
+# vars
+yvar = 'aqbio_nt_darter';#aqbio_nt_total, aqbio_nt_cent, aqbio_nt_darter, aqbio_nt_benins
+quant = 0.8
+# Get the BPJ auto-determined PWIT left side regression
+huc6_rawdata = 
+  fn_dh_elfstats ( ftype = 'fe_quantreg_pwit', analysis_timespan = "full", yvar = yvar,
+  sampres = "species", stat_quantreg_qu = quant, feature_ftype = 'nhd_huc6', stat_quantreg_ghi = 'all', 
+  stat_quantreg_glo = 'all', dataset_tag = 'Huc6 customGhiGlo'
+);
+huc6_qmean_data = huc6_rawdata;
+huc6_qmean_data = subset(huc6_qmean_data, in_xvar == 'erom_q0001e_mean')
+huc6_qmean_data = subset(huc6_qmean_data, out_m > 0)
+
+huc8_rawdata = 
+  fn_dh_elfstats ( ftype = 'fe_quantreg', analysis_timespan = "full", yvar = yvar,
+    sampres = "species", stat_quantreg_qu = quant, feature_ftype = 'nhd_huc8', stat_quantreg_ghi = 'all', 
+    stat_quantreg_glo = 'all', dataset_tag = 'bpj-rcc'
+  );
+huc8_qmean_data = huc8_rawdata;
+huc8_qmean_data = subset(huc8_qmean_data, in_xvar == 'erom_q0001e_mean')
+huc8_qmean_data = subset(huc8_qmean_data, out_m > 0)
+
+huc10_rawdata = 
+  fn_dh_elfstats ( ftype = 'fe_quantreg', analysis_timespan = "full", yvar = yvar,
+    sampres = "species", stat_quantreg_qu = quant, feature_ftype = 'nhd_huc10', stat_quantreg_ghi = 'all',
+    stat_quantreg_glo = 'all', dataset_tag = 'bpj-530'
+  );
+huc10_qmean_data = huc10_rawdata;
+huc10_qmean_data = subset(huc10_qmean_data, in_xvar == 'erom_q0001e_mean')
+huc10_qmean_data = subset(huc10_qmean_data, out_m > 0)
+
+```
+
+
+```{r, echo=FALSE}
+boxplot(
+    huc6_qmean_data$out_rsq_adj, huc8_qmean_data$out_rsq_adj, huc10_qmean_data$out_rsq_adj,
+    names = c('HUC6', 'HUC8', 'HUC10'), 
+    main = 'Spatial Resolution Rsq (all p)'
+  );
+
+huc6_qmean_data = subset(huc6_qmean_data, out_p <= 0.01)
+huc8_qmean_data = subset(huc8_qmean_data, out_p <= 0.01)
+huc10_qmean_data = subset(huc10_qmean_data, out_p <= 0.01)
+boxplot(
+    huc6_qmean_data$out_rsq_adj, huc8_qmean_data$out_rsq_adj, huc10_qmean_data$out_rsq_adj,
+    names = c('HUC6', 'HUC8', 'HUC10'), 
+    main = 'Spatial Resolution Rsq p <= 0.01'
+  );
+
+
+boxplot(
+    huc6_qmean_data$out_m, huc8_qmean_data$out_m, huc10_qmean_data$out_m,
+    names = c('HUC6', 'HUC8', 'HUC10'), 
+    main = 'Spatial Resolution m, p <= 0.01'
+  );
+
+boxplot(
+    huc6_qmean_data$out_n, huc8_qmean_data$out_n, huc10_qmean_data$out_n,
+    names = c('HUC6', 'HUC8', 'HUC10'), 
+    main = 'Spatial Resolution n'
+  );
+quantile( huc10_qmean_data$out_n)
+
+barplot(
+    c(length(huc6_qmean_data$out_n), length(huc8_qmean_data$out_n), length(huc10_qmean_data$out_n)),
+    names = c('HUC6', 'HUC8', 'HUC10'), 
+    main = 'Number of significant Relationships',
+    ylim = c(0, 1+length(huc10_qmean_data$out_n))
+  );
+
+```
