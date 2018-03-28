@@ -70,7 +70,7 @@ inputs <- list(
     'ecoregion_iv',
     'ecoiii_huc6'
   ),#this can be used to process by multiple region types at once 
-  ws_ftype = c('nhd_huc8'),		     #Options: state, hwi_region, nhd_huc8, nhd_huc6, ecoregion_iii, ecoregion_iv, ecoiii_huc6
+  ws_ftype = c('nhd_huc10'),		     #Options: state, hwi_region, nhd_huc8, nhd_huc6, ecoregion_iii, ecoregion_iv, ecoiii_huc6
   target_hydrocode = 'nhd_huc8_02070011 nhd_huc8_02070010',
   #target_hydrocode = atl_new, 
   quantile = .80,                  #Specify the quantile to use for quantile regresion plots 

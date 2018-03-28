@@ -3,7 +3,7 @@ title: "ELF Regional Comparisons"
 output: word_document
 ---
   
-```{r, echo=FALSE,warning=FALSE,message=FALSE,error=FALSE,results='hide'}
+```{r,#test, echo=FALSE,warning=FALSE,message=FALSE,error=FALSE,results='hide'}
 # install.packages('gdata')
 options(timeout=1024);
 library('gdata')
@@ -12,7 +12,7 @@ source(paste(fxn_locations,"query_elf_statistics.R", sep = "/"));
 save_directory = paste(file_directory,"/",sep='');
 
 # vars
-yvar = 'aqbio_nt_darter';#aqbio_nt_total, aqbio_nt_cent, aqbio_nt_darter, aqbio_nt_benins
+yvar = 'aqbio_nt_total';#aqbio_nt_total, aqbio_nt_cent, aqbio_nt_darter, aqbio_nt_benins
 quant = 0.8
 # Get the BPJ auto-determined PWIT left side regression
 huc6_rawdata = 
@@ -42,43 +42,74 @@ huc10_qmean_data = huc10_rawdata;
 huc10_qmean_data = subset(huc10_qmean_data, in_xvar == 'erom_q0001e_mean')
 huc10_qmean_data = subset(huc10_qmean_data, out_m > 0)
 
+ecoiii_rawdata = 
+  fn_dh_elfstats ( ftype = 'fe_quantreg', analysis_timespan = "full", yvar = yvar,
+    sampres = "species", stat_quantreg_qu = quant, feature_ftype = 'ecoregion_iii', stat_quantreg_ghi = 'all',
+    stat_quantreg_glo = 'all', dataset_tag = 'bpj-530'
+  );
+ecoiii_qmean_data = ecoiii_rawdata;
+ecoiii_qmean_data = subset(ecoiii_qmean_data, in_xvar == 'erom_q0001e_mean')
+ecoiii_qmean_data = subset(ecoiii_qmean_data, out_m > 0)
+
 ```
+Automated routines were used to detect Ecological Limit Functions (ELF) as a variety of spatial scales including Omernik Eco-Region iii, the NHD HUC 6, HUC 8, and HUC 10.  The characteristics of the ELF were estimated by the upper 20% quantile of the data set described by y = f(ln(x)), where y was a number of taxa metric, and x was drainage area, mean annual flow, or mean monthly flow as estmated by the EROM model.  Because the datasets demonstrated an increasing NT as watershed area increased up to a certain point (refered to here as the "RCC Breakpoint"), then leveled off or began to decrease, it was important to restrict analysis of data to the left side of this breakpoint.  Initially, the breakpoint selected  was by inspection of a scatterplot of the entire multi-state dataset, resulting in 530 square miles.  Upon reviewing HUC6 data, however, it became clear that there were different RCC breakpoints evident in the different river basins.
 
 
 ```{r, echo=FALSE}
-boxplot(
-    huc6_qmean_data$out_rsq_adj, huc8_qmean_data$out_rsq_adj, huc10_qmean_data$out_rsq_adj,
-    names = c('HUC6', 'HUC8', 'HUC10'), 
-    main = 'Spatial Resolution Rsq (all p)'
-  );
+noms <- c('Eco iii', 'HUC6', 'HUC8', 'HUC10')
+
+# Plots all, without regard for p-value
+#boxplot(
+#    ecoiii_qmean_data$out_rsq_adj,
+#    huc6_qmean_data$out_rsq_adj, 
+#    huc8_qmean_data$out_rsq_adj, 
+#    huc10_qmean_data$out_rsq_adj,
+#    names = noms, 
+#    main = 'Spatial Resolution Rsq (all p)'
+#  );
 
 huc6_qmean_data = subset(huc6_qmean_data, out_p <= 0.01)
 huc8_qmean_data = subset(huc8_qmean_data, out_p <= 0.01)
 huc10_qmean_data = subset(huc10_qmean_data, out_p <= 0.01)
+ecoiii_qmean_data = subset(ecoiii_qmean_data, out_p <= 0.01)
 boxplot(
-    huc6_qmean_data$out_rsq_adj, huc8_qmean_data$out_rsq_adj, huc10_qmean_data$out_rsq_adj,
-    names = c('HUC6', 'HUC8', 'HUC10'), 
-    main = 'Spatial Resolution Rsq p <= 0.01'
+    ecoiii_qmean_data$out_rsq_adj, 
+    huc6_qmean_data$out_rsq_adj, 
+    huc8_qmean_data$out_rsq_adj, 
+    huc10_qmean_data$out_rsq_adj,
+    names = noms, 
+    main = 'Spatial Resolution Rsq p <= 0.01, m > 0'
   );
 
 
 boxplot(
-    huc6_qmean_data$out_m, huc8_qmean_data$out_m, huc10_qmean_data$out_m,
-    names = c('HUC6', 'HUC8', 'HUC10'), 
-    main = 'Spatial Resolution m, p <= 0.01'
+    ecoiii_qmean_data$out_m, 
+    huc6_qmean_data$out_m, 
+    huc8_qmean_data$out_m, 
+    huc10_qmean_data$out_m,
+    names = noms, 
+    main = 'Spatial Resolution m, p <= 0.01, m > 0'
   );
 
 boxplot(
-    huc6_qmean_data$out_n, huc8_qmean_data$out_n, huc10_qmean_data$out_n,
-    names = c('HUC6', 'HUC8', 'HUC10'), 
+    ecoiii_qmean_data$out_n,
+    huc6_qmean_data$out_n, 
+    huc8_qmean_data$out_n, 
+    huc10_qmean_data$out_n,
+    names = noms, 
     main = 'Spatial Resolution n'
   );
 quantile( huc10_qmean_data$out_n)
 
 barplot(
-    c(length(huc6_qmean_data$out_n), length(huc8_qmean_data$out_n), length(huc10_qmean_data$out_n)),
-    names = c('HUC6', 'HUC8', 'HUC10'), 
-    main = 'Number of significant Relationships',
+    c(
+      length(ecoiii_qmean_data$out_n), 
+      length(huc6_qmean_data$out_n), 
+      length(huc8_qmean_data$out_n), 
+      length(huc10_qmean_data$out_n)
+      ),
+    names = noms, 
+    main = 'Number of significant Relationships, p <= 0.01, m > 0',
     ylim = c(0, 1+length(huc10_qmean_data$out_n))
   );
 

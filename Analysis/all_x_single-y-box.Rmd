@@ -73,8 +73,8 @@ plot_monthly <- function (data, subname = 'all', metric = "out_rsq_adj") {
 }
 
 
-bundle <- 'watershed';
-ftype <- 'nhd_huc10';
+bundle <- 'ecoregion';
+ftype <- 'ecoregion_iii';
 metric <- 'aqbio_nt_total'; # aqbio_nt_total, aqbio_nt_cent, aqbio_nt_darter, aqbio_nt_benins
 q_ftype <- "fe_quantreg";
 analysis_timespan = "full";
@@ -164,9 +164,10 @@ plot_monthly(data, '( headwaters, p<0.01, R>0 )');
 * Timespan: `r analysis_timespan`
 ```{r, echo=FALSE,fig.width=3, fig.show='hold'}
 cs = c( 'sqmi', 'mean', 'jan', 'feb', 'mar', 'apr', 'may', 'june', 'july', 'aug', 'sept', 'oct', 'nov', 'dec');
+data.da <- subset(data, in_xvar == 'nhdp_drainage_sqmi');
 # coloring bar plots: https://stackoverflow.com/questions/16121903/r-barplot-y-axis-scale-too-short
-  for (i in 1:nrow(data.da)) {
-  hc = data.da$containing_hydrocode[i]
+for (i in 1:nrow(data.da)) {
+  hc = as.character(data.da$containing_hydrocode[i])
   data.hc = subset(data, containing_hydrocode == hc & in_xvar != 'nhdp_drainage_sqkm')
   data.sorted = c(
     subset(data.hc, in_xvar == 'nhdp_drainage_sqmi')$out_rsq_adj,
