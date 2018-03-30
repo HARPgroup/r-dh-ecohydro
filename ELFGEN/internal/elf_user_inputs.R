@@ -70,10 +70,10 @@ inputs <- list(
     'ecoregion_iv',
     'ecoiii_huc6'
   ),#this can be used to process by multiple region types at once 
-  ws_ftype = c('nhd_huc6'),		     #Options: state, hwi_region, nhd_huc8, nhd_huc6, ecoregion_iii, ecoregion_iv, ecoiii_huc6
-  #target_hydrocode = 'nhd_huc8_02070011 nhd_huc8_02070010',
-  target_hydrocode = '020700', #atl_new
-  quantile = .90,                  #Specify the quantile to use for quantile regresion plots 
+  ws_ftype = c('nhd_huc10'),		     #Options: state, hwi_region, nhd_huc8, nhd_huc6, ecoregion_iii, ecoregion_iv, ecoiii_huc6
+  target_hydrocode = 'nhd_huc8_02070011 nhd_huc8_02070010',
+  #target_hydrocode = atl_new, 
+  quantile = .80,                  #Specify the quantile to use for quantile regresion plots 
   xaxis_thresh = 15000,            #Leave at 15000 so all plots have idential axis limits 
   #analysis_timespan = '1990-2000',#used to subset data on date range 
   analysis_timespan = 'full',      #used to plot for entire timespan 
@@ -97,7 +97,7 @@ inputs <- list(
   glo = 1,   # PWIT Breakpoint lower guess (sqmi/cfs)
   ghi = 408, # PWIT Breakpoint upper guess (sqmi/cfs) - also used as DA or MAF breakpoint for elf_quantreg method 
   token = token,
-  dataset_tag = "jk-test"
+  dataset_tag = "bpj_rcc"
 ) 
 
 #------------------------------------------------------------------------------------------------
