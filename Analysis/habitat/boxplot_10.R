@@ -83,13 +83,15 @@ ifim_maf <- round(as.numeric(as.character(ifim_maf$propvalue)),1)
 
 f_0 <- f_fxn(gage,0.0)
 flow.ts.range_0 <- flow.ts.range_fxn(f_0,"all")
-flow.ts.range_0$Flow <- (flow.ts.range_0$Flow)*gage_factor #weight gage flow by factor
+#flow.ts.range_0$Flow <- round(((flow.ts.range_0$Flow)*gage_factor),0) #weight gage flow by factor
+flow.ts.range_0$Flow <- signif(((flow.ts.range_0$Flow)*gage_factor),3)
+
 wua.at.q_0 <- wua.at.q_fxn(flow.ts.range_0)
 wua.at.q_0 <- data.frame(flow.ts.range_0,wua.at.q_0)
 
 f_10 <- f_fxn(gage,0.10)
 flow.ts.range_10 <- flow.ts.range_fxn(f_10,"all")
-flow.ts.range_10$Flow <- (flow.ts.range_10$Flow)*gage_factor #weight gage flow by factor
+flow.ts.range_10$Flow <- signif(((flow.ts.range_10$Flow)*gage_factor),3) #weight gage flow by factor
 wua.at.q_10 <- wua.at.q_fxn(flow.ts.range_10)
 wua.at.q_10 <- data.frame(flow.ts.range_10,wua.at.q_10)
 

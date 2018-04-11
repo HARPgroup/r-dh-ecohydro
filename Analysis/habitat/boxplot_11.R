@@ -34,26 +34,22 @@ token <- rest_token(site, token, rest_uname, rest_pw);
 #===============================================================
 # BEGIN RETRIEVE IFIM DATA
 #===============================================================
-ifim_sites <- c(397290,397291,397292,397293,397294,397299,397300,397301,397302,397303,397304,397305,397282,397283,397295,397296,397286,397287,397288,397289,397297,397298)
+ifim_sites <- c(397290,397291,397292,397293,
+                397294,397299,397300,397301,
+                397302,397303,397304,397305,
+                397282,397283,397295,397296,
+                397286,397287,397288,397289,
+                397297,397298,397284,397285)
 
-
+#ifim_sites <- c(397284)
+stat_method <- "median" #"mean" or " median"
+ 
 for (x in 1:length(ifim_sites)){
   ifim_featureid <- ifim_sites[x]
-  
-#ifim_featureid <- 397301
-
-
 
 ifim_dataframe <- vahydro_prop_matrix(ifim_featureid,'ifim_habitat_table')
 WUA.df <- ifim_dataframe
 targets <- colnames(WUA.df[-1])
-
-#ifim_metric <- 'riffle'
-#ifim_metric <- 'smb_adult'
-#ifim_metric <- 'smb_sub_adult'
-#ifim_metric <- 'smb_juv'
-#ifim_metric <- 'smb_yoy'
-#ifim_metric <- 'smb_spawn'
 
 ifim_site <- getFeature(list(hydroid = ifim_featureid), token, site, feature)
 ifim_site_name <- as.character(ifim_site$name)
@@ -78,18 +74,15 @@ ifim_maf <- round(as.numeric(as.character(ifim_maf$propvalue)),1)
 # END RETRIEVE IFIM DATA
 #===============================================================
 
-#===============================================================
-#===============================================================
-
 f_0 <- f_fxn(gage,0.0)
 flow.ts.range_0 <- flow.ts.range_fxn(f_0,"all")
-flow.ts.range_0$Flow <- (flow.ts.range_0$Flow)*gage_factor #weight gage flow by factor
+flow.ts.range_0$Flow <- ((flow.ts.range_0$Flow)*gage_factor)
 wua.at.q_0 <- wua.at.q_fxn(flow.ts.range_0)
 wua.at.q_0 <- data.frame(flow.ts.range_0,wua.at.q_0)
 
 f_10 <- f_fxn(gage,0.10)
 flow.ts.range_10 <- flow.ts.range_fxn(f_10,"all")
-flow.ts.range_10$Flow <- (flow.ts.range_10$Flow)*gage_factor #weight gage flow by factor
+flow.ts.range_10$Flow <- ((flow.ts.range_10$Flow)*gage_factor)
 wua.at.q_10 <- wua.at.q_fxn(flow.ts.range_10)
 wua.at.q_10 <- data.frame(flow.ts.range_10,wua.at.q_10)
 
@@ -121,7 +114,6 @@ wua_10pct_chg [grep('-12-', wua_10pct_chg$Date, perl= TRUE), "month" ] <- "Dec"
 start_date <- min(wua_10pct_chg$Date)
 end_date <- max(wua_10pct_chg$Date)
 
-#Jan_rows <- which(wua_10pct_chg$month == "Jan")
 Jan_data <- wua_10pct_chg[which(wua_10pct_chg$month == "Jan"),]
 Feb_data <- wua_10pct_chg[which(wua_10pct_chg$month == "Feb"),]
 Mar_data <- wua_10pct_chg[which(wua_10pct_chg$month == "Mar"),]
@@ -166,8 +158,6 @@ for (L in 1:length(dfList)) {
 #-------------------------------------------------------------------------------------------------
 #Build dataframe of means of each metric percent change
 
-#hab.df <- wua_10pct_chg 
-
 col_all <- data.frame(col_all = c(''),
                       stringsAsFactors=FALSE)
 
@@ -177,10 +167,15 @@ for (col_num  in 1:length(colnames(hab.df))){
   col_data <- col_data[!is.na(col_data)] #remove NA values prior to calculating mean
   col_data <- col_data[!is.infinite(col_data)]   #remove Inf values prior to calculating mean
   
-  col_mean <- mean(col_data)
+  if (stat_method == "median"){
+    col_stat <- median(col_data)
+  } else {
+    col_stat <- mean(col_data)
+  }
+  
   col_name <- colnames(hab.df[col_num])
   
-  col_i <- data.frame(col_mean)
+  col_i <- data.frame(col_stat)
   names(col_i)[1]<-paste(col_name)
   
   col_all <-data.frame(col_all,col_i)
@@ -189,10 +184,7 @@ col_all <-col_all[,-1] #remove empty col
 col_all <-col_all[,-1] #remove date col
 col_all = col_all[,!(names(col_all) %in% "month")] #remove month col
 
-#} #close df loop
-
 #-------------------------------------------------------------------------------------------------
-#box_table_i <- data.frame(newx,newy,pctchg)
 box_table_i <- data.frame(metric = targets,
                         flow = names(dfList[L]),
                         pctchg = as.numeric(col_all[1,]),
@@ -200,26 +192,9 @@ box_table_i <- data.frame(metric = targets,
 
 box_table <- rbind(box_table, box_table_i)
 } #close df loop
-# box_table <- data.frame(metric = targets,
-#                         flow = "Mean Annual Flow",
-#                         pctchg = as.numeric(col_all[1,]),
-#                         stringsAsFactors=FALSE)
 
 #-------------------------------------------------------------------------------------------------
-#convert table values to numeric before plotting 
-#box_table <- wua_10pct_chg
-#for (z in 2:length(table)) {
-#  box_table[,z] <-as.numeric(as.character(  table[,z]))
-#}
-#box_table[,2] <- round(box_table[,2], digits = 0)
 
-#remove canoe data before generating boxplot 
-#canoe_row <- which(box_table$metric=="canoe")
-#if((length(canoe_row)>0) == TRUE){
-#  box_table <- box_table[-canoe_row,]
-#}
-
-#-------------------------------------------------------------------------------------------------
 
 if (length(which(box_table$metric=="canoe")) != 0 ){
   print("Removing canoe")
@@ -240,19 +215,15 @@ if (length(which(box_table$metric=="canoe_mid")) != 0 ){
 
 
 box_table <- box_table [-1,] #remove empty first row
-#box_table$pct_chg_10 <- (box_table$pct_chg_10)*-1 #invert sign for yaxis % chg
 
 #convert table values to numeric before plotting 
   box_table[,3] <- as.numeric(as.character(box_table[,3]))
-#box_table[,3] <- round(box_table[,2], digits = 0)
 
-#ggplot(box_table, aes(as.factor(maf),pct_chg_10))+
-#ggplot(box_table, aes(as.factor(flow),pctchg))+
 ggplot(box_table, aes(flow,pctchg))+
   geom_boxplot(fill='#A4A4A4', color="darkred")+
   geom_text(aes(label=metric),hjust=0, vjust=0)+
   geom_hline(yintercept=0,col='#A4A4A4')+
-  labs(title = "Percent Habitat Change with 10% Flow Reduction",
+  labs(title = paste("Percent Habitat Change with 10% Flow Reduction (",stat_method," monthly)",sep=""),
        subtitle = paste(ifim_site_name,":\nDrainage Area: ",ifim_da_sqmi," sqmi\nUSGS: ",gage," (",start_date," to ",end_date,")",sep=""))+
 
   xlab("Flow (cfs)")+ 
@@ -260,10 +231,12 @@ ggplot(box_table, aes(flow,pctchg))+
   scale_x_discrete(limit = c("MAF",month.abb))
 #scale_y_continuous(limits = c(-10, 100))
 
-filename <- paste(ifim_site_name,"boxplot.png", sep="_")
+filename <- paste(ifim_site_name,"10pct",stat_method,"boxplot.png", sep="_")
 ggsave(file=filename, path = save_directory, width=14, height=8)
 
 
+table_export <- data.frame(ifim_site_name,ifim_da_sqmi,box_table)
+write.csv(table_export, file = paste(save_directory,"\\",ifim_site_name,"_10pct_",stat_method,".csv",sep=""))
 
 }
 
