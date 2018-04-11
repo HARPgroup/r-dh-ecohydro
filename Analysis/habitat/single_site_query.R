@@ -16,14 +16,14 @@ source(paste(fxn_locations,"rest.private", sep = ""));         #load rest userna
 token <- rest_token(site, token, rest_uname, rest_pw);
 
 #-------------------------------------------------------------------------------
-#'NF_Shenandoah'      transects = 397290,397291,397292,397293,397294
-#'SF_Shenandoah'      transects = 397299,397300,397301
-#'Upper_James'        transects = 397302,397303,397304,397305
-#'New_River_Claytor'  transects = 397284,397285
-#'Appomattox'         transects = 397282,397283
-#'Potomac'            transects = 397295,397296
-#'North_Anna'         transects = 397286,397287,397288,397289
-#'Roanoke'            transects = 397297,397298
+#'NF_Shenandoah'      sites = 397290,397291,397292,397293,397294
+#'SF_Shenandoah'      sites = 397299,397300,397301
+#'Upper_James'        sites = 397302,397303,397304,397305
+#'New_River_Claytor'  sites = 397284,397285
+#'Appomattox'         sites = 397282,397283
+#'Potomac'            sites = 397295,397296
+#'North_Anna'         sites = 397286,397287,397288,397289
+#'Roanoke'            sites = 397297,397298
 
 ifim_featureid <- 397290
 
