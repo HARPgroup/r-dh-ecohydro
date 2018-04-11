@@ -1,8 +1,13 @@
+library('ggplot2')
+library('plyr')
 
 basepath='C:\\Users\\nrf46657\\Desktop\\VAHydro Development\\GitHub\\r-dh-ecohydro\\ELFGEN\\internal\\';
 source(paste(basepath,'config.local.private',sep='/'));
 
-stat_method <- "mean"
+#specify either "median" or "mean" of august daily percent habitat change
+stat_method <- "median"
+
+
 Above_Harvell_Dam <- read.csv(paste(save_directory,paste("\\WUA-CSV\\",stat_method,"\\Above Harvell Dam_10pct_",stat_method,".csv",sep=""),sep=""))
 Below_Harvell_Dam <- read.csv(paste(save_directory,paste("\\WUA-CSV\\",stat_method,"\\Below Harvell Dam_10pct_",stat_method,".csv",sep=""),sep=""))
 Craig <- read.csv(paste(save_directory,paste("\\WUA-CSV\\",stat_method,"\\Craig_10pct_",stat_method,".csv",sep=""),sep=""))
@@ -60,8 +65,6 @@ aug_all_sites <- na.omit(aug_all_sites) #remove NA rows prior to calculating med
 
 
 #----------------------------------------------------------------------------------------------
-#aug_all_sites_medians <- aggregate(aug_all_sites[,6], list(aug_all_sites$ifim_da_sqmi), median)
-
 aug_all_sites_medians <- aggregate(list(pctchg = aug_all_sites[,6]), list(ifim_da_sqmi = aug_all_sites$ifim_da_sqmi), median)
 aug_all_sites_min<- aggregate(list(pctchg = aug_all_sites[,6]), list(ifim_da_sqmi = aug_all_sites$ifim_da_sqmi), min)
 aug_all_sites_25 <- ddply(aug_all_sites, "ifim_da_sqmi", summarise, pctchg = quantile(pctchg, .25))
@@ -80,27 +83,6 @@ ascending_aug_all_sites <- ascending_aug_all_sites [,-1]
 aug_all_sites_medians <- data.frame(ascending_aug_all_sites,aug_all_sites_medians)
 colnames(aug_all_sites_medians)[1] <- "ifim_site_name"
 
-#subset for plotting regression line 
-aug_lower <- aug_all_sites_medians
-aug_lower <- aug_lower[-24,] 
-aug_lower <- aug_lower[-23,] 
-
-aug_lower_min <- aug_all_sites_min
-aug_lower_min <- aug_lower_min[-24,] 
-aug_lower_min <- aug_lower_min[-23,]
-
-aug_lower_25 <- aug_all_sites_25
-aug_lower_25 <- aug_lower_25[-24,] 
-aug_lower_25 <- aug_lower_25[-23,]
-
-aug_lower_75 <- aug_all_sites_75
-aug_lower_75 <- aug_lower_75[-24,] 
-aug_lower_75 <- aug_lower_75[-23,]
-
-aug_lower_max <- aug_all_sites_max
-aug_lower_max <- aug_lower_max[-24,] 
-aug_lower_max <- aug_lower_max[-23,]
-
 ggplot(aug_all_sites_medians, aes(ifim_da_sqmi,pctchg))+
   geom_point(size = 2,color = "blue4")+
   geom_point(data = aug_all_sites_min,aes(ifim_da_sqmi,pctchg),size = 2,color = "chartreuse4")+
@@ -109,19 +91,12 @@ ggplot(aug_all_sites_medians, aes(ifim_da_sqmi,pctchg))+
   geom_point(data = aug_all_sites_max,aes(ifim_da_sqmi,pctchg),size = 2,color = "chartreuse4")+
   #geom_smooth()+
   #geom_line(method='lm',formula=y~log(x))
-   geom_smooth(data=aug_lower, method=lm,se=FALSE,color = "blue4")+
-   geom_smooth(data=aug_lower_min, method=lm,se=FALSE,color = "chartreuse4")+
-   geom_smooth(data=aug_lower_25, method=lm,se=FALSE,color = "chocolate3")+
-   geom_smooth(data=aug_lower_75, method=lm,se=FALSE,color = "chocolate3")+
-   geom_smooth(data=aug_lower_max, method=lm,se=FALSE,color = "chartreuse4")+
-   
-  
-  #include Patomac 
-  #geom_smooth(data=aug_lower, method=lm,se=FALSE,color = "blue4")+
-  #geom_smooth(data=aug_all_sites_min, method=lm,se=FALSE,color = "chartreuse4")+
-  #geom_smooth(data=aug_all_sites_25, method=lm,se=FALSE,color = "chocolate3")+
-  #geom_smooth(data=aug_all_sites_75, method=lm,se=FALSE,color = "chocolate3")+
-  #geom_smooth(data=aug_all_sites_max, method=lm,se=FALSE,color = "chartreuse4")+
+
+  geom_smooth(data=aug_all_sites_medians, method=lm,se=FALSE,color = "blue4")+
+  geom_smooth(data=aug_all_sites_min, method=lm,se=FALSE,color = "chartreuse4")+
+  geom_smooth(data=aug_all_sites_25, method=lm,se=FALSE,color = "chocolate3")+
+  geom_smooth(data=aug_all_sites_75, method=lm,se=FALSE,color = "chocolate3")+
+  geom_smooth(data=aug_all_sites_max, method=lm,se=FALSE,color = "chartreuse4")+
   
   xlab("Drainage Area (mi^2)")+ 
   ylab("Percent Habitat Change (August)")+
