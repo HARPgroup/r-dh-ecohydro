@@ -29,11 +29,12 @@ token <- rest_token(site, token, rest_uname, rest_pw);
 
 #Added by Jen
 #use a list of huc8 or other hydrocodes to run custom ghi for quantreg
-Input_targetHydrocode <-  read.csv(file="D:\\Jkrstolic\\R\\deqEcoflows\\Breakpoints\\FullDatasets\\Huc6_batchlistsMAFQuantReg.csv",header=TRUE) #list of Huc8 to process for QUantreg
+Input_targetHydrocode <-  read.csv(file="D:\\Jkrstolic\\R\\deqEcoflows\\Breakpoints\\FullDatasets\\Batch_lists_for_ElfGen\\Huc6_batchBenthic_listsPWIT.csv",header=TRUE) #list of Huc8 to process for QUantreg   Huc6_batchlistsMAFQuantReg.csv
 data.table.hydrocode <- data.table(Input_targetHydrocode)
 T_hydrocode <- data.table.hydrocode$target_hydrocode #input the huc8 of interst, save as a list
 Numb_hydrocodes <- length(T_hydrocode) #number of hucs
 GhiList   <- data.table.hydrocode$ghi
+GloList   <- data.table.hydrocode$glo
 #------------------------------------------------------------------------------------------------
 #User inputs 
 
@@ -64,13 +65,12 @@ inputs <- list(
   ),		
   x_metric = 'erom_q0001e_mean', #Flow metric to be plotted on the x-axis
   not_y_metric = c(
-               'nhdp_drainage_sqmi',
                'aqbio_nt_bival',
                'aqbio_nt_cypr_native', 
                'aqbio_benthic_nt_total',
-               'nhdp_drainage_sqmi'
+               'aqbio_nt_total'
               ), #this can be used to process by multiple biometrics at once 
-  y_metric = 'aqbio_nt_total',	   #Biometric to be plotted on the y-axis, see "dh variable key" column for options: https://docs.google.com/spreadsheets/d/1PnxY4Rxfk9hkuaXy7tv8yl-mPyJuHdQhrOUWx_E1Y_w/edit#gid=0
+  y_metric = 'aqbio_benthic_nt_total',	   #Biometric to be plotted on the y-axis, see "dh variable key" column for options: https://docs.google.com/spreadsheets/d/1PnxY4Rxfk9hkuaXy7tv8yl-mPyJuHdQhrOUWx_E1Y_w/edit#gid=0
   not_ws_ftype = c(
     'state',
     'hwi_region',
@@ -93,8 +93,8 @@ inputs <- list(
     
     send_to_rest = "YES",            #"YES" to push ELF statistic outputs to VAHydro
     station_agg = "max",             #Specify aggregation to only use the "max" NT value for each station or "all" NT values
-    sampres = 'species',                  
-    #sampres = 'maj_fam_gen_spec',                  
+    #sampres = 'species',                  
+    sampres = 'maj_fam_gen_spec',                  
     #--Sample Resolution Grouping Options 
     #   species...............Species taxanomic level (Fish metrics only)
     #   maj_fam_gen_spec......majority a mix of family/genus/species (Benthics only)
@@ -108,13 +108,13 @@ inputs <- list(
     twopoint = "NO",   #Plot using basic two-point ELF method (YES or NO)
     pw_it_RS = "NO",   #Plot using PWIT *with the regression to the right of the breakpoint included (YES or NO)
     DA_Flow = "NO",    # Plot the drainage area and flow together to discern any modeling issues. 
-    glo = 0,   # PWIT Breakpoint lower guess (sqmi/cfs)
+    glo = GloList[J],   # PWIT Breakpoint lower guess (sqmi/cfs)
     ghi = GhiList[J], # PWIT Breakpoint upper guess (sqmi/cfs) - also used as DA breakpoint for elf_quantreg method
     # ghi values determined from ymax analyses,  q25 = 72 
     #                                            q50 = 205 
     #                                            q75 = 530
     token = token,
-    dataset_tag = "HUC8_quantregwHuc6bp"
+    dataset_tag = "BenthicQuantreg_update"
 ) 
 
 #------------------------------------------------------------------------------------------------
