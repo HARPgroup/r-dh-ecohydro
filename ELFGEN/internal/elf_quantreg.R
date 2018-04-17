@@ -28,12 +28,18 @@ elf_quantreg <- function(inputs, data, x_metric_code, y_metric_code, ws_ftype_co
   sampres <- inputs$sampres
   ghi <- inputs$ghi
   dataset_tag <- inputs$dataset_tag
-
+  
   #Retain a copy of the full dataset in order to include grey points on plot
   full_dataset <- data
-  
-  #remove datapoints greater than the ghi DA threashold
-  data<-data[!(data$drainage_area_sqmi > (ghi)),]
+
+  #remove datapoints greater than the ghi threshold
+  if (x_metric == 'nhdp_drainage_sqmi') {
+    ghi_var <- 'drainage_area_sqmi'
+  } else {
+    ghi_var <- 'qmean_annual'
+  }
+ 
+  data<-data[!(data[ghi_var] > (ghi)),]
   subset_n <- length(data$y_value)
 
   #If statement needed in case there are fewer than 4 datapoints to the left of x-axis inflection point, or if there are more than 3 points but all have the same x_value
@@ -92,9 +98,6 @@ print(paste("Upper quantile has ", nrow(upper.quant), "values"));
             flow_title <- flow_name$varname                         #needed for human-readable plot titles
 
 admincode <-paste(Hydroid,"_fe_quantreg",sep="");
-#admincode <-paste("Joey_test_5",sep="");
-
-print(token)
 
         # stash the regression statistics using REST  
            if (send_to_rest == 'YES') {
@@ -130,7 +133,7 @@ print("Storing quantile regression.");
             adminid <- elf_store_data(qd, token, inputs, adminid)
            } else {
             #Plot images are stored using watershed hydrocode when NOT performing REST 
-            adminid <- paste(search_code,"fe_quantreg",x_metric,y_metric,quantile,station_agg,sampres,analysis_timespan,"0",ghi, sep='_');
+            adminid <- paste(dataset_tag,search_code,"fe_quantreg",x_metric,y_metric,quantile,station_agg,sampres,analysis_timespan,"0",ghi,ghi_var, sep='_');
            }
 
             #Display only 3 significant digits on plots
@@ -143,8 +146,7 @@ print("Storing quantile regression.");
             #Plot titles
             plot_title <- paste(Feature.Name," (",sampres," grouping)\n",
                                 startdate," to ",
-                                enddate,"\n\nQuantile Regression: (breakpoint at DA = ", ghi, 
-                                ' sqmi)',
+                                enddate,"\n\nQuantile Regression: (breakpoint at ",ghi_var," = ", ghi,")",
                                 sep="");
             xaxis_title <- paste(flow_title,"\n","\n","m: ",plot_ruslope,"    b: ",plot_ruint,"    r^2: ",plot_rurs,"    adj r^2: ",plot_rursadj,"    p: ",plot_rup,"\n","    Upper ",((1 - quantile)*100),"% n: ",rucount,"    Data Subset n: ",subset_n,"    Full Dataset n: ",length(full_dataset$y_value),sep="");
             yaxis_title <- paste(biometric_title);

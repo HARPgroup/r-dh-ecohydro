@@ -27,6 +27,7 @@ rest_pw = FALSE;
 source(paste(fxn_locations,"rest.private", sep = ""));         #load rest username and password, contained in rest.private file
 token <- rest_token(site, token, rest_uname, rest_pw);
 
+source(paste(fxn_locations,"huc8_groupings.txt", sep = "")); 
 
 #------------------------------------------------------------------------------------------------
 #User inputs 
@@ -77,6 +78,7 @@ inputs <- list(
 
   ws_ftype = c('nhd_huc6'),		     #Options: state, hwi_region, nhd_huc8, nhd_huc6, ecoregion_iii, ecoregion_iv, ecoiii_huc6
   target_hydrocode = c('020802'),  #Leave blank to process all, individual examples: usa_state_virginia for all of VA, atl_non_coastal_plain_usgs,ohio_river_basin_nhdplus,nhd_huc8_05050001...
+
   quantile = .80,                  #Specify the quantile to use for quantile regresion plots 
   
   xaxis_thresh = 15000,            #Leave at 15000 so all plots have idential axis limits 
@@ -107,7 +109,7 @@ inputs <- list(
              #                                            q75 = 530
   token = token,
   dataset_tag = "small_ELFexamples"
-) 
+)
 
 #------------------------------------------------------------------------------------------------
 elf_retrieve_data (inputs) 

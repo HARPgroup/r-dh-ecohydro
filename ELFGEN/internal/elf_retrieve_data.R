@@ -30,6 +30,7 @@ elf_retrieve_data <- function(inputs = list()){
   twopoint <- inputs$twopoint
   token <- inputs$token
 
+  #l <- 1
 for (l in offset_ws_ftype:length(ws_ftype)) {
      
   print(paste("ws_ftype ",l,". of ",length(ws_ftype),". ",ws_ftype[l],sep=""))
@@ -58,6 +59,7 @@ for (l in offset_ws_ftype:length(ws_ftype)) {
   #print(HUClist_url_full)
   HUClist <- read.table(HUClist_url_full,header = TRUE, sep = ",")
   Watershed_Hydrocode <- HUClist$Hydrocode
+  #print(Watershed_Hydrocode)
   Feature.Name <- HUClist$Feature.Name
   Hydroid <- HUClist$HydroID
   
