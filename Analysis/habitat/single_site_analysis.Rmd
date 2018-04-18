@@ -478,28 +478,28 @@ hab_ts_plot_multi_fxn(inputs,filename,ifim_site_name,ifim_metric)
 
 ```{r DATA TABLES, fig.width=14, fig.height=8, echo=FALSE,results='hide'}
 
-hab_pct_table <- table_export
-elf_pct_table <- read.csv(paste(save_directory,paste("\\pctchg_",target_hydrocode,"_",elf_metric,".csv",sep=""),sep=""))
-elf_pct_table[1]<-NULL
-
-
-elf_pct_table_subset <- elf_pct_table[elf_pct_table$erom_q0001e_mean %in% hab_pct_table$discharge,]
-
-
-plot(hab_pct_table$discharge,as.vector(hab_pct_table$pct_chg_10), col="blue",pch=19,
-      xlab="Discharge (cfs)", 
-      ylab=paste("Percent Decrease",sep=""),
-      ylim=c(-20,20),
-      xlim=c(0,500))
-lines(hab_pct_table$discharge,as.vector(hab_pct_table$pct_chg_10), col="blue",lwd=1) 
-title(main=paste(paste(ifim_site_name," - ",ifim_metric,"\n10% Reduction in Discharge and resulting % change in NT and Habitat",sep=""),sep=""))
-
-points(elf_pct_table_subset$erom_q0001e_mean,elf_pct_table_subset$pct_chg_10, col="black",pch=5) 
-lines(elf_pct_table_subset$erom_q0001e_mean,elf_pct_table_subset$pct_chg_10, col="black",lwd=1) 
-abline(h=0, col="black")
-legend("bottomleft",inset=0.05,title="Legend",c(ifim_metric,elf_metric),col=c("blue","black"),pch=c(19,5))
-
-   
+# hab_pct_table <- table_export
+# elf_pct_table <- read.csv(paste(save_directory,paste("\\pctchg_",target_hydrocode,"_",elf_metric,".csv",sep=""),sep=""))
+# elf_pct_table[1]<-NULL
+# 
+# 
+# elf_pct_table_subset <- elf_pct_table[elf_pct_table$erom_q0001e_mean %in% hab_pct_table$discharge,]
+# 
+# 
+# plot(hab_pct_table$discharge,as.vector(hab_pct_table$pct_chg_10), col="blue",pch=19,
+#       xlab="Discharge (cfs)", 
+#       ylab=paste("Percent Decrease",sep=""),
+#       ylim=c(-20,20),
+#       xlim=c(0,500))
+# lines(hab_pct_table$discharge,as.vector(hab_pct_table$pct_chg_10), col="blue",lwd=1) 
+# title(main=paste(paste(ifim_site_name," - ",ifim_metric,"\n10% Reduction in Discharge and resulting % change in NT and Habitat",sep=""),sep=""))
+# 
+# points(elf_pct_table_subset$erom_q0001e_mean,elf_pct_table_subset$pct_chg_10, col="black",pch=5) 
+# lines(elf_pct_table_subset$erom_q0001e_mean,elf_pct_table_subset$pct_chg_10, col="black",lwd=1) 
+# abline(h=0, col="black")
+# legend("bottomleft",inset=0.05,title="Legend",c(ifim_metric,elf_metric),col=c("blue","black"),pch=c(19,5))
+# 
+#    
 
  
 ```
