@@ -79,9 +79,14 @@ ifim_maf <- round(as.numeric(as.character(ifim_maf$propvalue)),1)
 # END RETRIEVE IFIM DATA
 #===============================================================
 
+# BEGIN CALCULATING PERCENT HABITAT LOSS
+  dataframe <- ifim_dataframe
+
+
+
   #Get column for metric of interest
   colnum <- grep(ifim_metric,colnames(ifim_dataframe))
-  dataframe[,colnum]
+  #dataframe[,colnum]
 
   pct_list <- c(5,50,20,30,40,10)
  # pct_list <- c(10)
@@ -473,8 +478,8 @@ hab_ts_plot_multi_fxn(inputs,filename,ifim_site_name,ifim_metric)
 
 ```{r DATA TABLES, fig.width=14, fig.height=8, echo=FALSE,results='hide'}
 
-hab_pct_table <- table_export
-elf_pct_table <- read.csv(paste(save_directory,paste("\\pctchg_",target_hydrocode,"_",elf_metric,".csv",sep=""),sep=""))
+# hab_pct_table <- table_export
+# elf_pct_table <- read.csv(paste(save_directory,paste("\\pctchg_",target_hydrocode,"_",elf_metric,".csv",sep=""),sep=""))
 # elf_pct_table[1]<-NULL
 # 
 # 

@@ -26,11 +26,11 @@ elf_retrieve_data <- function(inputs = list()){
   quantreg <- inputs$quantreg 
   ymax <- inputs$ymax   
   pw_it <- inputs$pw_it  
-  pw_it_RS <- inputs$pw_it_RS  
+  pw_it_RS <- inputs$pw_it_RS 
+  pw_it_RS_IFIM <- inputs$pw_it_RS_IFIM 
   twopoint <- inputs$twopoint
   token <- inputs$token
 
-  #l <- 1
 for (l in offset_ws_ftype:length(ws_ftype)) {
      
   print(paste("ws_ftype ",l,". of ",length(ws_ftype),". ",ws_ftype[l],sep=""))
@@ -59,7 +59,6 @@ for (l in offset_ws_ftype:length(ws_ftype)) {
   #print(HUClist_url_full)
   HUClist <- read.table(HUClist_url_full,header = TRUE, sep = ",")
   Watershed_Hydrocode <- HUClist$Hydrocode
-  #print(Watershed_Hydrocode)
   Feature.Name <- HUClist$Feature.Name
   Hydroid <- HUClist$HydroID
   
@@ -154,6 +153,8 @@ for (k in offset_y_metric:length(y_metric)) {
       source(paste(fxn_locations,"elf_pw_it_RS.R", sep = ""));       #loads ef_pw_it_RS function
       source(paste(fxn_locations,"elf_pct_chg.R", sep =""));         #loads percent change barplot function
       source(paste(fxn_locations,"elf_store_data.R", sep = ""));     #loads function used to store ELF stats to VAHydro
+      source(paste(fxn_locations,"elf_pw_it_RS_IFIM.R", sep = ""));  #loads elf_pw_it_RS_IFIM function for overlaying WUA curves on ELFs
+      source(paste(fxn_locations,"elf_pct_chg_hab.R", sep ="")); 
       
       if(quantreg == "YES") {print(paste("PLOTTING - method quantreg breakpoint ...",sep="")) 
                             elf_quantreg (inputs, data, x_metric_code, y_metric_code, ws_ftype_code, Feature.Name_code, Hydroid_code, search_code, token, startdate, enddate)}
@@ -165,8 +166,13 @@ for (k in offset_y_metric:length(y_metric)) {
                             elf_twopoint (inputs, data, x_metric_code, y_metric_code, ws_ftype_code, Feature.Name_code, Hydroid_code, search_code, token, startdate, enddate)}
 
       if(pw_it_RS == "YES") {print(paste("PLOTTING - method quantreg breakpoint using piecewise function (Including regression to the right of breakpoint)...",sep=""))
-                                      elf_pw_it_RS (inputs, data, x_metric_code, y_metric_code, ws_ftype_code, Feature.Name_code, Hydroid_code, search_code, token, startdate, enddate)}
-
+                               elf_pw_it_RS (inputs, data, x_metric_code, y_metric_code, ws_ftype_code, Feature.Name_code, Hydroid_code, search_code, token, startdate, enddate)}
+      
+      if(pw_it_RS_IFIM == "YES") {print(paste("PLOTTING - method quantreg breakpoint using piecewise function (Including regression to the right of breakpoint)...",sep=""))
+                                plt <- elf_pw_it_RS_IFIM (inputs, data, x_metric_code, y_metric_code, ws_ftype_code, Feature.Name_code, Hydroid_code, search_code, token, startdate, enddate)}
+      
+      #print(plt)
+      return(plt)
         } #closes watershed for loop  
       } #closes x_metric for loop
     } #closes y_metric for loop
