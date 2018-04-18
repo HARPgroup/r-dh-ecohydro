@@ -1,0 +1,501 @@
+---
+title: "Percent Habitat Change with Flow Reduction"
+output: word_document
+---
+***
+```{r DATA RETRIEVAL, include = FALSE, warning = FALSE}
+rm(list = ls())  #clear variables
+options(timeout=240); # set timeout to twice default level to avoid abort due to high traffic
+
+#----------------------------------------------
+site <- "http://deq1.bse.vt.edu/d.dh"    #Specify the site of interest, either d.bet OR d.dh
+#----------------------------------------------
+
+#----FOR RUNNING LOCALLY:
+basepath='C:\\Users\\nrf46657\\Desktop\\VAHydro Development\\GitHub\\r-dh-ecohydro\\ELFGEN\\internal\\';
+source(paste(basepath,'config.local.private',sep='/'));
+
+#Load Functions               
+source(paste(fxn_locations,"elf_retrieve_data.R", sep = ""));  #loads function used to retrieve F:E data from VAHydro
+source(paste(habitat_files,'hab_ts_functions.R',sep='/')) #loads habtat timeseries functions
+source(paste(fxn_vahydro,"rest_functions.R", sep = ""));       #loads file containing function that retrieves REST token
+rest_uname = FALSE;
+rest_pw = FALSE;
+source(paste(fxn_locations,"rest.private", sep = ""));         #load rest username and password, contained in rest.private file
+token <- rest_token(site, token, rest_uname, rest_pw);
+
+#_________________________________________________________
+# PROJECT               SITE HYDROIDS
+#
+# NF_Shenandoah         397290,397291,397292,397293,397294
+# SF_Shenandoah         397299,397300,397301
+# Upper_James           397302,397303,397304,397305
+# New_River_Claytor     397284,397285
+# Appomattox            397282,397283
+# Potomac               397295,397296
+# North_Anna            397286,397287,397288,397289
+# Roanoke               397297,397298
+#_________________________________________________________
+
+#===============================================================
+# BEGIN RETRIEVE IFIM DATA
+#===============================================================
+ifim_featureid <- 397299
+#ifim_featureid <-397295
+
+
+ifim_dataframe <- vahydro_prop_matrix(ifim_featureid,'ifim_habitat_table')
+WUA.df <- ifim_dataframe
+targets <- colnames(WUA.df[-1])
+
+#ifim_metric <- 'riffle'
+ifim_metric <- 'smb_adult'
+#ifim_metric <- 'smb_sub_adult'
+#ifim_metric <- 'smb_juv'
+#ifim_metric <- 'smb_yoy'
+#ifim_metric <- 'smb_spawn'
+
+ifim_site <- getFeature(list(hydroid = ifim_featureid), token, site, feature)
+ifim_site_name <- as.character(ifim_site$name)
+
+inputs = list(varkey = 'usgs_siteid',featureid = ifim_featureid,entity_type = 'dh_feature')
+gage <- getProperty(inputs,site,prop)
+gage <- as.character(gage$propcode)
+
+ifim_da_sqmi <- getProperty(list(featureid = ifim_featureid,
+                                 varkey = 'nhdp_drainage_sqmi',
+                                 entity_type = 'dh_feature'), 
+                            site, prop)
+
+ifim_da_sqmi <- round(as.numeric(as.character(ifim_da_sqmi$propvalue)),1)
+
+ifim_maf <- getProperty(list(featureid = ifim_featureid,
+                                 varkey = 'erom_q0001e_mean',
+                                 entity_type = 'dh_feature'), 
+                            site, prop)
+
+ifim_maf <- round(as.numeric(as.character(ifim_maf$propvalue)),1)
+#===============================================================
+# END RETRIEVE IFIM DATA
+#===============================================================
+
+  #Get column for metric of interest
+  colnum <- grep(ifim_metric,colnames(ifim_dataframe))
+  dataframe[,colnum]
+
+  pct_list <- c(5,50,20,30,40,10)
+ # pct_list <- c(10)
+  
+  table <- data.frame(x = dataframe$discharge,
+                      y = dataframe[,colnum],
+                      stringsAsFactors=FALSE)
+  
+  #j <- 1
+  for (j in 1:length(pct_list)) {
+    
+  pctchg_all <- data.frame(newx = c(''),
+                           newy= c(''),
+                           pctchg = c(''),
+                           stringsAsFactors=FALSE)
+
+  #i <- 1
+  for (i in 1:length(dataframe$discharge)) {  
+
+  x2 <- dataframe$discharge[i]
+  y_base <- dataframe[,colnum][i]
+  #newx <- x2 - (x2*0.1)
+  newx <- x2 - (x2*(pct_list[j])/100)
+  #if point minus x% exists as is next down (no interpolation needed)
+  newy <- (dataframe[which(dataframe$discharg==newx), ])[,colnum]
+  if(length(newy) == TRUE){
+    pctchg <- ((y_base-newy)/y_base)*100
+  } else {
+    
+    x1 <- max((subset(dataframe, discharge<newx))$discharge)
+    y1 <- (dataframe[which(dataframe$discharg==x1), ])[,colnum]
+    
+    x2 <- min((subset(dataframe, discharge>newx))$discharge)
+    y2 <- (dataframe[which(dataframe$discharg==x2), ])[,colnum]
+    
+    newy <- y1+((newx-x1)*((y2-y1)/(x2-x1)))
+
+    pctchg <- ((y_base-newy)/y_base)*100
+    
+  }
+ 
+  if (length(pctchg)==0){pctchg <- NA}
+  if (length(newx)==0){newx <- NA}
+  if (length(newy)==0){newy<- NA}
+  pctchg_i <- data.frame(newx,newy,pctchg)
+  pctchg_all <- rbind(pctchg_all, pctchg_i)
+  }
+  pctchg_all <- data.frame(pctchg_all[-1,])
+
+  #detail table for individual % changes 
+  df_pctchg <- data.frame(x = dataframe$discharge,
+                          y = dataframe[,colnum],
+                          newx = pctchg_all$newx,
+                          newy = pctchg_all$newy,
+                          pctchg = pctchg_all$pctchg,
+                          stringsAsFactors=FALSE)
+  
+
+  table_i = data.frame(pctchg_all$pctchg)
+  names(table_i) <- c(paste("pct_chg_",pct_list[j],sep=""))
+  table <- cbind(table, table_i)
+  
+  }
+  
+  #EXPORT DATA TO CSV
+  table_export <- table
+  names(table_export)[1]<-"discharge"
+  names(table_export)[2]<-ifim_metric
+  table_export <- data.frame(table_export[1],
+                             table_export[2],
+                             table_export[3],
+                             table_export[8],
+                             table_export[5],
+                             table_export[6],
+                             table_export[7],
+                             table_export[4]
+                             )
+  write.csv(table_export, file = paste(save_directory,"\\pctchg_",ifim_site_name,"_",ifim_metric,".csv",sep=""))
+```
+
+```{r SITE INFO, results='asis', echo=FALSE}
+cat("\n\n\n\nIFIM Site: ",ifim_site_name)
+cat("\n\nArea (mi^2): ",ifim_da_sqmi)
+cat("\n\nMAF (cfs): ",ifim_maf)
+```
+
+```{r SITE METRICS, echo=FALSE, message=FALSE, warning=FALSE}
+#col1 <- c("IFIM Site","Area mi^2")
+#col2 <- c(ifim_site_name,ifim_da_sqmi)
+#siteinfo <- data.frame(col1,col2)
+#colnames(siteinfo) <- NULL
+
+library(pander)
+#pander(siteinfo)
+
+ifim_metrics <- toString(colnames(ifim_dataframe[-1]))
+ifim_metrics <-data.frame(ifim_metrics)
+colnames(ifim_metrics) <- "Site Metrics"
+pander(ifim_metrics)  
+```
+***
+
+```{r ELF PLOT, fig.width=10, fig.height=8, echo=FALSE, message=FALSE, warning=FALSE,results='hide'}
+#retrieve txt file of ifim sites and corresponding ELF regions data
+ifim_sites_df <- read.table(paste(habitat_files,'ifim_sites_df.txt',sep='/'), header=TRUE)
+site_row <- ifim_sites_df [which(ifim_sites_df$site == ifim_featureid),]
+
+  project <- as.character(site_row$project)
+  huc8  <- as.character(site_row$huc8)
+  ifim_site <- ifim_featureid 
+  scale_factor <- site_row$scale_factor
+  
+  target_hydrocode <- huc8 #what region resolution to plot for 
+  elf_metric <- 'aqbio_nt_total'
+  
+  inputs <- list(
+    site = site,
+    offset_x_metric = 1,                      
+    offset_y_metric = 1,                      
+    offset_ws_ftype = 1,                     
+    offset_hydrocode = 1,                     
+    pct_chg = 10,                             
+    save_directory = save_directory, 
+    x_metric = 'erom_q0001e_mean', 
+    y_metric = elf_metric,	 
+    ws_ftype = c('nhd_huc8'),		   
+    target_hydrocode = target_hydrocode,       
+    quantile = .80,                 
+    xaxis_thresh = 15000,             
+    analysis_timespan = 'full',     
+    send_to_rest = "NO",            
+    station_agg = "max",             
+    sampres = 'species',   
+    quantreg = "NO",  
+    pw_it = "NO",     
+    ymax = "NO",       
+    twopoint = "NO",   
+    pw_it_RS = "NO", 
+    pw_it_RS_IFIM = "YES",
+    glo = site_row$glo,   
+    ghi = site_row$ghi, 
+    token = token,
+    dataset_tag = ""
+  ) 
+  plt <- elf_retrieve_data (inputs) 
+  ifim_plt <- plt
+ 
+      ifim_plt <- ifim_plt + geom_line(data = dataframe, aes(x = discharge, y = dataframe[[which( colnames(dataframe)==ifim_metric)]]/scale_factor, colour = "violet"),linetype = "dashed",show.legend = FALSE)+
+      labs(subtitle = paste("IFIM Project: ",project,"\nSite: ",ifim_site_name,"\nDrainage Area = ",ifim_da_sqmi," mi^2","\nMean Annual Flow = ",ifim_maf," cfs",sep=""))+
+      scale_y_continuous(sec.axis = sec_axis(~.*scale_factor, name = "WUA, ft^2/1000 ft"))+
+      scale_color_manual("Legend",values=c("palegreen","slategray1","tan1","black","brown"),
+        
+        labels=c(paste("Data Subset (Upper ",((1 - inputs$quantile)*100),"%)",sep=""),
+                 paste("Data Subset (Lower ",(100-((1 - inputs$quantile)*100)),"%)",sep=""),
+                 paste("Regression (Upper ",((1 - inputs$quantile)*100),"%)",sep=""),
+                 "RCC bkpt",
+                 ifim_metric)) + 
+       guides(colour = guide_legend(override.aes = list(linetype=c(0,0,1,1,3),shape=c(16,16,NA,NA,NA)),label.position = "right")) 
+
+ifim_plt
+```
+
+```{r ELF PCT CHNG PLOT, fig.width=10, fig.height=8, echo=FALSE, warning=FALSE}
+library(knitr)
+elf_pctchg <- paste(save_directory,"\\",huc8,"_fe_quantreg_pwit_RS_erom_q0001e_mean_aqbio_nt_total_0.8_max_species_full_",site_row$glo,"_",site_row$ghi,"_pctchg.png",sep="")
+
+include_graphics(elf_pctchg)
+```
+
+***
+
+```{r 10pct CHANGE EXAMPLE, fig.width=12, fig.height=10, echo=FALSE}
+  par(mfrow=c(2,2))  #rows, columns
+  plot(table$x,table$y,  xlab="Discharge (cfs)", ylab=paste(ifim_metric," (WUA, ft^2/1000 ft)",sep=""))
+  #title(main=paste(ifim_site_name,": ",ifim_metric,sep=""))
+  lines(table$x,table$y)
+
+  plot(table$x,table$y,  xlab="Discharge (cfs)", ylab=paste(ifim_metric," (WUA, ft^2/1000 ft)",sep=""))
+  lines(table$x,table$y)
+  points(df_pctchg$newx,df_pctchg$newy,col="blue",pch=18)
+  legend("topright",inset=0.05,title="Legend",c(paste(pct_list[j],"% Reduction in Discharge",sep="")),col=c("blue"),pch=19)
+
+ plot(table$x, as.character(table$pct_chg_10),col="blue",pch=18, 
+       xlab="Discharge (cfs)", ylab=paste("Percent Decrease in ",ifim_metric," Habitat",sep=""),
+       ylim=c(-55,55)) #at 700 cfs, 50% decrease in flow = 1500% increase in habitat
+  #xlim=c(0,100))
+  abline(h=0, col="black")
+  points(table$x, as.character(table$pct_chg_10),col="blue",pch=18)
+  
+  plot(table$x, as.character(table$pct_chg_10),col="blue",pch=18, 
+       xlab="Discharge (cfs)", ylab=paste("Percent Decrease in ",ifim_metric," Habitat",sep=""),
+       ylim=c(-55,55)) #at 700 cfs, 50% decrease in flow = 1500% increase in habitat
+  #xlim=c(0,100))
+  abline(h=0, col="black")
+  points(table$x, as.character(table$pct_chg_10),col="blue",pch=18)
+  #lines(table$x[order(table$x)],(loess(as.character(pct_chg_10) ~ x,data=table))$fitted[order(table$x)],col="blue",lwd=1)
+  lines(table$x,as.character(table$pct_chg_10))
+  mtext(paste(ifim_site_name,": ",ifim_metric,sep=""), side=3, outer=TRUE, line=-2.0, cex=2)
+```  
+
+```{r 10pct AND VARYING pct ZOOM, fig.width=12, fig.height=15, echo=FALSE}
+  par(mfrow=c(2,1))  #rows, columns
+  plot(table$x, as.character(table$pct_chg_10),col="blue",pch=18, 
+       xlab="Discharge (cfs)", ylab=paste(ifim_metric," (WUA, ft^2/1000 ft)",sep=""),
+       ylim=c(0,15), #at 700 cfs, 50% decrease in flow = 1500% increase in habitat
+       xlim=c(0,1000))
+  title(main=paste(ifim_site_name,": ",paste(pct_list[j],"% Reduction in Discharge",sep=""),sep=""))
+  abline(h=0, col="black")
+  points(table$x, as.character(table$pct_chg_10),col="blue",pch=18)
+  #lines(table$x[order(table$x)],(loess(as.character(pct_chg_10) ~ x,data=table))$fitted[order(table$x)],col="blue",lwd=1)
+  lines(table$x,as.character(table$pct_chg_10),col="blue",lwd=1)
+   
+  plot(table$x, as.character(table$pct_chg_5),col="firebrick",pch=18, 
+       xlab="Discharge (cfs)", ylab=paste(ifim_metric," (WUA, ft^2/1000 ft)",sep=""),
+       ylim=c(0,55), #at 700 cfs, 50% decrease in flow = 1500% increase in habitat
+       xlim=c(0,1000))
+  title(main=paste(ifim_site_name,": ",ifim_metric,sep=""))
+  abline(h=0, col="black")
+  points(table$x, as.character(table$pct_chg_10),col="blue",pch=18)
+  points(table$x, as.character(table$pct_chg_20),col="forestgreen",pch=18)
+  points(table$x, as.character(table$pct_chg_30),col="orange",pch=18)
+  points(table$x, as.character(table$pct_chg_40),col="black",pch=18)
+  points(table$x, as.character(table$pct_chg_50),col="violet",pch=18)
+
+  #lines(table$x[order(table$x)],(loess(as.character(pct_chg_5) ~ x,data=table))$fitted[order(table$x)],col="firebrick",lwd=1)
+   lines(table$x,as.character(table$pct_chg_5),col="firebrick",lwd=1)
+  
+  #lines(table$x[order(table$x)],(loess(as.character(pct_chg_10) ~ x,data=table))$fitted[order(table$x)],col="blue",lwd=1)
+  lines(table$x,as.character(table$pct_chg_10),col="blue",lwd=1)
+  
+  #lines(table$x[order(table$x)],(loess(as.character(pct_chg_20) ~ x,data=table))$fitted[order(table$x)],col="forestgreen",lwd=1)
+  lines(table$x,as.character(table$pct_chg_20),col="forestgreen",lwd=1)
+  
+  #lines(table$x[order(table$x)],(loess(as.character(pct_chg_30) ~ x,data=table))$fitted[order(table$x)],col="orange",lwd=1)
+  lines(table$x,as.character(table$pct_chg_30),col="orange",lwd=1)
+  
+  #lines(table$x[order(table$x)],(loess(as.character(pct_chg_40) ~ x,data=table))$fitted[order(table$x)],col="black",lwd=1)
+  lines(table$x,as.character(table$pct_chg_40),col="black",lwd=1)
+  
+  #lines(table$x[order(table$x)],(loess(as.character(pct_chg_50) ~ x,data=table))$fitted[order(table$x)],col="violet",lwd=1)
+  lines(table$x,as.character(table$pct_chg_50),col="violet",lwd=1)
+  
+    legend("topright",inset=0.05,title="Legend",
+           c(paste("50% Reduction in Discharge",sep=""),
+             paste("40% Reduction in Discharge",sep=""),
+             paste("30% Reduction in Discharge",sep=""),
+             paste("20% Reduction in Discharge",sep=""),
+             paste("10% Reduction in Discharge",sep=""),
+             paste("5% Reduction in Discharge",sep="")
+             )
+           ,col=c("violet","black","orange","forestgreen","blue","firebrick"),pch=19)
+
+
+
+```
+
+```{r VARYING pct ZOOM OUT, fig.width=12, fig.height=8, echo=FALSE}
+ plot(table$x, as.character(table$pct_chg_5),col="firebrick",pch=18, 
+       xlab="Discharge (cfs)", ylab=paste(ifim_metric," (WUA, ft^2/1000 ft)",sep=""),
+       ylim=c(-55,55)) #at 700 cfs, 50% decrease in flow = 1500% increase in habitat
+       #xlim=c(0,100))
+  title(main=paste(ifim_site_name,": ",ifim_metric,sep=""))
+  abline(h=0, col="black")
+  points(table$x, as.character(table$pct_chg_10),col="blue",pch=18)
+  points(table$x, as.character(table$pct_chg_20),col="forestgreen",pch=18)
+  points(table$x, as.character(table$pct_chg_30),col="orange",pch=18)
+  points(table$x, as.character(table$pct_chg_40),col="black",pch=18)
+  points(table$x, as.character(table$pct_chg_50),col="violet",pch=18)
+
+  #lines(table$x[order(table$x)],(loess(as.character(pct_chg_5) ~ x,data=table))$fitted[order(table$x)],col="firebrick",lwd=1)
+   lines(table$x,as.character(table$pct_chg_5),col="firebrick",lwd=1)
+  
+  #lines(table$x[order(table$x)],(loess(as.character(pct_chg_10) ~ x,data=table))$fitted[order(table$x)],col="blue",lwd=1)
+  lines(table$x,as.character(table$pct_chg_10),col="blue",lwd=1)
+  
+  #lines(table$x[order(table$x)],(loess(as.character(pct_chg_20) ~ x,data=table))$fitted[order(table$x)],col="forestgreen",lwd=1)
+  lines(table$x,as.character(table$pct_chg_20),col="forestgreen",lwd=1)
+  
+  #lines(table$x[order(table$x)],(loess(as.character(pct_chg_30) ~ x,data=table))$fitted[order(table$x)],col="orange",lwd=1)
+  lines(table$x,as.character(table$pct_chg_30),col="orange",lwd=1)
+  
+  #lines(table$x[order(table$x)],(loess(as.character(pct_chg_40) ~ x,data=table))$fitted[order(table$x)],col="black",lwd=1)
+  lines(table$x,as.character(table$pct_chg_40),col="black",lwd=1)
+  
+  #lines(table$x[order(table$x)],(loess(as.character(pct_chg_50) ~ x,data=table))$fitted[order(table$x)],col="violet",lwd=1)
+  lines(table$x,as.character(table$pct_chg_50),col="violet",lwd=1)
+
+  
+      legend("topright",inset=0.05,title="Legend",
+           c(paste("50% Reduction in Discharge",sep=""),
+             paste("40% Reduction in Discharge",sep=""),
+             paste("30% Reduction in Discharge",sep=""),
+             paste("20% Reduction in Discharge",sep=""),
+             paste("10% Reduction in Discharge",sep=""),
+             paste("5% Reduction in Discharge",sep="")
+             )
+           ,col=c("violet","black","orange","forestgreen","blue","firebrick"),pch=19)
+
+```
+
+***
+# Habitat Timeseries
+### 10% Flow Reduction (Past Year)
+```{r RETRIEVE HAB TS DATA CURRENT YEAR, include = FALSE, warning = FALSE}
+
+f_0 <- f_fxn(gage,0.0)
+flow.ts.range_0 <- flow.ts.range_fxn(f_0,"current_year")
+wua.at.q_0 <- wua.at.q_fxn(flow.ts.range_0)
+
+f_10 <- f_fxn(gage,0.10)
+flow.ts.range_10 <- flow.ts.range_fxn(f_10,"current_year")
+wua.at.q_10 <- wua.at.q_fxn(flow.ts.range_10)
+
+```
+```{r PLOT CURRENT YEAR, fig.width=14, fig.height=8, echo=FALSE,results='hide'}
+hab_ts_plot_overlay_fxn(flow.ts.range_0,wua.at.q_0,flow.ts.range_10,wua.at.q_10,filename,ifim_site_name,ifim_metric)
+```
+
+### 10% Flow Reduction (Past 10 Years)
+```{r RETRIEVE HAB TS DATA 10 YEAR, include = FALSE, warning = FALSE}
+
+f_0 <- f_fxn(gage,0.0)
+flow.ts.range_0 <- flow.ts.range_fxn(f_0,"ten_year")
+wua.at.q_0 <- wua.at.q_fxn(flow.ts.range_0)
+
+f_10 <- f_fxn(gage,0.10)
+flow.ts.range_10 <- flow.ts.range_fxn(f_10,"ten_year")
+wua.at.q_10 <- wua.at.q_fxn(flow.ts.range_10)
+
+```
+```{r PLOT 10 YEAR, fig.width=14, fig.height=8, echo=FALSE,results='hide'}
+hab_ts_plot_overlay_fxn(flow.ts.range_0,wua.at.q_0,flow.ts.range_10,wua.at.q_10,filename,ifim_site_name,ifim_metric)
+```
+
+### Varying Flow Reductions (Past Year)
+```{r RETRIEVE HAB TS DATA MULTI, include = FALSE, warning = FALSE}
+
+f_0 <- f_fxn(gage,0.0)
+flow.ts.range_0 <- flow.ts.range_fxn(f_0,"current_year")
+wua.at.q_0 <- wua.at.q_fxn(flow.ts.range_0)
+
+f_5 <- f_fxn(gage,0.05)
+flow.ts.range_5 <- flow.ts.range_fxn(f_5,"current_year")
+wua.at.q_5 <- wua.at.q_fxn(flow.ts.range_5)
+
+f_10 <- f_fxn(gage,0.10)
+flow.ts.range_10 <- flow.ts.range_fxn(f_10,"current_year")
+wua.at.q_10 <- wua.at.q_fxn(flow.ts.range_10)
+
+f_20 <- f_fxn(gage,0.20)
+flow.ts.range_20 <- flow.ts.range_fxn(f_20,"current_year")
+wua.at.q_20 <- wua.at.q_fxn(flow.ts.range_20)
+
+f_30 <- f_fxn(gage,0.30)
+flow.ts.range_30 <- flow.ts.range_fxn(f_30,"current_year")
+wua.at.q_30 <- wua.at.q_fxn(flow.ts.range_30)
+
+f_40 <- f_fxn(gage,0.40)
+flow.ts.range_40 <- flow.ts.range_fxn(f_40,"current_year")
+wua.at.q_40 <- wua.at.q_fxn(flow.ts.range_40)
+
+f_50 <- f_fxn(gage,0.50)
+flow.ts.range_50 <- flow.ts.range_fxn(f_50,"current_year")
+wua.at.q_50 <- wua.at.q_fxn(flow.ts.range_50)
+
+```
+```{r PLOT MULTI, fig.width=14, fig.height=8, echo=FALSE,results='hide'}
+inputs <- list(
+    flow.ts.range_0 = flow.ts.range_0,
+    wua.at.q_0 = wua.at.q_0, 
+    flow.ts.range_5 = flow.ts.range_5,
+    wua.at.q_5 = wua.at.q_5,
+    flow.ts.range_10 = flow.ts.range_10,                      
+    wua.at.q_10 = wua.at.q_10,
+    flow.ts.range_20 = flow.ts.range_20,                      
+    wua.at.q_20 = wua.at.q_20,
+    flow.ts.range_30 = flow.ts.range_30,                      
+    wua.at.q_30 = wua.at.q_30,
+    flow.ts.range_40 = flow.ts.range_40,                      
+    wua.at.q_40 = wua.at.q_40,
+    flow.ts.range_50 = flow.ts.range_50,                      
+    wua.at.q_50 = wua.at.q_50
+    )
+hab_ts_plot_multi_fxn(inputs,filename,ifim_site_name,ifim_metric)
+
+```
+
+
+
+```{r DATA TABLES, fig.width=14, fig.height=8, echo=FALSE,results='hide'}
+
+hab_pct_table <- table_export
+elf_pct_table <- read.csv(paste(save_directory,paste("\\pctchg_",target_hydrocode,"_",elf_metric,".csv",sep=""),sep=""))
+# elf_pct_table[1]<-NULL
+# 
+# 
+# elf_pct_table_subset <- elf_pct_table[elf_pct_table$erom_q0001e_mean %in% hab_pct_table$discharge,]
+# 
+# 
+# plot(hab_pct_table$discharge,as.vector(hab_pct_table$pct_chg_10), col="blue",pch=19,
+#       xlab="Discharge (cfs)", 
+#       ylab=paste("Percent Decrease",sep=""),
+#       ylim=c(-20,20),
+#       xlim=c(0,500))
+# lines(hab_pct_table$discharge,as.vector(hab_pct_table$pct_chg_10), col="blue",lwd=1) 
+# title(main=paste(paste(ifim_site_name," - ",ifim_metric,"\n10% Reduction in Discharge and resulting % change in NT and Habitat",sep=""),sep=""))
+# 
+# points(elf_pct_table_subset$erom_q0001e_mean,elf_pct_table_subset$pct_chg_10, col="black",pch=5) 
+# lines(elf_pct_table_subset$erom_q0001e_mean,elf_pct_table_subset$pct_chg_10, col="black",lwd=1) 
+# abline(h=0, col="black")
+# legend("bottomleft",inset=0.05,title="Legend",c(ifim_metric,elf_metric),col=c("blue","black"),pch=c(19,5))
+# 
+#    
+
+ 
+```
+
