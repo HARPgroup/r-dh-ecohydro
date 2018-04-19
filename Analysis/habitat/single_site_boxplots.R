@@ -6,7 +6,7 @@ site <- "http://deq1.bse.vt.edu/d.dh"    #Specify the site of interest, either d
 #----------------------------------------------
 
 #----FOR RUNNING LOCALLY:
-basepath='C:\\Users\\nrf46657\\Desktop\\VAHydro Development\\GitHub\\r-dh-ecohydro\\ELFGEN\\internal\\';
+basepath='/var/www/R';
 source(paste(basepath,'config.local.private',sep='/'));
 
 #Load Functions               
@@ -15,7 +15,7 @@ source(paste(habitat_files,'hab_ts_functions.R',sep='/')) #loads habtat timeseri
 source(paste(fxn_vahydro,"rest_functions.R", sep = ""));       #loads file containing function that retrieves REST token
 rest_uname = FALSE;
 rest_pw = FALSE;
-source(paste(fxn_locations,"rest.private", sep = ""));         #load rest username and password, contained in rest.private file
+source(paste(fxn_locations,"auth.private", sep = ""));         #load rest username and password, contained in rest.private file
 token <- rest_token(site, token, rest_uname, rest_pw);
 
 #_________________________________________________________
