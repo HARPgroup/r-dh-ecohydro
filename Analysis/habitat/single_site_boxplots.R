@@ -12,10 +12,10 @@ source(paste(basepath,'config.local.private',sep='/'));
 #Load Functions               
 source(paste(fxn_locations,"elf_retrieve_data.R", sep = ""));  #loads function used to retrieve F:E data from VAHydro
 source(paste(habitat_files,'hab_ts_functions.R',sep='/')) #loads habtat timeseries functions
-source(paste(fxn_vahydro,"rest_functions.R", sep = ""));       #loads file containing function that retrieves REST token
+source(paste(fxn_vahydro,"VAHydro-2.0/rest_functions.R", sep = "/"));       #loads file containing function that retrieves REST token
 rest_uname = FALSE;
 rest_pw = FALSE;
-source(paste(fxn_locations,"auth.private", sep = ""));         #load rest username and password, contained in rest.private file
+source(paste(fxn_vahydro,"auth.private", sep = "/"));         #load rest username and password, contained in rest.private file
 token <- rest_token(site, token, rest_uname, rest_pw);
 
 #_________________________________________________________
