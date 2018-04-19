@@ -2,3 +2,5 @@
 tempfile
 *.log
 *.Rhistory
+*.out
+*.docx
