@@ -1,6 +1,0 @@
-fxn_locations <- "C:\\usr\\local\\home\\git\\r-dh-ecohydro\\";
-save_directory <- "C:\\Workspace\\tmp\\";
-fxn_vahydro <- "C:\\usr\\local\\home\\git\\r-dh-ecohydro\\Analysis\\fn_vahydro-2.0\\" 
-habitat_files <- "C:\\Users\\nrf46657\\Desktop\\VAHydro Development\\GitHub\\r-dh-ecohydro\\Analysis\\Habitat\\"   
-# note that it seems that unix style paths work OK in RStudio on windows?
-auth_rest <- '/usr/local/home/git/r-dh-ecohydro/ELFGEN/internal'
