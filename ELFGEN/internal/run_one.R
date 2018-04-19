@@ -1,5 +1,5 @@
 rm(list = ls())  #clear variables
-options(timeout=240); # set timeout to twice default level to avoid abort due to high traffic
+options(timeout=2400); # set timeout to twice default level to avoid abort due to high traffic
 
 library(quantreg);
 library(ggplot2);
@@ -55,8 +55,8 @@ inputs <- list(
 ##### Data Acquisition #####
 #retrieve raw data
 mydata <- vahydro_fe_data(
-  '0208020104', "erom_q0001e_mean", "aqbio_nt_total", 
-  'watershed',  "nhd_huc10", "species"
+  'usa_state_virginia', "erom_q0001e_mean", "aqbio_nt_total", 
+  'landunit',  "usa_state", "species"
 );
 data <- elf_cleandata(mydata, inputs);
 
@@ -87,8 +87,8 @@ inputs$ghi <- max(mydata$x_value);
 elf_pw_it (
   inputs, data, inputs$x_metric, 
   inputs$y_metric, ws_ftype_code = NULL, 
-  '020802', '020802', 
-  '020802', token, 
+  'usa_state_virginia', 'usa_state_virginia', 
+  'usa_state_virginia', token, 
   min(data$tstime), max(data$tstime)
 )
 # add new function
