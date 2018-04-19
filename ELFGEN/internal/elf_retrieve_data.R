@@ -172,7 +172,7 @@ for (k in offset_y_metric:length(y_metric)) {
                                 plt <- elf_pw_it_RS_IFIM (inputs, data, x_metric_code, y_metric_code, ws_ftype_code, Feature.Name_code, Hydroid_code, search_code, token, startdate, enddate)}
       
       #print(plt)
-      return(plt)
+      #return(plt)
         } #closes watershed for loop  
       } #closes x_metric for loop
     } #closes y_metric for loop

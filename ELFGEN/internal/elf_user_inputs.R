@@ -6,8 +6,8 @@ site <- "http://deq1.bse.vt.edu/d.dh"    #Specify the site of interest, either d
 #----------------------------------------------
 
 #----Change Basepath here to point to your global config file:
-#basepath='/var/www/R';
-basepath='C:\\Users\\nrf46657\\Desktop\\VAHydro Development\\GitHub\\r-dh-ecohydro\\';
+basepath='/var/www/R';
+#basepath='C:\\Users\\nrf46657\\Desktop\\VAHydro Development\\GitHub\\r-dh-ecohydro\\';
 # set your local directory paths in config.local.private located in filepath above
 # this file will NOT be sent to git, so it should persist
 # so, edit config.local.private once and you should be good to go
@@ -66,8 +66,8 @@ inputs <- list(
     'ecoregion_iv',
     'ecoiii_huc6'
   ),#this can be used to process by multiple region types at once 
-  ws_ftype = c('nhd_huc8'),		     #Options: state, hwi_region, nhd_huc8, nhd_huc6, ecoregion_iii, ecoregion_iv, ecoiii_huc6
-  target_hydrocode = 'nhd_huc8_02070011',
+  ws_ftype = c('nhd_huc6'),		     #Options: state, hwi_region, nhd_huc8, nhd_huc6, ecoregion_iii, ecoregion_iv, ecoiii_huc6
+  target_hydrocode = '',
   #target_hydrocode = atl_new, 
   quantile = .80,                  #Specify the quantile to use for quantile regresion plots 
   xaxis_thresh = 15000,            #Leave at 15000 so all plots have idential axis limits 
@@ -86,7 +86,7 @@ inputs <- list(
                                    #   maj_species...........majority species (Benthics only)
   
   quantreg = "YES",   #Plot using quantile regression method (YES or NO)
-  pw_it = "YES",      #Plot using breakpoint determined by piecewise iterative function (YES or NO)
+  pw_it = "NO",      #Plot using breakpoint determined by piecewise iterative function (YES or NO)
   ymax = "NO",       #Plot using breakpoint at x-value corresponding to max y-value (YES or NO)
   twopoint = "NO",   #Plot using basic two-point ELF method (YES or NO)
   pw_it_RS = "NO",   #Plot using PWIT *with the regression to the right of the breakpoint included (YES or NO)
