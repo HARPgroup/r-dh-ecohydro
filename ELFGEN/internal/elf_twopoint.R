@@ -9,6 +9,8 @@ library(scales);
 
 elf_twopoint <- function(inputs, data, x_metric_code, y_metric_code, ws_ftype_code, Feature.Name_code, Hydroid_code, search_code, token, startdate, enddate){
  
+  a = FALSE
+  
   #Load inputs 
   x_metric <- x_metric_code
   y_metric <- y_metric_code
@@ -121,8 +123,10 @@ elf_twopoint <- function(inputs, data, x_metric_code, y_metric_code, ws_ftype_co
       yaxis_title <- paste(biometric_title);
       
       print (paste("Plotting ELF"));
+      
+      my.plot <- function() {
       # START - plotting function
-      ggplot()+
+      result <- ggplot()+
         ylim(0,yaxis_thresh)+
         geom_point(data = data, aes(x=x_value, y=y_value,colour="blue"))+
         geom_smooth(data = twopt, method = "lm", se = FALSE, aes(x=V1,y=V2,colour="red"))+
@@ -144,6 +148,10 @@ elf_twopoint <- function(inputs, data, x_metric_code, y_metric_code, ws_ftype_co
           shape=c(16,NA)),
           label.position = "right")
         ); 
+      }
+      
+      a <- my.plot()
+      print(class(a)) 
       
       # END plotting function
       filename <- paste(adminid,"elf.png", sep="_")
@@ -180,5 +188,5 @@ elf_twopoint <- function(inputs, data, x_metric_code, y_metric_code, ws_ftype_co
   } else { 
     print(paste("... Skipping (xmin == xmin.ymax for ", search_code,")", sep=''));
   }
-  
+  return(a)
 } #close function

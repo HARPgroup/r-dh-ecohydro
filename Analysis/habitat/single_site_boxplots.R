@@ -6,16 +6,20 @@ site <- "http://deq1.bse.vt.edu/d.dh"    #Specify the site of interest, either d
 #----------------------------------------------
 
 #----FOR RUNNING LOCALLY:
-basepath='D:\\Jkrstolic\\R\\deqEcoflows\\GitHub\\r-dh-ecohydro\\ELFGEN\\internal\\';
+
+#oldbasepath='D:\\Jkrstolic\\R\\deqEcoflows\\GitHub\\r-dh-ecohydro\\ELFGEN\\internal\\';
+#basepath='/var/www/R';
+basepath='C:/Users/nrf46657/Desktop/VAHydro Development/GitHub/r-dh-ecohydro/';
+
 source(paste(basepath,'config.local.private',sep='/'));
 
 #Load Functions               
 source(paste(fxn_locations,"elf_retrieve_data.R", sep = ""));  #loads function used to retrieve F:E data from VAHydro
 source(paste(habitat_files,'hab_ts_functions.R',sep='/')) #loads habtat timeseries functions
-source(paste(fxn_vahydro,"rest_functions.R", sep = ""));       #loads file containing function that retrieves REST token
+source(paste(hydro_tools,"VAHydro-2.0/rest_functions.R", sep = "/"));       #loads file containing function that retrieves REST token
 rest_uname = FALSE;
 rest_pw = FALSE;
-source(paste(fxn_locations,"rest.private", sep = ""));         #load rest username and password, contained in rest.private file
+source(paste(hydro_tools,"auth.private", sep = "/"));#load rest username and password, contained in auth.private file
 token <- rest_token(site, token, rest_uname, rest_pw);
 
 #_________________________________________________________

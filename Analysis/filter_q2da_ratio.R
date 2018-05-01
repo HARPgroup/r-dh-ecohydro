@@ -56,27 +56,9 @@ inputs <- list(
 #retrieve raw data
 mydata <- vahydro_fe_data(
   'usa_state_virginia', "erom_q0001e_mean", "aqbio_nt_total", 
-  'landunit',  "usa_state", "species"
+  'landunit',  "state", "species"
 );
 data <- elf_cleandata(mydata, inputs);
-
-#perform quantile regression calculation and plot 
-elf_quantreg(
- inputs, data, x_metric_code = inputs$x_metric, 
- y_metric_code = inputs$y_metric, 
- ws_ftype_code = NULL, 
- Feature.Name_code = 'Roanoke ELF', 
- Hydroid_code = NULL, 
- search_code = NULL, token, 
- min(data$tstime), max(data$tstime)
-)
-plot(log(data$x_value), data$y_value)
-reg <- lm(y_value~log(x_value),data)
-abline(lm(y_value~log(x_value),data))
-lines(log(data$x_value[order(data$x_value)]), loess(y_value~log(x_value),data)$fitted[order(data$x_value)],col="blue",lwd=3)
-lines(table$x[order(table$x)],(loess(as.character(pct_chg_10) ~ x,data=table))$fitted[order(table$x)],col="blue",lwd=3)
-
-summary(reg)
 
 #for setting ghi = max x_value
 inputs$ghi <- max(mydata$x_value);
@@ -87,10 +69,18 @@ inputs$ghi <- max(mydata$x_value);
 elf_pw_it (
   inputs, data, inputs$x_metric, 
   inputs$y_metric, ws_ftype_code = NULL, 
-  'usa_state_virginia', 'usa_state_virginia', 
-  'usa_state_virginia', token, 
+  'usa_state_virginia_qda_lt1000', 'usa_state_virginia_qda_lt1000', 
+  'usa_state_virginia_qda_lt1000', token, 
   min(data$tstime), max(data$tstime)
 )
-# add new function
-# plot_elf_pwit()
-# add new function store_elf_pwit() (if SEND_TO_REST = TRUE)
+
+# Now, filter out those that have da : q ratio > 10
+
+data <- subset(data, ratio <= 10);
+elf_pw_it (
+  inputs, data, inputs$x_metric, 
+  inputs$y_metric, ws_ftype_code = NULL, 
+  'usa_state_virginia_qda_lt10', 'usa_state_virginia_qda_lt10', 
+  'usa_state_virginia_qda_lt10', token, 
+  min(data$tstime), max(data$tstime)
+)

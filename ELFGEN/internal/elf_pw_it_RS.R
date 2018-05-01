@@ -9,6 +9,8 @@ library(scales);
 
 elf_pw_it_RS <- function(inputs, data, x_metric_code, y_metric_code, ws_ftype_code, Feature.Name_code, Hydroid_code, search_code, token, startdate, enddate){
   
+  a = FALSE
+  
   #Load inputs
   x_metric <- x_metric_code
   y_metric <- y_metric_code
@@ -223,8 +225,10 @@ elf_pw_it_RS <- function(inputs, data, x_metric_code, y_metric_code, ws_ftype_co
       EDAS_lower_legend <- paste("Data Subset (Lower ",(100-((1 - quantile)*100)),"%)",sep="");
       
       print (paste("Plotting ELF"));
+      
+      my.plot <- function() {
       # START - plotting function
-      plt <- ggplot(data, aes(x=x_value,y=y_value)) + ylim(0,yaxis_thresh) + 
+        result <- ggplot(data, aes(x=x_value,y=y_value)) + ylim(0,yaxis_thresh) + 
         
         #Full Dataset (Gray Points)
         geom_point(data = full_dataset,aes(colour="aliceblue")) +
@@ -271,6 +275,10 @@ elf_pw_it_RS <- function(inputs, data, x_metric_code, y_metric_code, ws_ftype_co
             label.position = "right"
           )
         ); 
+      }
+      
+      a <- my.plot()
+      print(class(a)) 
       
       # END plotting function
       filename <- paste(adminid,"elf.png", sep="_")
@@ -331,5 +339,5 @@ elf_pw_it_RS <- function(inputs, data, x_metric_code, y_metric_code, ws_ftype_co
   } else {
     print(paste("... Skipping (No breaks are found using this piece-wise method in ", search_code,")", sep=''));
   }
-  
+  return(a)
 } #close function

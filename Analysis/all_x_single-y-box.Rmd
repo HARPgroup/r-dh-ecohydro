@@ -5,7 +5,7 @@ output: word_document
 
 ```{r, echo=FALSE}
 # install.packages('gdata')
-options(timeout=480);
+options(timeout=2000);
 library('gdata')
 source("/var/www/R/config.local.private");
 source(paste(fxn_locations,"query_elf_statistics.R", sep = "/")); 
@@ -28,7 +28,7 @@ plot_monthly <- function (data, subname = 'all', metric = "out_rsq_adj") {
   data.nov <- subset(data, in_xvar == 'erom_q0001e_nov');
   data.dec <- subset(data, in_xvar == 'erom_q0001e_dec');
   n = c('DA', 'Mean', 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December')
-  title <- paste("R^2 of upper ", 100.*(1.0 - quantile), subname, "% for \n", metric, " = f(DA), f(Qmean), f(Qjan),..., f(Qdec) for ", ftype);
+  title <- paste(ftype, " Q=", 100.*(1.0 - quantile), subname, "% for \n", metric, " = f(DA), Qmean,.., Qdec");
   if (length(data.da$s_adminid) > 1) {
     ns <- cbind(
        'DA' = length(data.da[,metric]), 
@@ -73,14 +73,16 @@ plot_monthly <- function (data, subname = 'all', metric = "out_rsq_adj") {
 }
 
 
-bundle <- 'ecoregion';
-ftype <- 'ecoregion_iii';
-metric <- 'aqbio_nt_total'; # aqbio_nt_total, aqbio_nt_cent, aqbio_nt_darter, aqbio_nt_benins
+bundle <- 'watershed'; # ecoregion, landunit
+ftype <- 'nhd_huc8'; # ecoregion_iii
+metric <- 'aqbio_nt_benins'; # aqbio_nt_total, aqbio_nt_cent, aqbio_nt_darter, aqbio_nt_benins
 q_ftype <- "fe_quantreg";
 analysis_timespan = "full";
 sampres = "species";
 selected <- 'all'; # all or hydrocode
 quantile <- 0.8;
+pmax = 0.1;
+Rmin = 0.5;
 stat_quantreg_glo <- 0; 
 stat_quantreg_ghi <- 530; 
 # ftype = fe_quantreg, fe_quantreg_pwit, fe_quantreg_ymax, fe_twopoint
@@ -89,6 +91,7 @@ stat_quantreg_ghi <- 530;
 save_directory = paste(file_directory,"/",sep='');
 rawdata = fn_dh_elfstats (
     ftype = q_ftype,
+    site = base_url,
     analysis_timespan = analysis_timespan,
     yvar = metric,
     sampres = sampres, # e.g. species, e.
@@ -98,6 +101,8 @@ rawdata = fn_dh_elfstats (
     stat_quantreg_glo = stat_quantreg_glo, # use 1 for pwit, 0 for quantreg
     dataset_tag = 'bpj-530'
 );
+
+
 nsall <- cbind(
  'DA' = nrow(subset(rawdata, in_xvar == 'nhdp_drainage_sqmi')),
  'Qmean' = nrow(subset(rawdata, in_xvar == 'erom_q0001e_mean')),
@@ -119,8 +124,8 @@ nsall <- cbind(
 data = rawdata; # make a copy to start so we can compare raw to filtered if desired
 #data = subset(data, out_n >= 20)
 #data = subset(data, out_m > 0)
-data = subset(data, out_p < 0.01); # 
-data = subset(data, out_rsq_adj > 0)
+data = subset(data, out_p < pmax); # 
+data = subset(data, out_rsq_adj > Rmin)
 #data = subset(data, isheadwater > 0)
 # render it
 plot_monthly(data, '( p<0.01, R>0 )', metric = 'out_rsq_adj');
@@ -130,28 +135,8 @@ plot_monthly(data, '( p<0.01, R>0 )', metric = 'out_m');
 data = rawdata; # make a copy to start so we can compare raw to filtered if desired
 #data = subset(data, out_n >= 20)
 #data = subset(data, out_m > 0)
-data = subset(data, out_p < 0.01); # 
-data = subset(data, out_rsq_adj > 0)
-data = subset(data, isheadwater > 0)
-plot_monthly(data, '( headwaters, p<0.01, R>0 )');
-
-
-# Monthly m
-data = rawdata; # make a copy to start so we can compare raw to filtered if desired
-#data = subset(data, out_n >= 20)
-#data = subset(data, out_m > 0)
-data = subset(data, out_p < 0.01); # 
-data = subset(data, out_rsq_adj > 0)
-#data = subset(data, isheadwater > 0)
-# render it
-plot_monthly(data, '( p<0.01, R>0 )');
-
-# filter our data?
-data = rawdata; # make a copy to start so we can compare raw to filtered if desired
-#data = subset(data, out_n >= 20)
-#data = subset(data, out_m > 0)
-data = subset(data, out_p < 0.01); # 
-data = subset(data, out_rsq_adj > 0)
+data = subset(data, out_p < pmax); # 
+data = subset(data, out_rsq_adj > Rmin)
 data = subset(data, isheadwater > 0)
 plot_monthly(data, '( headwaters, p<0.01, R>0 )');
 

@@ -9,6 +9,8 @@ library(scales);
 
 elf_quantreg <- function(inputs, data, x_metric_code, y_metric_code, ws_ftype_code, Feature.Name_code, Hydroid_code, search_code, token, startdate, enddate){
 
+  a = FALSE
+  
   #Load inputs
   x_metric <- x_metric_code
   y_metric <- y_metric_code
@@ -156,8 +158,10 @@ print("Storing quantile regression.");
             EDAS_lower_legend <- paste("Data Subset (Lower ",(100-((1 - quantile)*100)),"%)",sep="");
 
 print (paste("Plotting ELF"));
+            
+            my.plot <- function() {
             # START - plotting function
-            plt <- ggplot(data, aes(x=x_value,y=y_value)) + ylim(0,yaxis_thresh) + 
+            result <- ggplot(data, aes(x=x_value,y=y_value)) + ylim(0,yaxis_thresh) + 
               geom_point(data = full_dataset,aes(colour="aliceblue")) +
               geom_point(data = data,aes(colour="blue")) + 
               stat_smooth(method = "lm",fullrange=FALSE,level = .95, data = upper.quant, aes(x=x_value,y=y_value,color = "red")) +
@@ -192,6 +196,10 @@ print (paste("Plotting ELF"));
                   label.position = "right"
                 )
               ); 
+            }
+            
+            a <- my.plot()
+            print(class(a)) 
             
             # END plotting function
               filename <- paste(adminid,"elf.png", sep="_")
@@ -236,5 +244,5 @@ print (paste("Plotting ELF"));
         } else {
           print(paste("... Skipping (fewer than 4 datapoints to the left of x-axis inflection point in ", search_code,")", sep=''));
         }   
-        
+  return(a)
 } #close function

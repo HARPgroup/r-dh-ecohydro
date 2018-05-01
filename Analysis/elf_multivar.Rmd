@@ -7,23 +7,8 @@ library(quantreg);
 library(knitr)
 # install.packages('pander')
 library(pander)
+options(timeout=1600);
 
-fe_data <- function (
-  bundle = 'watershed', 
-  ftype = 'ecoregion_iii',
-  metric = 'aqbio_nt_benins',
-  selected = 'all',
-  quantile = 0.8,
-  DA.thresh = 500,
-  site = 'd.dh') {
-  # load data for select ecoregion
-  uri <- paste("http://deq1.bse.vt.edu", site, "multivariate/max", metric, bundle, ftype, selected, sep='/') 
-  print(paste('uri: ', uri, sep = '')) 
-  data <- read.csv(uri, header = TRUE, sep = ",")
-  #makes sure all metric values are numeric and not factorial (fixes error with ni, total)
-  data$metric_value <- as.numeric(data$metric_value)
-  return(data )
-}
 ```
 
 This is a comparison of linear models for ecology = f(log(DA)), ecology = f(log(DA), log(Qmean)), and ecology = f(log(DA), log(Qmonths stepwise)).
@@ -46,66 +31,66 @@ exc <- TRUE; # exclude stations with DA > 1000 * mean annual flow
 * Exclude Sites With DA > 1,000*Q: `r exc`
 
 ```{r include = FALSE, warning = FALSE}
-data <- fe_data(bundle, ftype, metric, selected, quantile, DA.thresh, site);
-if (exc) {
-  dme <- subset(data, da_sqkm >= .001 & da_sqkm < DA.thresh & da_sqkm < (1000 * annual));
-} else {
-  dme <- subset(data, da_sqkm >= .001 & da_sqkm < DA.thresh);
-}
+data <- vahydro_fe_data(selected,'erom_q0001e_mean',metric,'watershed','nhd_huc8','species', data);
+dme <- elf_cleandata(data, inputs);
+dme <- subset(dme, dme$drainage_area_sqmi < 350.0)
+dme$qnorm <- dme$qmean_annual / dme$drainage_area_sqmi;
+
+  
 #calculate the quantile regression
-up90 <- rq(metric_value ~ log(annual),data = dme, tau = quantile)
+up90 <- rq(y_value ~ log(qmean_annual),data = dme, tau = quantile)
 #find the values of upper quantile values of y for each value of DA based on the quantile regression
-newy <- c(log(dme$annual)*coef(up90)[2]+coef(up90)[1])
+newy <- c(log(dme$qmean_annual)*coef(up90)[2]+coef(up90)[1])
 #create a subset of the data that only includes the stations with NT values higher than the y values just calculated
-upper.quant <- subset(dme, dme$metric_value > newy)
-fit1 <- lm(metric_value ~ log(da_sqkm), data = upper.quant)
+upper.quant <- subset(dme, dme$y_value > newy)
+fit1 <- lm(y_value ~ log(drainage_area_sqmi), data = upper.quant)
 summary(fit1);
 
-fit2 <- lm(metric_value ~ log(da_sqkm) + log(annual), data = upper.quant)
+fit2 <- lm(y_value ~ log(drainage_area_sqmi) + qnorm, data = upper.quant)
 summary(fit2);
 
-fit_annual <- lm(metric_value ~ log(annual), data = upper.quant)
-summary(fit_annual);
+fit_qmean_annual <- lm(y_value ~ log(qmean_annual), data = upper.quant)
+summary(fit_qmean_annual);
 
-fit_jan <- lm(metric_value ~ log(jan), data = upper.quant)
+fit_jan <- lm(y_value ~ log(jan), data = upper.quant)
 summary(fit_jan);
 
-fit_feb <- lm(metric_value ~ log(feb), data = upper.quant)
+fit_feb <- lm(y_value ~ log(feb), data = upper.quant)
 summary(fit_feb);
 
-fit_mar <- lm(metric_value ~ log(mar), data = upper.quant)
+fit_mar <- lm(y_value ~ log(mar), data = upper.quant)
 summary(fit_mar);
 
-fit_apr<- lm(metric_value ~ log(apr), data = upper.quant)
+fit_apr<- lm(y_value ~ log(apr), data = upper.quant)
 summary(fit_apr);
 
-fit_may <- lm(metric_value ~ log(may), data = upper.quant)
+fit_may <- lm(y_value ~ log(may), data = upper.quant)
 summary(fit_may);
 
-fit_jun <- lm(metric_value ~ log(jun), data = upper.quant)
+fit_jun <- lm(y_value ~ log(jun), data = upper.quant)
 summary(fit_jun);
 
-fit_jul <- lm(metric_value ~ log(jul), data = upper.quant)
+fit_jul <- lm(y_value ~ log(jul), data = upper.quant)
 summary(fit_jul);
 
-fit_aug <- lm(metric_value ~ log(aug), data = upper.quant)
+fit_aug <- lm(y_value ~ log(aug), data = upper.quant)
 summary(fit_aug);
 
-fit_sep <- lm(metric_value ~ log(sep), data = upper.quant)
+fit_sep <- lm(y_value ~ log(sep), data = upper.quant)
 summary(fit_sep);
 
-fit_oct <- lm(metric_value ~ log(oct), data = upper.quant)
+fit_oct <- lm(y_value ~ log(oct), data = upper.quant)
 summary(fit_oct);
 
-fit_nov <- lm(metric_value ~ log(nov), data = upper.quant)
+fit_nov <- lm(y_value ~ log(nov), data = upper.quant)
 summary(fit_nov);
 
-fit_dec <- lm(metric_value ~ log(dec), data = upper.quant)
+fit_dec <- lm(y_value ~ log(dec), data = upper.quant)
 summary(fit_dec);
 
 
 library(MASS)
-fit <- lm(metric_value ~ log(da_sqkm) + log(jan) + log(feb) + 
+fit <- lm(y_value ~ log(drainage_area_sqmi) + log(jan) + log(feb) + 
             log(mar) + log(apr) + log(may)
           + log(jun) + log(jul) + log(aug) 
           + log(sep) + log(oct) + log(nov) + log(dec)
@@ -122,20 +107,20 @@ step$anova # display results
 # or the output of anova, so I use pander here
 #kable(anova(fit1), digits=2);
 pander(summary(fit1), digits=2);
-plot(upper.quant$metric_value, fitted(fit1), ylab=fit1$call[2])
+plot(upper.quant$y_value, fitted(fit1), ylab=fit1$call[2])
 pander(summary(fit2), digits=2);
-plot(upper.quant$metric_value, fitted(fit2))
-pander(summary(fit_annual), digits=2);
-plot(upper.quant$metric_value, fitted(fit_annual), ylab=fit2$call[2])
+plot(upper.quant$y_value, fitted(fit2))
+pander(summary(fit_qmean_annual), digits=2);
+plot(upper.quant$y_value, fitted(fit_qmean_annual), ylab=fit2$call[2])
 #kable(anova(step), digits=2);
 pander(summary(step), digits=2);
-plot(upper.quant$metric_value, fitted(step), ylab=step$call[2])
+plot(upper.quant$y_value, fitted(step), ylab=step$call[2])
 pander(summary(step), digits=2);
 
 mofit = list(fit_jan, fit_feb, fit_mar, fit_apr, fit_may, fit_jun, fit_jul, fit_aug, fit_sep, fit_oct, fit_nov, fit_dec)
 for (moreg in mofit) {
   pander(summary(moreg), digits=2);
-  plot(upper.quant$metric_value, fitted(moreg), ylab = moreg$call[2])
+  plot(upper.quant$y_value, fitted(moreg), ylab = moreg$call[2])
 }
 
 # GIVES GOOD SCREEN POUTPUT WITH P AND r2 BUT CRUDDY wORD OUTPUT

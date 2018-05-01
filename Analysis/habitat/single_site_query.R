@@ -6,13 +6,15 @@ site <- "http://deq1.bse.vt.edu/d.dh"    #Specify the site of interest, either d
 #----------------------------------------------
 
 #----FOR RUNNING LOCALLY:
-basepath='D:\\Jkrstolic\\R\\deqEcoflows\\GitHub\\r-dh-ecohydro\\ELFGEN\\internal\\';
+#oldbasepath='D:\\Jkrstolic\\R\\deqEcoflows\\GitHub\\r-dh-ecohydro\\ELFGEN\\internal\\';
+
+basepath='C:/Users/nrf46657/Desktop/VAHydro Development/GitHub/r-dh-ecohydro/';
 source(paste(basepath,'config.local.private',sep='/'));
 
-source(paste(fxn_vahydro,"rest_functions.R", sep = "")); 
+source(paste(hydro_tools,"VAHydro-2.0/rest_functions.R", sep = "/")); 
 rest_uname = FALSE;
 rest_pw = FALSE;
-source(paste(fxn_locations,"rest.private", sep = ""));         #load rest username and password, contained in rest.private file
+source(paste(hydro_tools,"auth.private", sep = "/"));#load rest username and password, contained in auth.private file
 token <- rest_token(site, token, rest_uname, rest_pw);
 
 #-------------------------------------------------------------------------------
