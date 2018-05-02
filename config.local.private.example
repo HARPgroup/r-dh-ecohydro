@@ -2,3 +2,4 @@ fxn_locations <- "C:\\Users\\nrf46657\\Desktop\\VAHydro Development\\GitHub\\r-d
 save_directory <- "C:\\Users\\nrf46657\\Desktop\\VAHydro Development\\GitHub\\plots";
 hydro_tools <- "C:/Users/nrf46657/Desktop/VAHydro Development/GitHub/hydro-tools" 
 habitat_files <- "C:\\Users\\nrf46657\\Desktop\\VAHydro Development\\GitHub\\r-dh-ecohydro\\Analysis\\Habitat\\"  
+base_directory <- "/usr/local/home/git/r-dh-ecohydro"
