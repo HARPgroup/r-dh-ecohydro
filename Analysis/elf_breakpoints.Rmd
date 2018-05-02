@@ -5,29 +5,49 @@ output: word_document
 
 ```{r include = FALSE, warning = FALSE}
 library(pander)
+base_url <- 'http://deq2.bse.vt.edu/d.dh'
+options(timeout=2000);
+library('gdata')
+source("/var/www/R/config.local.private");
+source(paste(base_directory,"Analysis/query_elf_statistics.R", sep = "/")); 
 bundle <- 'watershed';
 ftype <- 'nhd_huc8';
-metric <- 'aqbio_nt_benins';
+metric <- 'aqbio_nt_total';
 selected <- 'all';
 quantile <- 0.8;
-qftype <- 'fe_quantreg_pwit'; # fe_quantreg, fe_quantreg_pwit, fe_quantreg_ymax, fe_twopoint
+analysis_timespan = "full";
+sampres = "species";
+dataset_tag = 'bpj-530'; # bpj-530, bpj-rcc, 'HUC8_quantregwHuc6bp' (huc 6)
+q_ftype <- 'fe_quantreg_ymax'; # fe_quantreg, fe_quantreg_pwit, fe_quantreg_ymax, fe_twopoint
 pmax  <- 0.15;
-uri <- paste("http://deq1.bse.vt.edu/d.dh/fe-export-regparms", bundle, ftype, selected, metric, quantile, pmax, qftype, sep='/');
-data = read.csv(uri, header = TRUE, sep = "\t");
-data.da <- subset(data, x == 'nhdp_drainage_sqkm');
-data.mean <- subset(data, x == 'erom_q0001e_mean');
-data.jan <- subset(data, x == 'erom_q0001e_jan');
-data.feb <- subset(data, x == 'erom_q0001e_feb');
-data.mar <- subset(data, x == 'erom_q0001e_mar');
-data.apr <- subset(data, x == 'erom_q0001e_apr');
-data.may <- subset(data, x == 'erom_q0001e_may');
-data.jun <- subset(data, x == 'erom_q0001e_june');
-data.jul <- subset(data, x == 'erom_q0001e_july');
-data.aug <- subset(data, x == 'erom_q0001e_aug');
-data.sep <- subset(data, x == 'erom_q0001e_sept');
-data.oct <- subset(data, x == 'erom_q0001e_oct');
-data.nov <- subset(data, x == 'erom_q0001e_nov');
-data.dec <- subset(data, x == 'erom_q0001e_dec');
+
+data = fn_dh_elfstats (
+    ftype = q_ftype,
+    site = base_url,
+    analysis_timespan = analysis_timespan,
+    yvar = metric,
+    sampres = sampres, # e.g. species, e.
+    stat_quantreg_qu = quantile, # upper quantile to use
+    feature_ftype = ftype,
+    #stat_quantreg_ghi = stat_quantreg_ghi, #
+    #stat_quantreg_glo = stat_quantreg_glo, # use 1 for pwit, 0 for quantreg
+    dataset_tag = dataset_tag
+);
+
+data.da <- subset(data, in_xvar == 'nhdp_drainage_sqmi');
+data.mean <- subset(data, in_xvar == 'erom_q0001e_mean');
+data.jan <- subset(data, in_xvar == 'erom_q0001e_jan');
+data.feb <- subset(data, in_xvar == 'erom_q0001e_feb');
+data.mar <- subset(data, in_xvar == 'erom_q0001e_mar');
+data.apr <- subset(data, in_xvar == 'erom_q0001e_apr');
+data.may <- subset(data, in_xvar == 'erom_q0001e_may');
+data.jun <- subset(data, in_xvar == 'erom_q0001e_june');
+data.jul <- subset(data, in_xvar == 'erom_q0001e_july');
+data.aug <- subset(data, in_xvar == 'erom_q0001e_aug');
+data.sep <- subset(data, in_xvar == 'erom_q0001e_sept');
+data.oct <- subset(data, in_xvar == 'erom_q0001e_oct');
+data.nov <- subset(data, in_xvar == 'erom_q0001e_nov');
+data.dec <- subset(data, in_xvar == 'erom_q0001e_dec');
 n = c('DA', 'Mean', 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December')
 title <- paste("R^2 of upper ", 100.*(1.0 - quantile), "% for \n", metric, " = f(DA), f(Qmean), f(Qjan),..., f(Qdec) for ", ftype);
 ```
@@ -39,9 +59,9 @@ title <- paste("R^2 of upper ", 100.*(1.0 - quantile), "% for \n", metric, " = f
 
 ```{r }
 boxplot(
-  data.da$Rsq, data.mean$Rsq, data.jan$Rsq, data.feb$Rsq, data.mar$Rsq, 
-  data.apr$Rsq, data.may$Rsq, data.jun$Rsq, data.jul$Rsq, data.aug$Rsq, 
-  data.sep$Rsq, data.oct$Rsq, data.nov$Rsq, data.dec$Rsq,
+  data.da$out_rsq_adj, data.mean$out_rsq_adj, data.jan$out_rsq_adj, data.feb$out_rsq_adj, data.mar$out_rsq_adj, 
+  data.apr$out_rsq_adj, data.may$out_rsq_adj, data.jun$out_rsq_adj, data.jul$out_rsq_adj, data.aug$out_rsq_adj, 
+  data.sep$out_rsq_adj, data.oct$out_rsq_adj, data.nov$out_rsq_adj, data.dec$out_rsq_adj,
   names = n, 
   main = title
 );
@@ -51,19 +71,19 @@ boxplot(
 ```{r }
 title <- paste("Breakpoint summary for \n", metric, " = f(DA), f(Qmean), f(Qjan),..., f(Qdec) for ", ftype);
 boxplot(
-  0.386102 * data.da$bkpt, data.mean$bkpt, data.jan$bkpt, data.feb$bkpt, data.mar$bkpt, 
-  data.apr$bkpt, data.may$bkpt, data.jun$bkpt, data.jul$bkpt, data.aug$bkpt, 
-  data.sep$bkpt, data.oct$bkpt, data.nov$bkpt, data.dec$bkpt,
+  data.da$out_breakpoint, data.mean$out_breakpoint, data.jan$out_breakpoint, data.feb$out_breakpoint, data.mar$out_breakpoint, 
+  data.apr$out_breakpoint, data.may$out_breakpoint, data.jun$out_breakpoint, data.jul$out_breakpoint, data.aug$out_breakpoint, 
+  data.sep$out_breakpoint, data.oct$out_breakpoint, data.nov$out_breakpoint, data.dec$out_breakpoint,
   names = n, 
   main = title
 );
 z <- cbind(
-  as.matrix(summary(0.386102 * data.da$bkpt)), 
-  as.matrix(summary(data.mean$bkpt)), 
-  as.matrix(summary(data.jan$bkpt)), 
-  as.matrix(summary(data.may$bkpt)), 
-  as.matrix(summary(data.aug$bkpt)), 
-  as.matrix(summary(data.dec$bkpt))
+  as.matrix(summary(data.da$out_breakpoint)), 
+  as.matrix(summary(data.mean$out_breakpoint)), 
+  as.matrix(summary(data.jan$out_breakpoint)), 
+  as.matrix(summary(data.may$out_breakpoint)), 
+  as.matrix(summary(data.aug$out_breakpoint)), 
+  as.matrix(summary(data.dec$out_breakpoint))
 )
 colnames(z) <- c('DA', 'Mean', 'January', 'April', 'August', 'December')
 pander(z)
