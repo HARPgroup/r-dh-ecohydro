@@ -20,29 +20,59 @@ elf_pct_chg_hab <- function(pct_inputs = list()){
   pct_list <- c(5,10,20,30,40,50)
   slope_table <- data.frame(xvalues=xvalues,
                             stringsAsFactors=FALSE)
-  
-  #i <- 1
+  #added by Jen with a few new vars
   for (i in 1:length(pct_list)) {
     pct <- (its -((pct_list[i]/100)*its))
     sb <- (ruslope*log(pct))+ruint
     pct_chgb <- (((sa-sb)/sa)*100)
     pct_chgs = c(pct_chgb)
+    taxaLoss <- (sa-sb)
     slope_table_i = data.frame(pct_chgs)
+    taxaLoss_table_i = data.frame(taxaLoss)
     names(slope_table_i) <- c(paste("pct_chg_",pct_list[i],sep=""))
-    slope_table <- cbind(slope_table, slope_table_i)
+    names(taxaLoss_table_i) <- c(paste("taxaloss_pct_chg",pct_list[i],sep=""))
+    slope_table <- cbind(slope_table, slope_table_i, taxaLoss_table_i)
   }
   
   slope_table_export <- slope_table
   names(slope_table_export)[1]<-x_metric
   slope_table_export <- data.frame(slope_table_export[1],
-                             sa,
-                             slope_table_export[2],
-                             slope_table_export[3],
-                             slope_table_export[4],
-                             slope_table_export[5],
-                             slope_table_export[6],
-                             slope_table_export[7]
+                                   sa,
+                                   slope_table_export[2],
+                                   slope_table_export[3],
+                                   slope_table_export[4],
+                                   slope_table_export[5],
+                                   slope_table_export[6],
+                                   slope_table_export[7],
+                                   slope_table_export[8],
+                                   slope_table_export[9],
+                                   slope_table_export[10],
+                                   slope_table_export[11],
+                                   slope_table_export[12],
+                                   slope_table_export[13]
   )
+  #i <- 1
+  # for (i in 1:length(pct_list)) {
+  #   pct <- (its -((pct_list[i]/100)*its))
+  #   sb <- (ruslope*log(pct))+ruint
+  #   pct_chgb <- (((sa-sb)/sa)*100)
+  #   pct_chgs = c(pct_chgb)
+  #   slope_table_i = data.frame(pct_chgs)
+  #   names(slope_table_i) <- c(paste("pct_chg_",pct_list[i],sep=""))
+  #   slope_table <- cbind(slope_table, slope_table_i)
+  # }
+  # 
+  # slope_table_export <- slope_table
+  # names(slope_table_export)[1]<-x_metric
+  # slope_table_export <- data.frame(slope_table_export[1],
+  #                            sa,
+  #                            slope_table_export[2],
+  #                            slope_table_export[3],
+  #                            slope_table_export[4],
+  #                            slope_table_export[5],
+  #                            slope_table_export[6],
+  #                            slope_table_export[7]
+  # )
   names(slope_table_export)[2]<-y_metric
   write.csv(slope_table_export, file = paste(save_directory,"\\pctchg_",search_code,"_",y_metric,".csv",sep=""))
   

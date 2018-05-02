@@ -5,11 +5,10 @@ options(timeout=240); # set timeout to twice default level to avoid abort due to
 site <- "http://deq1.bse.vt.edu/d.dh"    #Specify the site of interest, either d.bet OR d.dh
 #----------------------------------------------
 
-#old basepath='D:\\Jkrstolic\\R\\deqEcoflows\\GitHub\\r-dh-ecohydro\\ELFGEN\\internal\\';
+basepath='D:\\Jkrstolic\\R\\deqEcoflows\\GitHub\\r-dh-ecohydro\\';
 
 #----Change Basepath here to point to your global config file:
-basepath='/var/www/R';
-#basepath='C:\\Users\\nrf46657\\Desktop\\VAHydro Development\\GitHub\\r-dh-ecohydro\\';
+#basepath='/var/www/R';
 
 # set your local directory paths in config.local.private located in filepath above
 # this file will NOT be sent to git, so it should persist
@@ -60,7 +59,7 @@ inputs <- list(
                'aqbio_benthic_nt_total',
                'nhdp_drainage_sqmi'
               ), #this can be used to process by multiple biometrics at once 
-  y_metric = 'aqbio_nt_cent',	   #Biometric to be plotted on the y-axis, see "dh variable key" column for options: https://docs.google.com/spreadsheets/d/1PnxY4Rxfk9hkuaXy7tv8yl-mPyJuHdQhrOUWx_E1Y_w/edit#gid=0
+  y_metric = 'aqbio_nt_total',	   #Biometric to be plotted on the y-axis, see "dh variable key" column for options: https://docs.google.com/spreadsheets/d/1PnxY4Rxfk9hkuaXy7tv8yl-mPyJuHdQhrOUWx_E1Y_w/edit#gid=0
   not_ws_ftype = c(
     'state',
     'hwi_region',
@@ -74,7 +73,7 @@ inputs <- list(
   ),#this can be used to process by multiple region types at once 
 
   ws_ftype = c('nhd_huc6'),		     #Options: state, hwi_region, nhd_huc8, nhd_huc6, ecoregion_iii, ecoregion_iv, ecoiii_huc6
-  target_hydrocode = '',           #Leave blank to process all, individual examples: usa_state_virginia for all of VA, atl_non_coastal_plain_usgs,ohio_river_basin_nhdplus,nhd_huc8_05050001...
+  target_hydrocode = '0207000',           #Leave blank to process all, individual examples: usa_state_virginia for all of VA, atl_non_coastal_plain_usgs,ohio_river_basin_nhdplus,nhd_huc8_05050001...
   #target_hydrocode = atl_new, 
 
   quantile = .80,                  #Specify the quantile to use for quantile regresion plots 
@@ -94,16 +93,16 @@ inputs <- list(
                                    #   maj_fam...............majority family (Benthics only)
                                    #   maj_species...........majority species (Benthics only)
   
-  quantreg = "YES",   #Plot using quantile regression method (YES or NO)
+  quantreg = "NO",   #Plot using quantile regression method (YES or NO)
   pw_it = "YES",      #Plot using breakpoint determined by piecewise iterative function (YES or NO)
   ymax = 'NO',       #Plot using breakpoint at x-value corresponding to max y-value (YES or NO)
   twopoint = "NO",   #Plot using basic two-point ELF method (YES or NO)
   pw_it_RS = "NO",   #Plot using PWIT *with the regression to the right of the breakpoint included (YES or NO)
   pw_it_RS_IFIM = "NO",
-  glo = 1,   # PWIT Breakpoint lower guess (sqmi/cfs)
-  ghi = 530, # PWIT Breakpoint upper guess (sqmi/cfs) - also used as DA or MAF breakpoint for elf_quantreg method 
+  glo = 290,   # PWIT Breakpoint lower guess (sqmi/cfs)
+  ghi = 350, # PWIT Breakpoint upper guess (sqmi/cfs) - also used as DA or MAF breakpoint for elf_quantreg method 
   token = token,
-  dataset_tag = "small_ELFexamples"
+  dataset_tag = "TaxaLossJLR"
 )
 
 #------------------------------------------------------------------------------------------------

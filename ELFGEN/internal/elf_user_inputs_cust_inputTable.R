@@ -91,7 +91,7 @@ inputs <- list(
     #analysis_timespan = '1990-2000',#used to subset data on date range 
     analysis_timespan = 'full',      #used to plot for entire timespan 
     
-    send_to_rest = "YES",            #"YES" to push ELF statistic outputs to VAHydro
+    send_to_rest = "NO",            #"YES" to push ELF statistic outputs to VAHydro
     station_agg = "max",             #Specify aggregation to only use the "max" NT value for each station or "all" NT values
     #sampres = 'species',                  
     sampres = 'maj_fam_gen_spec',                  
