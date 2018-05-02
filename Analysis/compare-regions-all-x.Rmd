@@ -90,14 +90,14 @@ plot_monthly_count <- function (data, subname = 'all', xmetric = "out_rsq_adj", 
   } 
 }
 
-metric <- 'aqbio_nt_benins'; # aqbio_nt_total, aqbio_nt_cent, aqbio_nt_darter, aqbio_nt_benins
+metric <- 'aqbio_nt_darter'; # aqbio_nt_total, aqbio_nt_cent, aqbio_nt_darter, aqbio_nt_benins
 q_ftype <- "fe_quantreg";
 dataset_tag = 'bpj-530'; # bpj-530, bpj-rcc, 'HUC8_quantregwHuc6bp' (huc 6)
 analysis_timespan = "full";
 sampres = "species";
 selected <- 'all'; # all or hydrocode
 quantile <- 0.8;
-pmax = 1.01;
+pmax = 0.01;
 Rmin = -1.0;
 stat_quantreg_glo <- 0; 
 stat_quantreg_ghi <- 530; 

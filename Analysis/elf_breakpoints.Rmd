@@ -34,20 +34,21 @@ data = fn_dh_elfstats (
     dataset_tag = dataset_tag
 );
 
-data.da <- subset(data, in_xvar == 'nhdp_drainage_sqmi');
-data.mean <- subset(data, in_xvar == 'erom_q0001e_mean');
-data.jan <- subset(data, in_xvar == 'erom_q0001e_jan');
-data.feb <- subset(data, in_xvar == 'erom_q0001e_feb');
-data.mar <- subset(data, in_xvar == 'erom_q0001e_mar');
-data.apr <- subset(data, in_xvar == 'erom_q0001e_apr');
-data.may <- subset(data, in_xvar == 'erom_q0001e_may');
-data.jun <- subset(data, in_xvar == 'erom_q0001e_june');
-data.jul <- subset(data, in_xvar == 'erom_q0001e_july');
-data.aug <- subset(data, in_xvar == 'erom_q0001e_aug');
-data.sep <- subset(data, in_xvar == 'erom_q0001e_sept');
-data.oct <- subset(data, in_xvar == 'erom_q0001e_oct');
-data.nov <- subset(data, in_xvar == 'erom_q0001e_nov');
-data.dec <- subset(data, in_xvar == 'erom_q0001e_dec');
+data.da <- subset(data, in_xvar == 'nhdp_drainage_sqmi' & out_p <= 0.01);
+data.mean <- subset(data, in_xvar == 'erom_q0001e_mean' & out_p <= 0.01);
+data.mean <- subset(data, in_xvar == 'erom_q0001e_mean' & out_p <= 0.01);
+data.jan <- subset(data, in_xvar == 'erom_q0001e_jan' & out_p <= 0.01);
+data.feb <- subset(data, in_xvar == 'erom_q0001e_feb' & out_p <= 0.01);
+data.mar <- subset(data, in_xvar == 'erom_q0001e_mar' & out_p <= 0.01);
+data.apr <- subset(data, in_xvar == 'erom_q0001e_apr' & out_p <= 0.01);
+data.may <- subset(data, in_xvar == 'erom_q0001e_may' & out_p <= 0.01);
+data.jun <- subset(data, in_xvar == 'erom_q0001e_june' & out_p <= 0.01);
+data.jul <- subset(data, in_xvar == 'erom_q0001e_july' & out_p <= 0.01);
+data.aug <- subset(data, in_xvar == 'erom_q0001e_aug' & out_p <= 0.01);
+data.sep <- subset(data, in_xvar == 'erom_q0001e_sept' & out_p <= 0.01);
+data.oct <- subset(data, in_xvar == 'erom_q0001e_oct' & out_p <= 0.01);
+data.nov <- subset(data, in_xvar == 'erom_q0001e_nov' & out_p <= 0.01);
+data.dec <- subset(data, in_xvar == 'erom_q0001e_dec' & out_p <= 0.01);
 n = c('DA', 'Mean', 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December')
 title <- paste("R^2 of upper ", 100.*(1.0 - quantile), "% for \n", metric, " = f(DA), f(Qmean), f(Qjan),..., f(Qdec) for ", ftype);
 ```
