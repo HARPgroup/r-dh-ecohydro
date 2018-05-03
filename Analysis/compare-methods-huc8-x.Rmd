@@ -90,7 +90,7 @@ plot_monthly_count <- function (data, subname = 'all', xmetric = "out_rsq_adj", 
   } 
 }
 
-metric <- 'aqbio_nt_benins'; # aqbio_nt_total, aqbio_nt_cent, aqbio_nt_darter, aqbio_nt_benins
+metric <- 'aqbio_nt_total'; # aqbio_nt_total, aqbio_nt_cent, aqbio_nt_darter, aqbio_nt_benins
 q_ftype <- "fe_quantreg";
 dataset_tag = 'bpj-530'; # bpj-530, bpj-rcc, 'HUC8_quantregwHuc6bp' (huc 6)
 analysis_timespan = "full";
@@ -108,16 +108,10 @@ save_directory = paste(file_directory,"/",sep='');
 # bundle - ecoregion, landunit, watershed
 # ftype - ecoregion_iii, nhd_huc6, nhd_huc6=8, nhd_huc10
 batch <- data.frame(
-  bundle = 'watershed', ftype = 'nhd_huc6', dataset_tag = 'bpj-530', q_ftype = 'fe_quantreg')
+  bundle = 'watershed', ftype = 'nhd_huc8', dataset_tag = 'bpj-530', q_ftype = 'fe_quantreg')
 batch <- rbind(
   batch, data.frame(
-    bundle = 'ecoregion', ftype = 'ecoregion_iii', dataset_tag = 'bpj-530', q_ftype = 'fe_quantreg'))
-batch <- rbind(
-  batch, data.frame(
-    bundle = 'watershed', ftype = 'nhd_huc8', dataset_tag = 'bpj-530', q_ftype = 'fe_quantreg'))
-batch <- rbind(
-  batch, data.frame(
-    bundle = 'watershed', ftype = 'nhd_huc10', dataset_tag = 'bpj-530', q_ftype = 'fe_quantreg'))
+    bundle = 'ecoregion', ftype = 'nhd_huc8', dataset_tag = 'bpj-rcc', q_ftype = 'fe_quantreg'))
 
 for (row in 1:nrow(batch)) {
   bundle <- batch[row,]$bundle;
