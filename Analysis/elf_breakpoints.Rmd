@@ -5,11 +5,11 @@ output: word_document
 
 ```{r include = FALSE, warning = FALSE}
 library(pander)
-base_url <- 'http://deq2.bse.vt.edu/d.dh'
 options(timeout=2000);
 library('gdata')
 source("/var/www/R/config.local.private");
 source(paste(base_directory,"Analysis/query_elf_statistics.R", sep = "/")); 
+base_url <- 'http://deq2.bse.vt.edu/d.dh'
 bundle <- 'watershed';
 ftype <- 'nhd_huc8';
 metric <- 'aqbio_nt_total';

@@ -37,6 +37,9 @@ batch <- rbind(
     bundle = 'watershed', ftype = 'nhd_huc8', dataset_tag = 'bpj-rcc', q_ftype = 'fe_quantreg'))
 batch <- rbind(
   batch, data.frame(
+    bundle = 'watershed', ftype = 'nhd_huc8', dataset_tag = 'bpj-530', q_ftype = 'fe_quantreg_ymax'))
+batch <- rbind(
+  batch, data.frame(
     bundle = 'watershed', ftype = 'nhd_huc8', dataset_tag = 'bpj-446-da', q_ftype = 'fe_quantreg'))
 batch <- rbind(
   batch, data.frame(
@@ -70,7 +73,7 @@ for (row in 1:nrow(batch)) {
   #data = subset(data, isheadwater > 0)
   # render it
   ymin = 0.0; # restrain plot
-  labeltext = paste('( p<', pmax, 'R>', Rmin,' )',sep='')
+  labeltext = paste(q_ftype, ' ( p<', pmax, 'R>', Rmin,' )',sep='')
   plot_monthly(data, labeltext, xmetric = 'out_rsq_adj', ymetric = metric, ymin=ymin);
   mmax = ceiling(max(data$out_m))
   #plot_monthly(data, labeltext, xmetric = 'out_m', ymetric = metric, ymin=0, ymax=mmax);

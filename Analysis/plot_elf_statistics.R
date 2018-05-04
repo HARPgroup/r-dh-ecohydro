@@ -16,7 +16,7 @@ plot_monthly <- function (data, subname = 'all', xmetric = "out_rsq_adj", ymetri
   data.nov <- subset(data, in_xvar == 'erom_q0001e_nov');
   data.dec <- subset(data, in_xvar == 'erom_q0001e_dec');
   n = c('DA', 'Mean', 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December')
-  title <- paste(ftype, " Q=", 100.*(1.0 - quantile), "%", subname, "for \n");
+  title <- paste(ftype, " Q=", 100.*(1.0 - quantile), "%", subname);
   if (length(data.da$s_adminid) > 1) {
     boxplot(
       data.da[,xmetric], data.mean[,xmetric], data.jan[,xmetric], data.feb[,xmetric], data.mar[,xmetric], 
