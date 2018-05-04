@@ -3,6 +3,7 @@ options(timeout=240); # set timeout to twice default level to avoid abort due to
  
 #----------------------------------------------
 site <- "http://deq1.bse.vt.edu/d.dh"    #Specify the site of interest, either d.bet OR d.dh
+datasite <- "http://deq2.bse.vt.edu/d.dh" # where to get the raw data to analyze
 #----------------------------------------------
 
 #----Change Basepath here to point to your global config file:
@@ -26,6 +27,7 @@ source(paste(fxn_locations,"huc8_groupings.txt", sep = ""));
 #User inputs 
 inputs <- list(
   site = site,
+  datasite = datasite,
   offset_x_metric = 1,                      #Leave at 1 to start from begining of x_metric for-loop
   offset_y_metric = 1,                      #Leave at 1 to start from begining of y_metric for-loop
   offset_ws_ftype = 1,                      #Leave at 1 to start from begining of ws_ftype for-loop
@@ -54,7 +56,7 @@ inputs <- list(
                'aqbio_nt_bival',
                'aqbio_nt_cypr_native'
               ), #this can be used to process by multiple biometrics at once 
-  y_metric = 'aqbio_nt_cent',	   #Biometric to be plotted on the y-axis, see "dh variable key" column for options: https://docs.google.com/spreadsheets/d/1PnxY4Rxfk9hkuaXy7tv8yl-mPyJuHdQhrOUWx_E1Y_w/edit#gid=0
+  y_metric = 'aqbio_nt_total',	   #Biometric to be plotted on the y-axis, see "dh variable key" column for options: https://docs.google.com/spreadsheets/d/1PnxY4Rxfk9hkuaXy7tv8yl-mPyJuHdQhrOUWx_E1Y_w/edit#gid=0
   not_ws_ftype = c(
     'state',
     'hwi_region',
@@ -66,7 +68,7 @@ inputs <- list(
     'ecoregion_iv',
     'ecoiii_huc6'
   ),#this can be used to process by multiple region types at once 
-  ws_ftype = c('nhd_huc6'),		     #Options: state, hwi_region, nhd_huc8, nhd_huc6, ecoregion_iii, ecoregion_iv, ecoiii_huc6
+  ws_ftype = c('nhd_huc8'),		     #Options: state, hwi_region, nhd_huc8, nhd_huc6, ecoregion_iii, ecoregion_iv, ecoiii_huc6
   target_hydrocode = '',
   #target_hydrocode = atl_new, 
   quantile = .80,                  #Specify the quantile to use for quantile regresion plots 
@@ -74,7 +76,7 @@ inputs <- list(
   #analysis_timespan = '1990-2000',#used to subset data on date range 
   analysis_timespan = 'full',      #used to plot for entire timespan 
 
-  send_to_rest = "NO",            #"YES" to push ELF statistic outputs to VAHydro
+  send_to_rest = "YES",            #"YES" to push ELF statistic outputs to VAHydro
   station_agg = "max",             #Specify aggregation to only use the "max" NT value for each station or "all" NT values
   sampres = 'species',                  
   #sampres = 'maj_fam_gen_spec',                  
@@ -92,9 +94,10 @@ inputs <- list(
   pw_it_RS = "NO",   #Plot using PWIT *with the regression to the right of the breakpoint included (YES or NO)
   pw_it_RS_IFIM = "NO",
   glo = 1,   # PWIT Breakpoint lower guess (sqmi/cfs)
-  ghi = 530, # PWIT Breakpoint upper guess (sqmi/cfs) - also used as DA or MAF breakpoint for elf_quantreg method 
+  ghi = 408, # PWIT Breakpoint upper guess (sqmi/cfs) - also used as DA or MAF breakpoint for elf_quantreg method 
+  ghi_var = 'drainage_area_sqmi', # use '' for default to have fn choose DA or Qmean
   token = token,
-  dataset_tag = "bpj-530"
+  dataset_tag = "bpj-408-da"
 ) 
 
 #------------------------------------------------------------------------------------------------
