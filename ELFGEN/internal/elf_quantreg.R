@@ -10,7 +10,7 @@ library(scales);
 elf_quantreg <- function(
   inputs, data, x_metric_code, y_metric_code, ws_ftype_code, 
   Feature.Name_code, Hydroid_code, search_code, token, 
-  startdate, enddate, ghi_var = ''){
+  startdate, enddate){
 
   a = FALSE
   
@@ -32,6 +32,7 @@ elf_quantreg <- function(
   site <- inputs$site
   sampres <- inputs$sampres
   ghi <- inputs$ghi
+  ghi_var = inputs$ghi_var
   dataset_tag <- inputs$dataset_tag
   
   #Retain a copy of the full dataset in order to include grey points on plot
