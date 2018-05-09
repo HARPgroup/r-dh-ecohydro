@@ -61,15 +61,10 @@ inputs <- list(
                                    #   maj_fam...............majority family (Benthics only)
                                    #   maj_species...........majority species (Benthics only)
   
-  quantreg = "NO",   #Plot using quantile regression method (YES or NO)
-  pw_it = "NO",      #Plot using breakpoint determined by piecewise iterative function (YES or NO)
-  ymax = "NO",       #Plot using breakpoint at x-value corresponding to max y-value (YES or NO)
-  twopoint = "NO",   #Plot using basic two-point ELF method (YES or NO)
-  pw_it_RS = "NO",   #Plot using PWIT *with the regression to the right of the breakpoint included (YES or NO)
-  pw_it_RS_IFIM = "NO",
+  method = "quantreg", #quantreg, pwit, ymax, twopoint, pwit_RS
   glo = 1,   # PWIT Breakpoint lower guess (sqmi/cfs)
   ghi = 408, # PWIT Breakpoint upper guess (sqmi/cfs) - also used as DA or MAF breakpoint for elf_quantreg method 
-  ghi_var = '', # use '' for default to have fn choose DA or Qmean
+  ghi_var = '',  #qmean_annual or drainage_area_sqmi; use '' for default to have fn choose DA or Qmean
   token = '',
   dataset_tag = "none"
 ) 

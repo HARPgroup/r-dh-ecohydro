@@ -13,7 +13,7 @@ basepath='/usr/local/home/git/r-dh-ecohydro';
 # this file will NOT be sent to git, so it should persist
 # so, edit config.local.private once and you should be good to go
 source('/var/www/R/config.local.private');
-
+#source(paste(basepath,'config.local.private',sep='/'));
 
 #Load Functions               
 source(paste(fxn_locations,"elf_retrieve_data.R", sep = ""));  #loads function used to retrieve F:E data from VAHydro
@@ -31,14 +31,14 @@ source(paste(fxn_locations,"elf_default_inputs.R", sep = ""));
 # Now add custom local settings here
 inputs$x_metric = 'erom_q0001e_mean'; #Flow metric to be plotted on the x-axis
 inputs$y_metric = 'aqbio_nt_total';
-inputs$ws_ftype = c('nhd_huc10');
-inputs$target_hydrocode = '0208020111';
+inputs$ws_ftype = c('hwi_region');
+inputs$target_hydrocode = '';
 inputs$quantile = .80;
-inputs$send_to_rest = "NO";
+inputs$send_to_rest = "YES";
 inputs$glo = 1;
-inputs$method = "ymax"; #quantreg, pwit, ymax, twopoint, pwit_RS
+inputs$method = "pwit"; #quantreg, pwit, ymax, twopoint, pwit_RS
 inputs$ghi = 530;
-inputs$dataset_tag = 'ymax75';
+inputs$dataset_tag = 'JK-TEST11';
 inputs$token = token;
 
 #------------------------------------------------------------------------------------------------
