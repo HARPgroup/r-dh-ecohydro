@@ -40,7 +40,9 @@ plot_monthly <- function (data, subname = 'all', xmetric = "out_rsq_adj", ymetri
   }
 }
 
-plot_monthly_count <- function (data, subname = 'all', xmetric = "out_rsq_adj", ymin = 0.5, ymax = 1.0) {
+plot_monthly_count <- function (
+  data, subname = 'all', xmetric = "out_rsq_adj", 
+  ymin = 0.5, ymax = 1.0) {
   # dataset_tag: bpj-530, bpj-rcc
   data.da <- subset(data, in_xvar == 'nhdp_drainage_sqmi');
   data.mean <- subset(data, in_xvar == 'erom_q0001e_mean');
@@ -56,6 +58,7 @@ plot_monthly_count <- function (data, subname = 'all', xmetric = "out_rsq_adj", 
   data.oct <- subset(data, in_xvar == 'erom_q0001e_oct');
   data.nov <- subset(data, in_xvar == 'erom_q0001e_nov');
   data.dec <- subset(data, in_xvar == 'erom_q0001e_dec');
+  n = c('DA', 'Mean', 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December')
   if (length(data.da$s_adminid) > 1) {
     ns <- cbind(
       'DA' = length(data.da[,xmetric]), 
