@@ -8,6 +8,7 @@ elf_pct_chg_hab <- function(pct_inputs = list()){
   sampres <- pct_inputs$sampres
   startdate <- pct_inputs$startdate
   enddate <- pct_inputs$enddate
+  target_hydrocode <- pct_inputs$target_hydrocode #need to know the hydrocode in use for file name
   
   search_code <- pct_inputs$search_code
   x_metric <- pct_inputs$x_metric
@@ -21,6 +22,7 @@ elf_pct_chg_hab <- function(pct_inputs = list()){
   slope_table <- data.frame(xvalues=xvalues,
                             stringsAsFactors=FALSE)
   #added by Jen with a few new vars
+  i <- 1
   for (i in 1:length(pct_list)) {
     pct <- (its -((pct_list[i]/100)*its))
     sb <- (ruslope*log(pct))+ruint
@@ -74,8 +76,7 @@ elf_pct_chg_hab <- function(pct_inputs = list()){
   #                            slope_table_export[7]
   # )
   names(slope_table_export)[2]<-y_metric
-  write.csv(slope_table_export, file = paste(save_directory,"\\pctchg_",search_code,"_",y_metric,".csv",sep=""))
-  
+  write.csv(slope_table_export, file = paste(save_directory,"\\pctchg_",target_hydrocode,"_",y_metric,".csv",sep=""))
   
 title_projname <- sampres
 
@@ -117,4 +118,5 @@ plt2 <- ggplot(slope_table, aes(x=xvalues, y=pct_chgs_20)) +
         axis.text.y = element_text(colour="grey20",size=15,hjust=.5,vjust=.5,face="plain"))
 
 }
+
 

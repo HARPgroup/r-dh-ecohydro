@@ -7,11 +7,7 @@ site <- "http://deq1.bse.vt.edu/d.dh"    #Specify the site of interest, either d
 
 #----FOR RUNNING LOCALLY:
 
-
-basepath='D:\\Jkrstolic\\R\\deqEcoflows\\GitHub\\r-dh-ecohydro\\ELFGEN\\internal\\';
-# set your local directory paths in config.local.private located in filepath above
-# this file will NOT be sent to git, so it should persist
-# so, edit config.local.private once and you should be good to go
+basepath='D:\\Jkrstolic\\R\\deqEcoflows\\GitHub\\r-dh-ecohydro\\';
 source(paste(basepath,'config.local.private',sep='/'));
 
 #----FOR RUNNING FROM SERVER:
@@ -21,15 +17,17 @@ source(paste(basepath,'config.local.private',sep='/'));
 
 #Load Functions               
 source(paste(fxn_locations,"elf_retrieve_data.R", sep = ""));  #loads function used to retrieve F:E data from VAHydro
-source(paste(fxn_vahydro,"rest_functions.R", sep = ""));       #loads file containing function that retrieves REST token
+source(paste(hydro_tools,"VAHydro-2.0/rest_functions.R", sep = "/")); 
 rest_uname = FALSE;
 rest_pw = FALSE;
-source(paste(fxn_locations,"rest.private", sep = ""));         #load rest username and password, contained in rest.private file
+source(paste(hydro_tools,"auth.private", sep = "/"));#load rest username and password, contained in auth.private file
 token <- rest_token(site, token, rest_uname, rest_pw);
+
+source(paste(fxn_locations,"huc8_groupings.txt", sep = "")); 
 
 #Added by Jen
 #use a list of huc8 or other hydrocodes to run custom ghi for quantreg
-Input_targetHydrocode <-  read.csv(file="D:\\Jkrstolic\\R\\deqEcoflows\\Breakpoints\\FullDatasets\\Batch_lists_for_ElfGen\\Huc6_batchBenthic_listsPWIT.csv",header=TRUE) #list of Huc8 to process for QUantreg   Huc6_batchlistsMAFQuantReg.csv
+Input_targetHydrocode <-  read.csv(file="D:\\Jkrstolic\\R\\deqEcoflows\\Breakpoints\\FullDatasets\\Batch_lists_for_ElfGen\\FishBatchLists\\Huc6_batchlistsMAF_PWIT.csv",header=TRUE) #list of Huc8 to process for QUantreg   Huc6_batchlistsMAFQuantReg.csv
 data.table.hydrocode <- data.table(Input_targetHydrocode)
 T_hydrocode <- data.table.hydrocode$target_hydrocode #input the huc8 of interst, save as a list
 Numb_hydrocodes <- length(T_hydrocode) #number of hucs
@@ -102,19 +100,20 @@ inputs <- list(
     #   maj_fam...............majority family (Benthics only)
     #   maj_species...........majority species (Benthics only)
     
-    quantreg = "YES",   #Plot using quantile regression method (YES or NO)
-    pw_it = "NO",      #Plot using breakpoint determined by piecewise iterative function (YES or NO)
+    quantreg = "NO",   #Plot using quantile regression method (YES or NO)
+    pw_it = "YES",      #Plot using breakpoint determined by piecewise iterative function (YES or NO)
     ymax = 'NO',       #Plot using breakpoint at x-value corresponding to max y-value (YES or NO)
     twopoint = "NO",   #Plot using basic two-point ELF method (YES or NO)
     pw_it_RS = "NO",   #Plot using PWIT *with the regression to the right of the breakpoint included (YES or NO)
-    DA_Flow = "NO",    # Plot the drainage area and flow together to discern any modeling issues. 
-    glo = GloList[J],   # PWIT Breakpoint lower guess (sqmi/cfs)
+    #DA_Flow = "NO",    # Plot the drainage area and flow together to discern any modeling issues. 
+    pw_it_RS_IFIM = "NO",  
+  glo = GloList[J],   # PWIT Breakpoint lower guess (sqmi/cfs)
     ghi = GhiList[J], # PWIT Breakpoint upper guess (sqmi/cfs) - also used as DA breakpoint for elf_quantreg method
     # ghi values determined from ymax analyses,  q25 = 72 
     #                                            q50 = 205 
     #                                            q75 = 530
     token = token,
-    dataset_tag = "BenthicQuantreg_update"
+    dataset_tag = "TaxaLossJLR"
 ) 
 
 #------------------------------------------------------------------------------------------------

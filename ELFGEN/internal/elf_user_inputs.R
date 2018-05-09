@@ -35,7 +35,7 @@ inputs <- list(
   offset_hydrocode = 1,                     #Leave at 1 to start from begining of Watershed_Hydrocode for-loop
   pct_chg = 10,                             #Percent decrease in flow for barplots (keep at 10 for now)
   save_directory = save_directory, 
-  x_metric = c(
+  not_x_metric = c(
     'nhdp_drainage_sqmi',
     'erom_q0001e_mean',
     'erom_q0001e_jan',
@@ -51,7 +51,7 @@ inputs <- list(
     'erom_q0001e_nov',
     'erom_q0001e_dec'
   ),		
-  not_x_metric = 'erom_q0001e_mean', #Flow metric to be plotted on the x-axis
+  x_metric = 'erom_q0001e_mean', #Flow metric to be plotted on the x-axis
   not_y_metric = c(
                'nhdp_drainage_sqmi',
                'aqbio_nt_bival',
@@ -73,7 +73,7 @@ inputs <- list(
   ),#this can be used to process by multiple region types at once 
 
   ws_ftype = c('nhd_huc6'),		     #Options: state, hwi_region, nhd_huc8, nhd_huc6, ecoregion_iii, ecoregion_iv, ecoiii_huc6
-  target_hydrocode = '0207000',           #Leave blank to process all, individual examples: usa_state_virginia for all of VA, atl_non_coastal_plain_usgs,ohio_river_basin_nhdplus,nhd_huc8_05050001...
+  target_hydrocode = '030101',           #Leave blank to process all, individual examples: usa_state_virginia for all of VA, atl_non_coastal_plain_usgs,ohio_river_basin_nhdplus,nhd_huc8_05050001...
   #target_hydrocode = atl_new, 
 
   quantile = .80,                  #Specify the quantile to use for quantile regresion plots 
@@ -99,8 +99,8 @@ inputs <- list(
   twopoint = "NO",   #Plot using basic two-point ELF method (YES or NO)
   pw_it_RS = "NO",   #Plot using PWIT *with the regression to the right of the breakpoint included (YES or NO)
   pw_it_RS_IFIM = "NO",
-  glo = 290,   # PWIT Breakpoint lower guess (sqmi/cfs)
-  ghi = 350, # PWIT Breakpoint upper guess (sqmi/cfs) - also used as DA or MAF breakpoint for elf_quantreg method 
+  glo = 72,   # PWIT Breakpoint lower guess (sqmi/cfs)
+  ghi = 408, # PWIT Breakpoint upper guess (sqmi/cfs) - also used as DA or MAF breakpoint for elf_quantreg method 
   token = token,
   dataset_tag = "TaxaLossJLR"
 )
