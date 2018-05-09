@@ -33,13 +33,27 @@ inputs$y_metric = 'aqbio_nt_total';
 inputs$ws_ftype = c('nhd_huc10');
 inputs$target_hydrocode = '';
 inputs$quantile = .80;
-inputs$send_to_rest = "NO";
+inputs$send_to_rest = "YES";
 inputs$glo = 1;
 inputs$ghi = 530;
+inputs$method = "ymax"; #quantreg, pwit, ymax, twopoint, pwit_RS
 inputs$dataset_tag = 'ymax75';
 inputs$token = token;
 
 #------------------------------------------------------------------------------------------------
-elf_retrieve_data (inputs) 
+# 1. Get data list - expects header line format with at least target_hydrocode
+#    and optional any of the following
+# target_hydrocode,name,ghi,glo,
+batchlist = elf_assemble_batch(inputs) 
 
+# 2. Iterate through each item in the list
+for (row in 1:nrow(batchlist)) {
+  tin = inputs
+  target <- batchlist[row];
+#   2.1 Check for custom inputs in list
+  if ("glo" %in% colnames(target)) {
+    tin$glo <- target$glo
+  }
+#   2.2 Run selected routine 
+}
 ##############################################################################

@@ -35,7 +35,9 @@ inputs$target_hydrocode = '';
 inputs$quantile = .80;
 inputs$send_to_rest = "NO";
 inputs$glo = 1;
+inputs$method = "ymax"; #quantreg, pwit, ymax, twopoint, pwit_RS
 inputs$ghi = 530;
+inputs$offset_hydrocode = 481
 inputs$dataset_tag = 'ymax75';
 inputs$token = token;
 
