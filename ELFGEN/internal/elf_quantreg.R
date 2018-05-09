@@ -47,8 +47,7 @@ elf_quantreg <- function(
       ghi_var <- 'qmean_annual'
     }
   }
-
- 
+  
   data<-data[!(data[ghi_var] > (ghi)),]
   subset_n <- length(data$y_value)
 

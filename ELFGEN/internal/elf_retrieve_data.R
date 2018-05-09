@@ -32,6 +32,7 @@ elf_retrieve_data <- function(inputs = list()){
   twopoint <- inputs$twopoint
   token <- inputs$token
 
+#l <- 1
 for (l in offset_ws_ftype:length(ws_ftype)) {
      
   print(paste("ws_ftype ",l,". of ",length(ws_ftype),". ",ws_ftype[l],sep=""))
@@ -62,11 +63,14 @@ for (l in offset_ws_ftype:length(ws_ftype)) {
   Watershed_Hydrocode <- HUClist$Hydrocode
   Feature.Name <- HUClist$Feature.Name
   Hydroid <- HUClist$HydroID
-  
+
+#k<-1    
 for (k in offset_y_metric:length(y_metric)) {
   print(paste("y_metric ", k, ". of ",length(y_metric),". Beginning loop for ", y_metric[k], sep=''));
+  #j<-1
   for (j in offset_x_metric:length(x_metric)) {
     print(paste("x_metric ", j, ". of 14. Beginning loop for ", x_metric[j], sep=''));
+    #i<-1
     for (i in offset_hydrocode:length(Watershed_Hydrocode)) {
       print(paste("Feature ", i, ". of ",length(Watershed_Hydrocode),". Searching for stations from ", Watershed_Hydrocode[i], sep=''));
       search_code <- Watershed_Hydrocode[i];
