@@ -19,6 +19,7 @@ elf_retrieve_data <- function(inputs = list()){
   offset_ws_ftype <- inputs$offset_ws_ftype
   offset_hydrocode <- inputs$offset_hydrocode
   site <- inputs$site
+  datasite <- inputs$datasite
   xaxis_thresh <- inputs$xaxis_thresh
   sampres <- inputs$sampres
   analysis_timespan <- inputs$analysis_timespan
@@ -50,7 +51,7 @@ for (l in offset_ws_ftype:length(ws_ftype)) {
   }
   #Pull in full list of Virginia watersheds for the specified ftype
   #If we define a hydrocode > 'XXXXXX' it will retrieve that single one
-  HUClist_url_base <- paste(site,"/?q=elfgen_regions_export/",bundle, sep = "");
+  HUClist_url_base <- paste(datasite,"/?q=elfgen_regions_export/",bundle, sep = "");
   if (!(target_hydrocode == '')) {
     HUClist_url_full <- paste(HUClist_url_base, ws_ftype[l], target_hydrocode, sep = "/");
   } else {
@@ -78,7 +79,7 @@ for (k in offset_y_metric:length(y_metric)) {
       data <- vahydro_fe_data(
         Watershed_Hydrocode[i],
         x_metric_code,y_metric_code,
-        bundle,ws_ftype_code,sampres
+        bundle,ws_ftype_code,sampres,data #datasite
       );
       
       #makes sure all metric values are numeric and not factorial (fixes error with ni, total)

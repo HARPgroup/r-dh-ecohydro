@@ -2,7 +2,8 @@ rm(list = ls())  #clear variables
 options(timeout=240); # set timeout to twice default level to avoid abort due to high traffic
  
 #----------------------------------------------
-site <- "http://deq1.bse.vt.edu/d.dh"    #Specify the site of interest, either d.bet OR d.dh
+site <- "http://deq2.bse.vt.edu/d.dh"    #Specify the site of interest, either d.bet OR d.dh
+datasite <- "http://deq2.bse.vt.edu/d.dh" # where to get the raw data to analyze
 #----------------------------------------------
 
 basepath='D:\\Jkrstolic\\R\\deqEcoflows\\GitHub\\r-dh-ecohydro\\';
@@ -29,6 +30,7 @@ source(paste(fxn_locations,"huc8_groupings.txt", sep = ""));
 #User inputs 
 inputs <- list(
   site = site,
+  datasite = datasite,
   offset_x_metric = 1,                      #Leave at 1 to start from begining of x_metric for-loop
   offset_y_metric = 1,                      #Leave at 1 to start from begining of y_metric for-loop
   offset_ws_ftype = 1,                      #Leave at 1 to start from begining of ws_ftype for-loop
@@ -73,7 +75,7 @@ inputs <- list(
   ),#this can be used to process by multiple region types at once 
 
   ws_ftype = c('nhd_huc6'),		     #Options: state, hwi_region, nhd_huc8, nhd_huc6, ecoregion_iii, ecoregion_iv, ecoiii_huc6
-  target_hydrocode = '030101',           #Leave blank to process all, individual examples: usa_state_virginia for all of VA, atl_non_coastal_plain_usgs,ohio_river_basin_nhdplus,nhd_huc8_05050001...
+  target_hydrocode = '060102',           #Leave blank to process all, individual examples: usa_state_virginia for all of VA, atl_non_coastal_plain_usgs,ohio_river_basin_nhdplus,nhd_huc8_05050001...
   #target_hydrocode = atl_new, 
 
   quantile = .80,                  #Specify the quantile to use for quantile regresion plots 
@@ -93,14 +95,14 @@ inputs <- list(
                                    #   maj_fam...............majority family (Benthics only)
                                    #   maj_species...........majority species (Benthics only)
   
-  quantreg = "NO",   #Plot using quantile regression method (YES or NO)
+  quantreg = "YES",   #Plot using quantile regression method (YES or NO)
   pw_it = "YES",      #Plot using breakpoint determined by piecewise iterative function (YES or NO)
   ymax = 'NO',       #Plot using breakpoint at x-value corresponding to max y-value (YES or NO)
   twopoint = "NO",   #Plot using basic two-point ELF method (YES or NO)
   pw_it_RS = "NO",   #Plot using PWIT *with the regression to the right of the breakpoint included (YES or NO)
   pw_it_RS_IFIM = "NO",
-  glo = 72,   # PWIT Breakpoint lower guess (sqmi/cfs)
-  ghi = 408, # PWIT Breakpoint upper guess (sqmi/cfs) - also used as DA or MAF breakpoint for elf_quantreg method 
+  glo = 700,   # PWIT Breakpoint lower guess (sqmi/cfs)
+  ghi = 780, # PWIT Breakpoint upper guess (sqmi/cfs) - also used as DA or MAF breakpoint for elf_quantreg method 
   token = token,
   dataset_tag = "TaxaLossJLR"
 )

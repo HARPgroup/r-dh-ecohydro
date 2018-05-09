@@ -95,6 +95,7 @@ elf_pw_it <- function(inputs, data, x_metric_code, y_metric_code, ws_ftype_code,
       regupper <- lm(y_value ~ log(x_value),data = upper.quant)  
       ru <- summary(regupper)  #regression for upper quantile
       ru_pred <- predict(regupper)
+      ####################################################
       #############JLR#######################################
       #Added by JLR to include prediction intervals
       upper.quant_tab <- data.frame(upper.quant)
@@ -118,10 +119,10 @@ elf_pw_it <- function(inputs, data, x_metric_code, y_metric_code, ws_ftype_code,
       plus_minus_table = data.frame(plus_minus)
       
       
-      Conf_Pred_table <- cbind(upper.quant_tab, conf_table, pred_table, plus_minus_table) 
+      Conf_Pred_table <- cbind(upper.quant_tab, conf_table, pred_table, plus_minus_table) #
       out_name <- paste(search_code,"fe_quantreg_pwit",x_metric,y_metric,quantile,station_agg,sampres,analysis_timespan,glo,ghi, sep='_');
-      
-      write.csv(Conf_Pred_table, file = paste(out_name, "_Conf_Pred_information",".csv", sep=""), row.names = F, quote = FALSE)
+      print(paste("Exporting Prediction interval table "));
+      write.csv(Conf_Pred_table, file = paste(out_name,"_Conf_Pred_information",".csv", sep=""), row.names = F, quote = FALSE)
       ####################JLR###############
       #If statement needed in case slope is "NA"
       if (nrow(ru$coefficients) > 1) {
@@ -288,6 +289,7 @@ elf_pw_it <- function(inputs, data, x_metric_code, y_metric_code, ws_ftype_code,
           elf_pct_chg (pct_inputs)
           #write file from here? CSV
           #write.csv(slope_table_export, file = paste(save_directory,"\\pctchg_","_",y_metric,".csv",sep=""))
+        
           filename <- paste(adminid,"pctchg.png", sep="_")
           ggsave(file=filename, path = save_directory, width=8, height=5)
         } else {
