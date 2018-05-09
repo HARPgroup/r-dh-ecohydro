@@ -7,8 +7,8 @@ datasite <- "http://deq2.bse.vt.edu/d.dh" # where to get the raw data to analyze
 #----------------------------------------------
 
 #----Change Basepath here to point to your global config file:
-basepath='/var/www/R';
-#basepath='C:\\Users\\nrf46657\\Desktop\\VAHydro Development\\GitHub\\r-dh-ecohydro\\';
+#basepath='/var/www/R';
+basepath='C:\\Users\\nrf46657\\Desktop\\VAHydro Development\\GitHub\\r-dh-ecohydro\\';
 # set your local directory paths in config.local.private located in filepath above
 # this file will NOT be sent to git, so it should persist
 # so, edit config.local.private once and you should be good to go
@@ -17,6 +17,7 @@ source(paste(basepath,'config.local.private',sep='/'));
 #Load Functions               
 source(paste(fxn_locations,"elf_retrieve_data.R", sep = ""));  #loads function used to retrieve F:E data from VAHydro
 source(paste(hydro_tools,"VAHydro-2.0/rest_functions.R", sep = "/")); 
+source(paste(basepath,'Analysis/query_elf_statistics.R',sep='/')); #loads function used to check if submittals exist
 rest_uname = FALSE;
 rest_pw = FALSE;
 source(paste(hydro_tools,"auth.private", sep = "/"));#load rest username and password, contained in auth.private file
@@ -34,7 +35,7 @@ inputs <- list(
   offset_hydrocode = 1,                     #Leave at 1 to start from begining of Watershed_Hydrocode for-loop
   pct_chg = 10,                             #Percent decrease in flow for barplots (keep at 10 for now)
   save_directory = save_directory, 
-  x_metric = c(
+  not_x_metric = c(
     'nhdp_drainage_sqmi',
     'erom_q0001e_mean',
     'erom_q0001e_jan',
@@ -50,7 +51,7 @@ inputs <- list(
     'erom_q0001e_nov',
     'erom_q0001e_dec'
   ),		
-  not_x_metric = 'erom_q0001e_mean', #Flow metric to be plotted on the x-axis
+  x_metric = 'erom_q0001e_mean', #Flow metric to be plotted on the x-axis
   not_y_metric = c(
                'nhdp_drainage_sqmi',
                'aqbio_nt_bival',
@@ -68,8 +69,8 @@ inputs <- list(
     'ecoregion_iv',
     'ecoiii_huc6'
   ),#this can be used to process by multiple region types at once 
-  ws_ftype = c('nhd_huc8'),		     #Options: state, hwi_region, nhd_huc8, nhd_huc6, ecoregion_iii, ecoregion_iv, ecoiii_huc6
-  target_hydrocode = '',
+  ws_ftype = c('hwi_region'),		     #Options: state, hwi_region, nhd_huc8, nhd_huc6, ecoregion_iii, ecoregion_iv, ecoiii_huc6
+  target_hydrocode = '', #nhd_huc8_03010102
   #target_hydrocode = atl_new, 
   quantile = .80,                  #Specify the quantile to use for quantile regresion plots 
   xaxis_thresh = 15000,            #Leave at 15000 so all plots have idential axis limits 
@@ -95,9 +96,9 @@ inputs <- list(
   pw_it_RS_IFIM = "NO",
   glo = 1,   # PWIT Breakpoint lower guess (sqmi/cfs)
   ghi = 408, # PWIT Breakpoint upper guess (sqmi/cfs) - also used as DA or MAF breakpoint for elf_quantreg method 
-  ghi_var = 'drainage_area_sqmi', # use '' for default to have fn choose DA or Qmean
+  ghi_var = 'qmean_annual', #qmean_annual or drainage_area_sqmi; use '' for default to have fn choose DA or Qmean
   token = token,
-  dataset_tag = "bpj-408-da"
+  dataset_tag = "JK-TEST2"
 ) 
 
 #------------------------------------------------------------------------------------------------
