@@ -1,33 +1,7 @@
-rm(list = ls())  #clear variables
-options(timeout=240); # set timeout to twice default level to avoid abort due to high traffic
- 
-#----------------------------------------------
-site <- "http://deq2.bse.vt.edu/d.dh"    #Specify the site of interest, either d.bet OR d.dh
-datasite <- "http://deq2.bse.vt.edu/d.dh" # where to get the raw data to analyze
-#----------------------------------------------
-
-#----Change Basepath here to point to your global config file:
-basepath='/var/www/R';
-#basepath='C:\\Users\\nrf46657\\Desktop\\VAHydro Development\\GitHub\\r-dh-ecohydro\\';
-# set your local directory paths in config.local.private located in filepath above
-# this file will NOT be sent to git, so it should persist
-# so, edit config.local.private once and you should be good to go
-source(paste(basepath,'config.local.private',sep='/'));
-
-#Load Functions               
-source(paste(fxn_locations,"elf_retrieve_data.R", sep = ""));  #loads function used to retrieve F:E data from VAHydro
-source(paste(hydro_tools,"VAHydro-2.0/rest_functions.R", sep = "/")); 
-rest_uname = FALSE;
-rest_pw = FALSE;
-source(paste(hydro_tools,"auth.private", sep = "/"));#load rest username and password, contained in auth.private file
-token <- rest_token(site, token, rest_uname, rest_pw);
-
-source(paste(fxn_locations,"huc8_groupings.txt", sep = "")); 
-#------------------------------------------------------------------------------------------------
 #User inputs 
 inputs <- list(
   site = site,
-  datasite = datasite,
+  datasite = base_url,
   offset_x_metric = 1,                      #Leave at 1 to start from begining of x_metric for-loop
   offset_y_metric = 1,                      #Leave at 1 to start from begining of y_metric for-loop
   offset_ws_ftype = 1,                      #Leave at 1 to start from begining of ws_ftype for-loop
@@ -69,7 +43,7 @@ inputs <- list(
     'ecoiii_huc6'
   ),#this can be used to process by multiple region types at once 
   ws_ftype = c('nhd_huc8'),		     #Options: state, hwi_region, nhd_huc8, nhd_huc6, ecoregion_iii, ecoregion_iv, ecoiii_huc6
-  target_hydrocode = atl_new,
+  target_hydrocode = '',
   #target_hydrocode = atl_new, 
   quantile = .80,                  #Specify the quantile to use for quantile regresion plots 
   xaxis_thresh = 15000,            #Leave at 15000 so all plots have idential axis limits 
@@ -89,18 +63,13 @@ inputs <- list(
   
   quantreg = "NO",   #Plot using quantile regression method (YES or NO)
   pw_it = "NO",      #Plot using breakpoint determined by piecewise iterative function (YES or NO)
-  ymax = "YES",       #Plot using breakpoint at x-value corresponding to max y-value (YES or NO)
+  ymax = "NO",       #Plot using breakpoint at x-value corresponding to max y-value (YES or NO)
   twopoint = "NO",   #Plot using basic two-point ELF method (YES or NO)
   pw_it_RS = "NO",   #Plot using PWIT *with the regression to the right of the breakpoint included (YES or NO)
   pw_it_RS_IFIM = "NO",
   glo = 1,   # PWIT Breakpoint lower guess (sqmi/cfs)
   ghi = 408, # PWIT Breakpoint upper guess (sqmi/cfs) - also used as DA or MAF breakpoint for elf_quantreg method 
-  ghi_var = 'qmean_annual', # use '' for default to have fn choose DA or Qmean
-  token = token,
-  dataset_tag = "ymax-all"
+  ghi_var = '', # use '' for default to have fn choose DA or Qmean
+  token = '',
+  dataset_tag = "none"
 ) 
-
-#------------------------------------------------------------------------------------------------
-elf_retrieve_data (inputs) 
-
-##############################################################################

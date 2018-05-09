@@ -7,7 +7,10 @@ library(httr);
 library(data.table);
 library(scales);
 
-elf_ymax <- function(inputs, data, x_metric_code, y_metric_code, ws_ftype_code, Feature.Name_code, Hydroid_code, search_code, token, startdate, enddate){
+elf_ymax <- function(
+  inputs, data, x_metric_code, y_metric_code, ws_ftype_code, 
+  Feature.Name_code, Hydroid_code, search_code, token, 
+  startdate, enddate){
  
   a = FALSE
   

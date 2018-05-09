@@ -10,55 +10,56 @@ library(httr);
 library(data.table);
 library(scales);
 #----------------------------------------------
-site <- "http://deq1.bse.vt.edu/d.dh"    #Specify the site of interest, either d.bet OR d.dh
+site <- "http://deq2.bse.vt.edu/d.dh"    #Specify the site of interest, either d.bet OR d.dh
 #----------------------------------------------
 #----FOR RUNNING LOCALLY:
 # Only need to change 1 path here - set to wherever this code is located
-basepath='C:\\usr\\local\\home\\git\\r-dh-ecohydro';
+basepath='/var/www/R';
 
 # set your local directory paths in config.local.private located in filepath above
 # this file will NOT be sent to git, so it should persist
 # so, edit config.local.private once and you should be good to go
 source(paste(basepath,'config.local.private',sep='/'));
 # all these rely on variables set in config.local.private
-source(paste(fxn_vahydro,"rest_functions.R", sep = "/"));
-source(paste(auth_rest,"rest.private", sep="/"));
-source(paste(fxn_locations,"ELFGEN/internal/elf_quantreg.R", sep = "/"));
-source(paste(fxn_locations,"ELFGEN/internal/elf_pct_chg.R", sep = "/"));
-source(paste(fxn_locations,"ELFGEN/internal/elf_pw_it.R", sep = "/"));
-source(paste(fxn_locations,"ELFGEN/internal/elf_assemble_batch.R", sep = "/"));
+source(paste(hydro_tools,"VAHydro-2.0/rest_functions.R", sep = "/")); 
+source(paste(hydro_tools,"auth.private", sep = "/"));#load rest username and password, contained in auth.private file
+source(paste(fxn_locations,"elf_quantreg.R", sep = ""));
+source(paste(fxn_locations,"elf_pct_chg.R", sep = ""));
+source(paste(fxn_locations,"elf_pw_it.R", sep = ""));
+source(paste(fxn_locations,"elf_ymax.R", sep = ""));
+source(paste(fxn_locations,"elf_assemble_batch.R", sep = ""));
 
 token <- rest_token(site, token, rest_uname, rest_pw);
+
+# Load Default inputs
+source(paste(fxn_locations,"elf_default_inputs.R", sep = ""));
 #####
-inputs <- list(
-  site = site,
-  pct_chg = 10,                             #Percent decrease in flow for barplots (keep at 10 for now)
-  save_directory = save_directory, 
-  x_metric = 'erom_q0001e_mean', #Flow metric to be plotted on the x-axis
-  y_metric = 'aqbio_nt_total',	   #Biometric to be plotted on the y-axis, see "dh variable key" column for options: https://docs.google.com/spreadsheets/d/1PnxY4Rxfk9hkuaXy7tv8yl-mPyJuHdQhrOUWx_E1Y_w/edit#gid=0
-  ws_ftype = c('nhd_huc10'),		     #Options: state, hwi_region, nhd_huc8, nhd_huc6, ecoregion_iii, ecoregion_iv, ecoiii_huc6
-  target_hydrocode = 'usa_state_virginia',           #Leave blank to process all, individual examples: usa_state_virginia for all of VA, atl_non_coastal_plain_usgs,ohio_river_basin_nhdplus,nhd_huc8_05050001...
-  quantile = .80,                  #Specify the quantile to use for quantile regresion plots 
-  xaxis_thresh = 15000,            #Leave at 15000 so all plots have idential axis limits 
-  analysis_timespan = 'full',      #used to plot for entire timespan 
-  send_to_rest = "NO",            #"YES" to push ELF statistic outputs to VAHydro
-  station_agg = "max",             #Specify aggregation to only use the "max" NT value for each station or "all" NT values
-  sampres = 'species',                  
-  glo = 1,  
-  ghi = 530,
-  dataset_tag = 'ymax75',
-  token = token,
-  startdate = '1900-01-01',
-  enddate = '2100-01-01'
-);
+inputs$x_metric = 'erom_q0001e_mean'; #Flow metric to be plotted on the x-axis
+inputs$y_metric = 'aqbio_nt_total';
+inputs$ws_ftype = c('nhd_huc10');
+inputs$target_hydrocode = 'usa_state_virginia';
+inputs$quantile = .80;
+inputs$send_to_rest = "NO";
+inputs$glo = 1;
+inputs$ghi = 530;
+inputs$dataset_tag = 'ymax75';
+inputs$token = token;
+
 
 ##### Data Acquisition #####
 #retrieve raw data
 mydata <- vahydro_fe_data(
   'usa_state_virginia', "erom_q0001e_mean", "aqbio_nt_total", 
-  'landunit',  "usa_state", "species"
+  'landunit',  "state", "species"
 );
 data <- elf_cleandata(mydata, inputs);
+# do ymax calcs and plot
+elf_ymax(
+  inputs, data, x_metric_code = "erom_q0001e_mean", 
+  y_metric_code = "aqbio_nt_total", ws_ftype_code = 'landunit', 
+  Feature.Name_code = 'Virginia', Hydroid_code = 'usa_state_virginia', 
+  search_code = 'usa_state_virginia', token, 
+  startdate = min(data$tstime), enddate = max(data$tstime))
 
 #perform quantile regression calculation and plot 
 elf_quantreg(

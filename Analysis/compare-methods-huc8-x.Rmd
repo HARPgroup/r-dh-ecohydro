@@ -22,8 +22,8 @@ selected <- 'all'; # all or hydrocode
 quantile <- 0.8;
 pmax = 0.01;
 Rmin = 0.0;
-stat_quantreg_glo <- 0; 
-stat_quantreg_ghi <- 530; 
+#stat_quantreg_glo <- 0; 
+#stat_quantreg_ghi <- 530; 
 # ftype = fe_quantreg, fe_quantreg_pwit, fe_quantreg_ymax, fe_twopoint
 # analysis_timespan = full, 1990-2010, 1970-1980, ...
 # this is BS - save_directory should be fixed
@@ -43,7 +43,15 @@ batch <- rbind(
     bundle = 'watershed', ftype = 'nhd_huc8', dataset_tag = 'bpj-446-da', q_ftype = 'fe_quantreg'))
 batch <- rbind(
   batch, data.frame(
-    bundle = 'watershed', ftype = 'nhd_huc8', dataset_tag = 'bpj-408-da', q_ftype = 'fe_quantreg'))
+    bundle = 'watershed', ftype = 'nhd_huc8', dataset_tag = 'HUC8_quantregwHuc6bp', q_ftype = 'fe_quantreg'))
+# bpj-408-da is the median breakpoint from the HUC6 analysis
+batch <- rbind(
+  batch, data.frame(
+    bundle = 'watershed', ftype = 'nhd_huc8', dataset_tag = 'bpj-408-maf', q_ftype = 'fe_quantreg'))
+# Huc6Ghi 72=Glo - Jens HUC8 run
+batch <- rbind(
+  batch, data.frame(
+    bundle = 'watershed', ftype = 'nhd_huc8', dataset_tag = 'Huc6Ghi_72=Glo', q_ftype = 'fe_quantreg_pwit'))
 
 for (row in 1:nrow(batch)) {
   bundle <- batch[row,]$bundle;
@@ -66,17 +74,22 @@ for (row in 1:nrow(batch)) {
   
   # filter our data?
   data = rawdata; # make a copy to start so we can compare raw to filtered if desired
+  tot <- nrow(subset(data, in_xvar == 'erom_q0001e_mean'))
   #data = subset(data, out_n >= 20)
   #data = subset(data, out_m > 0)
   data = subset(data, out_p < pmax); # 
   data = subset(data, out_rsq_adj > Rmin)
+  mtch <- nrow(subset(data, in_xvar == 'erom_q0001e_mean'))
+  
   #data = subset(data, isheadwater > 0)
   # render it
   ymin = 0.0; # restrain plot
-  labeltext = paste(q_ftype, ' ( p<', pmax, 'R>', Rmin,' )',sep='')
+  labeltext = paste(q_ftype, ":", dataset_tag, '\n', ' ( p<', pmax, 'R>', Rmin, ' ', mtch, ' of ', tot,' )',sep='')
   plot_monthly(data, labeltext, xmetric = 'out_rsq_adj', ymetric = metric, ymin=ymin);
   mmax = ceiling(max(data$out_m))
   #plot_monthly(data, labeltext, xmetric = 'out_m', ymetric = metric, ymin=0, ymax=mmax);
+  plot_monthly_count (data, subname = dataset_tag, xmetric = "out_rsq_adj", 
+  ymin = 0.0, ymax = 1.0)
   
 }
 
