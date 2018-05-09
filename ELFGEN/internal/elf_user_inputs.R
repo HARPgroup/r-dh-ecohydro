@@ -7,12 +7,13 @@ datasite <- "http://deq2.bse.vt.edu/d.dh" # where to get the raw data to analyze
 #----------------------------------------------
 
 #----Change Basepath here to point to your global config file:
-#basepath='/var/www/R';
-basepath='C:\\Users\\nrf46657\\Desktop\\VAHydro Development\\GitHub\\r-dh-ecohydro\\';
+basepath='/usr/local/home/git/r-dh-ecohydro';
+#basepath='C:\\Users\\nrf46657\\Desktop\\VAHydro Development\\GitHub\\r-dh-ecohydro\\';
 # set your local directory paths in config.local.private located in filepath above
 # this file will NOT be sent to git, so it should persist
 # so, edit config.local.private once and you should be good to go
-source(paste(basepath,'config.local.private',sep='/'));
+source('/var/www/R/config.local.private');
+#source(paste(basepath,'config.local.private',sep='/'));
 
 #Load Functions               
 source(paste(fxn_locations,"elf_retrieve_data.R", sep = ""));  #loads function used to retrieve F:E data from VAHydro
@@ -88,17 +89,12 @@ inputs <- list(
                                    #   maj_fam...............majority family (Benthics only)
                                    #   maj_species...........majority species (Benthics only)
   
-  quantreg = "YES",   #Plot using quantile regression method (YES or NO)
-  pw_it = "NO",      #Plot using breakpoint determined by piecewise iterative function (YES or NO)
-  ymax = "NO",       #Plot using breakpoint at x-value corresponding to max y-value (YES or NO)
-  twopoint = "NO",   #Plot using basic two-point ELF method (YES or NO)
-  pw_it_RS = "NO",   #Plot using PWIT *with the regression to the right of the breakpoint included (YES or NO)
-  pw_it_RS_IFIM = "NO",
+  method = "quantreg", #quantreg, pwit, ymax, twopoint, pwit_RS
   glo = 1,   # PWIT Breakpoint lower guess (sqmi/cfs)
   ghi = 408, # PWIT Breakpoint upper guess (sqmi/cfs) - also used as DA or MAF breakpoint for elf_quantreg method 
   ghi_var = 'qmean_annual', #qmean_annual or drainage_area_sqmi; use '' for default to have fn choose DA or Qmean
   token = token,
-  dataset_tag = "JK-TEST2"
+  dataset_tag = "JK-TEST7" #SAME TAG MUST NOT BE USED FOR MULTIPLE METHODS!!
 ) 
 
 #------------------------------------------------------------------------------------------------

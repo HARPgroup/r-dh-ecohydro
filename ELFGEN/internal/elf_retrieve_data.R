@@ -24,12 +24,7 @@ elf_retrieve_data <- function(inputs = list()){
   sampres <- inputs$sampres
   analysis_timespan <- inputs$analysis_timespan
   station_agg <- inputs$station_agg
-  quantreg <- inputs$quantreg 
-  ymax <- inputs$ymax   
-  pw_it <- inputs$pw_it  
-  pw_it_RS <- inputs$pw_it_RS 
-  pw_it_RS_IFIM <- inputs$pw_it_RS_IFIM 
-  twopoint <- inputs$twopoint
+  method <- inputs$method
   token <- inputs$token
 
 #l <- 1
@@ -160,21 +155,21 @@ for (k in offset_y_metric:length(y_metric)) {
       source(paste(fxn_locations,"elf_pw_it_RS_IFIM.R", sep = ""));  #loads elf_pw_it_RS_IFIM function for overlaying WUA curves on ELFs
       source(paste(fxn_locations,"elf_pct_chg_hab.R", sep ="")); 
       
-      if(quantreg == "YES") {print(paste("PLOTTING - method quantreg breakpoint ...",sep="")) 
+      if(method == "quantreg") {print(paste("PLOTTING - method quantreg breakpoint ...",sep="")) 
                             plt <- elf_quantreg (inputs, data, x_metric_code, y_metric_code, ws_ftype_code, Feature.Name_code, Hydroid_code, search_code, token, startdate, enddate)}
-      if(ymax == "YES") {print(paste("PLOTTING - method quantreg breakpoint at y-max...",sep="")) 
+      if(method == "ymax") {print(paste("PLOTTING - method quantreg breakpoint at y-max...",sep="")) 
                             plt <- elf_ymax (inputs, data, x_metric_code, y_metric_code, ws_ftype_code, Feature.Name_code, Hydroid_code, search_code, token, startdate, enddate)}
-      if(pw_it == "YES") {print(paste("PLOTTING - method quantreg breakpoint using piecewise function...",sep="")) 
+      if(method == "pwit") {print(paste("PLOTTING - method quantreg breakpoint using piecewise function...",sep="")) 
                             plt <- elf_pw_it (inputs, data, x_metric_code, y_metric_code, ws_ftype_code, Feature.Name_code, Hydroid_code, search_code, token, startdate, enddate)}
-      if(twopoint == "YES") {print(paste("PLOTTING - method two-point function...",sep=""))
+      if(method == "twopoint") {print(paste("PLOTTING - method two-point function...",sep=""))
                             plt <- elf_twopoint (inputs, data, x_metric_code, y_metric_code, ws_ftype_code, Feature.Name_code, Hydroid_code, search_code, token, startdate, enddate)}
 
-      if(pw_it_RS == "YES") {print(paste("PLOTTING - method quantreg breakpoint using piecewise function (Including regression to the right of breakpoint)...",sep=""))
+      if(method == "pwit_RS") {print(paste("PLOTTING - method quantreg breakpoint using piecewise function (Including regression to the right of breakpoint)...",sep=""))
                               plt <-  elf_pw_it_RS (inputs, data, x_metric_code, y_metric_code, ws_ftype_code, Feature.Name_code, Hydroid_code, search_code, token, startdate, enddate)}
       
-      if(pw_it_RS_IFIM == "YES") {print(paste("PLOTTING - method quantreg breakpoint using piecewise function (Including regression to the right of breakpoint)...",sep=""))
+      if(method == "pw_it_RS_IFIM") {print(paste("PLOTTING - method quantreg breakpoint using piecewise function (Including regression to the right of breakpoint)...",sep=""))
                                 plt <- elf_pw_it_RS_IFIM (inputs, data, x_metric_code, y_metric_code, ws_ftype_code, Feature.Name_code, Hydroid_code, search_code, token, startdate, enddate)}
-      if(pw_it_RS_IFIM == "YES") {return(plt)}
+      if(method == "pw_it_RS_IFIM") {return(plt)}
       #print(plt)
       
       #return(plt)
