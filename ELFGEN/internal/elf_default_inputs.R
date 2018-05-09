@@ -1,7 +1,7 @@
 #User inputs 
 inputs <- list(
   site = site,
-  datasite = base_url,
+  datasite = datasite,
   offset_x_metric = 1,                      #Leave at 1 to start from begining of x_metric for-loop
   offset_y_metric = 1,                      #Leave at 1 to start from begining of y_metric for-loop
   offset_ws_ftype = 1,                      #Leave at 1 to start from begining of ws_ftype for-loop

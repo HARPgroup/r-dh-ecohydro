@@ -32,13 +32,12 @@ source(paste(fxn_locations,"elf_default_inputs.R", sep = ""));
 inputs$x_metric = 'erom_q0001e_mean'; #Flow metric to be plotted on the x-axis
 inputs$y_metric = 'aqbio_nt_total';
 inputs$ws_ftype = c('nhd_huc10');
-inputs$target_hydrocode = '';
+inputs$target_hydrocode = '0208020111';
 inputs$quantile = .80;
 inputs$send_to_rest = "NO";
 inputs$glo = 1;
 inputs$method = "ymax"; #quantreg, pwit, ymax, twopoint, pwit_RS
 inputs$ghi = 530;
-inputs$offset_hydrocode = 481
 inputs$dataset_tag = 'ymax75';
 inputs$token = token;
 
