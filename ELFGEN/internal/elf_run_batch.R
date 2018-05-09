@@ -26,11 +26,18 @@ source(paste(fxn_locations,"huc8_groupings.txt", sep = ""));
 
 # Load Default inputs
 source(paste(fxn_locations,"elf_default_inputs.R", sep = ""));
+source(paste(fxn_locations,"elf_assemble_batch.R", sep = ""));
+source(paste(fxn_locations,"elf_quantreg.R", sep = ""));
+source(paste(fxn_locations,"elf_ymax.R", sep = ""));
+source(paste(fxn_locations,"elf_pw_it.R", sep = ""));
+source(paste(fxn_locations,"elf_pct_chg.R", sep = ""));
+source(paste(fxn_locations,"elf_store_data.R", sep = ""));
+source(paste(base_directory,"Analysis/query_elf_statistics.R", sep = "/")); 
 #####
 # Now add custom local settings here
 inputs$x_metric = 'erom_q0001e_mean'; #Flow metric to be plotted on the x-axis
 inputs$y_metric = 'aqbio_nt_total';
-inputs$ws_ftype = c('nhd_huc10');
+inputs$ws_ftype = c('nhd_huc8');
 inputs$target_hydrocode = '';
 inputs$quantile = .80;
 inputs$send_to_rest = "YES";
@@ -45,15 +52,58 @@ inputs$token = token;
 #    and optional any of the following
 # target_hydrocode,name,ghi,glo,
 batchlist = elf_assemble_batch(inputs) 
-
+# or
+batchlist = read.csv(file=paste(fxn_locations,"Huc8_MAFw_Huc6BP_ForQuantreg.csv",sep="/"),header=TRUE)
 # 2. Iterate through each item in the list
 for (row in 1:nrow(batchlist)) {
   tin = inputs
-  target <- batchlist[row];
-#   2.1 Check for custom inputs in list
-  if ("glo" %in% colnames(target)) {
-    tin$glo <- target$glo
+  target <- batchlist[row,];
+  # 2.1 Check for custom inputs in list
+  eligible <- c(
+    'glo', 'ghi', 'target_hydrocode', 'x_metric_code', 'y_metric_code', 'startdate', 'enddate',
+    'bundle', 'ws_ftype', 'name', 'method', 'sampres', 'dataset_tag'
+    )
+  for (col in eligible) {
+    if (col %in% colnames(target)) {
+      tin[col] <- target[col]
+    }
   }
-#   2.2 Run selected routine 
+  print(tin$target_hydrocode)
+  # get the raw data
+  mydata <- vahydro_fe_data(
+    Watershed_Hydrocode = tin$target_hydrocode, x_metric_code = tin$x_metric, 
+    y_metric_code = tin$y_metric, bundle = tin$bundle,  
+    ws_ftype_code = tin$ws_ftype, sampres = tin$sampres
+  );
+  # filter out stuff we don't want (can be controlled via tin)
+  data <- elf_cleandata(mydata, inputs = tin);
+  # 2.2 Run selected routine 
+  if (!(is.data.frame(data))) {
+    print("No Data Found") 
+  } else {
+    if (is.null(tin$hydroid)) {
+      feature <- getFeature(
+        list(
+          ftype = tin$ws_ftype,
+          bundle = tin$bundle,
+          hydrocode = tin$target_hydrocode
+        )
+        , token, base_url);
+      tin$name = feature$name
+      tin$hydroid = feature$hydroid
+    }
+    if (is.null(tin$name)) {
+      tin$name = tin$target_hydrocode
+    }
+    startdate = min(data$tstime)
+    enddate = max(data$tstime)
+    elf_run_method(
+      method = tin$method, inputs = tin, data = data, 
+      x_metric_code = as.character(tin$x_metric), y_metric_code = as.character(tin$y_metric), 
+      ws_ftype_code = tin$ws_ftype, Feature.Name_code = tin$name, 
+      Hydroid_code = tin$hydroid, search_code = tin$target_hydrocode, 
+      token = token, startdate = startdate, enddate = enddate
+    )
+  }
 }
 ##############################################################################
