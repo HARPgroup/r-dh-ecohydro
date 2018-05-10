@@ -35,10 +35,10 @@ source(paste(fxn_locations,"elf_store_data.R", sep = ""));
 source(paste(base_directory,"Analysis/query_elf_statistics.R", sep = "/")); 
 #####
 # Now add custom local settings here
-inputs$x_metric = 'erom_q0001e_mean'; #Flow metric to be plotted on the x-axis
+inputs$x_metric = c('nhdp_drainage_sqmi','erom_q0001e_mean'); #Flow metric to be plotted on the x-axis
 inputs$y_metric = 'aqbio_nt_total';
 inputs$ws_ftype = c('nhd_huc8');
-inputs$target_hydrocode = '';
+inputs$target_hydrocode = 'nhd_huc8_06010206';
 inputs$quantile = .80;
 inputs$send_to_rest = "YES";
 inputs$glo = 1;
@@ -53,14 +53,14 @@ inputs$token = token;
 # target_hydrocode,name,ghi,glo,
 batchlist = elf_assemble_batch(inputs) 
 # or
-batchlist = read.csv(file=paste(fxn_locations,"Huc8_MAFw_Huc6BP_ForQuantreg.csv",sep="/"),header=TRUE)
+#batchlist = read.csv(file=paste(fxn_locations,"Huc8_MAFw_Huc6BP_ForQuantreg.csv",sep="/"),header=TRUE)
 # 2. Iterate through each item in the list
 for (row in 1:nrow(batchlist)) {
   tin = inputs
   target <- batchlist[row,];
   # 2.1 Check for custom inputs in list
   eligible <- c(
-    'glo', 'ghi', 'target_hydrocode', 'x_metric_code', 'y_metric_code', 'startdate', 'enddate',
+    'glo', 'ghi', 'target_hydrocode', 'x_metric', 'x_metric', 'startdate', 'enddate',
     'bundle', 'ws_ftype', 'name', 'method', 'sampres', 'dataset_tag'
     )
   for (col in eligible) {
