@@ -2,7 +2,8 @@ rm(list = ls())  #clear variables
 options(timeout=240); # set timeout to twice default level to avoid abort due to high traffic
  
 #----------------------------------------------
-site <- "http://deq1.bse.vt.edu/d.dh"    #Specify the site of interest, either d.bet OR d.dh
+site <- "http://deq2.bse.vt.edu/d.dh"    #Specify the site of interest, either d.bet OR d.dh
+datasite <- "http://deq2.bse.vt.edu/d.dh" # where to get the raw data to analyze
 #----------------------------------------------
 
 #----FOR RUNNING LOCALLY:
@@ -27,7 +28,7 @@ source(paste(fxn_locations,"huc8_groupings.txt", sep = ""));
 
 #Added by Jen
 #use a list of huc8 or other hydrocodes to run custom ghi for quantreg
-Input_targetHydrocode <-  read.csv(file="D:\\Jkrstolic\\R\\deqEcoflows\\Breakpoints\\FullDatasets\\Batch_lists_for_ElfGen\\FishBatchLists\\Huc6_batchlistsMAF_PWIT.csv",header=TRUE) #list of Huc8 to process for QUantreg   Huc6_batchlistsMAFQuantReg.csv
+Input_targetHydrocode <-  read.csv(file="D:\\Jkrstolic\\R\\deqEcoflows\\Breakpoints\\FullDatasets\\Batch_lists_for_ElfGen\\FishBatchLists\\Huc8_MAFw_Huc6BP_Forpwit.csv",header=TRUE) #list of Huc8 to process for QUantreg   Huc6_batchlistsMAFQuantReg.csv
 data.table.hydrocode <- data.table(Input_targetHydrocode)
 T_hydrocode <- data.table.hydrocode$target_hydrocode #input the huc8 of interst, save as a list
 Numb_hydrocodes <- length(T_hydrocode) #number of hucs
@@ -68,7 +69,7 @@ inputs <- list(
                'aqbio_benthic_nt_total',
                'aqbio_nt_total'
               ), #this can be used to process by multiple biometrics at once 
-  y_metric = 'aqbio_benthic_nt_total',	   #Biometric to be plotted on the y-axis, see "dh variable key" column for options: https://docs.google.com/spreadsheets/d/1PnxY4Rxfk9hkuaXy7tv8yl-mPyJuHdQhrOUWx_E1Y_w/edit#gid=0
+  y_metric = 'aqbio_nt_total',	   #Biometric to be plotted on the y-axis, see "dh variable key" column for options: https://docs.google.com/spreadsheets/d/1PnxY4Rxfk9hkuaXy7tv8yl-mPyJuHdQhrOUWx_E1Y_w/edit#gid=0
   not_ws_ftype = c(
     'state',
     'hwi_region',
@@ -81,8 +82,9 @@ inputs <- list(
     'ecoiii_huc6'
   ),#this can be used to process by multiple region types at once 
     
-    ws_ftype = c('nhd_huc6'),		     #Options: state, hwi_region, nhd_huc8, nhd_huc6, ecoregion_iii, ecoregion_iv, ecoiii_huc6
-    target_hydrocode = paste("0", T_hydrocode[J], sep= ""),  #Leave blank to process all, individual examples: usa_state_virginia for all of VA, atl_non_coastal_plain_usgs,ohio_river_basin_nhdplus,nhd_huc8_05050001...
+    ws_ftype = c('nhd_huc8'),		     #Options: state, hwi_region, nhd_huc8, nhd_huc6, ecoregion_iii, ecoregion_iv, ecoiii_huc6
+    #target_hydrocode = paste("0", T_hydrocode[J], sep= ""),  #Leave blank to process all, individual examples: usa_state_virginia for all of VA, atl_non_coastal_plain_usgs,ohio_river_basin_nhdplus,nhd_huc8_05050001...
+    target_hydrocode = T_hydrocode[J],  #  
     quantile = .80,                  #Specify the quantile to use for quantile regresion plots 
     
     xaxis_thresh = 15000,            #Leave at 15000 so all plots have idential axis limits 
@@ -92,7 +94,7 @@ inputs <- list(
     send_to_rest = "NO",            #"YES" to push ELF statistic outputs to VAHydro
     station_agg = "max",             #Specify aggregation to only use the "max" NT value for each station or "all" NT values
     #sampres = 'species',                  
-    sampres = 'maj_fam_gen_spec',                  
+    sampres = 'species',                  
     #--Sample Resolution Grouping Options 
     #   species...............Species taxanomic level (Fish metrics only)
     #   maj_fam_gen_spec......majority a mix of family/genus/species (Benthics only)
@@ -107,7 +109,7 @@ inputs <- list(
     pw_it_RS = "NO",   #Plot using PWIT *with the regression to the right of the breakpoint included (YES or NO)
     #DA_Flow = "NO",    # Plot the drainage area and flow together to discern any modeling issues. 
     pw_it_RS_IFIM = "NO",  
-  glo = GloList[J],   # PWIT Breakpoint lower guess (sqmi/cfs)
+    glo = GloList[J],   # PWIT Breakpoint lower guess (sqmi/cfs)
     ghi = GhiList[J], # PWIT Breakpoint upper guess (sqmi/cfs) - also used as DA breakpoint for elf_quantreg method
     # ghi values determined from ymax analyses,  q25 = 72 
     #                                            q50 = 205 
