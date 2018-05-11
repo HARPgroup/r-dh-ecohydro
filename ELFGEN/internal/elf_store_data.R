@@ -68,7 +68,7 @@ elf_store_data <- function(qd = list(), token = '', inputs = list(), adminid) {
         bundle = 'submittal',
         name = qd$name,
         admincode = qd$admincode,
-        ftype = qd$ftype,
+        ftype = 'fe_elf',
         fstatus = 'active',
         dh_link_feature_submittal = list(
           list( 
