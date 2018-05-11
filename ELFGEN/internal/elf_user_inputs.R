@@ -7,6 +7,7 @@ datasite <- "http://deq2.bse.vt.edu/d.dh" # where to get the raw data to analyze
 #----------------------------------------------
 
 basepath='D:\\Jkrstolic\\R\\deqEcoflows\\GitHub\\r-dh-ecohydro\\';
+#basepath='C:\\Users\\nrf46657\\Desktop\\VAHydro Development\\GitHub\\r-dh-ecohydro\\';
 
 #----Change Basepath here to point to your global config file:
 #basepath='/var/www/R';
@@ -95,7 +96,7 @@ inputs <- list(
                                    #   maj_fam...............majority family (Benthics only)
                                    #   maj_species...........majority species (Benthics only)
   
-  quantreg = "YES",   #Plot using quantile regression method (YES or NO)
+  quantreg = "NO",   #Plot using quantile regression method (YES or NO)
   pw_it = "YES",      #Plot using breakpoint determined by piecewise iterative function (YES or NO)
   ymax = 'NO',       #Plot using breakpoint at x-value corresponding to max y-value (YES or NO)
   twopoint = "NO",   #Plot using basic two-point ELF method (YES or NO)

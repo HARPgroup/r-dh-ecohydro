@@ -220,6 +220,10 @@ elf_pw_it <- function(inputs, data, x_metric_code, y_metric_code, ws_ftype_code,
       Quantile_Legend <- paste(quantile," Quantile (Data Subset)",sep=""); 
       EDAS_lower_legend <- paste("Data Subset (Lower ",(100-((1 - quantile)*100)),"%)",sep="");
       
+      
+      
+      print(head(Conf_Pred_table))
+      
       print (paste("Plotting ELF"));
       
       my.plot <- function() {
@@ -233,6 +237,12 @@ elf_pw_it <- function(inputs, data, x_metric_code, y_metric_code, ws_ftype_code,
         geom_smooth(data = data, method="lm",formula=y ~ x,show.legend = TRUE, aes(colour="yellow"),se=FALSE) + 
         geom_smooth(data = upper.quant, formula = y ~ x, method = "lm", show.legend = TRUE, aes(x=x_value,y=y_value,color = "green"),se=FALSE) + 
         geom_vline(xintercept = breakpt[1],linetype = "longdash",colour = "black")+
+        
+        geom_point(data = Conf_Pred_table, aes(x=x_value,y=conf_upr,color = "yellow1")) + 
+        geom_point(data = Conf_Pred_table, aes(x=x_value,y=conf_lwr,color = "yellow2")) + 
+        geom_point(data = Conf_Pred_table, aes(x=x_value,y=pred_upr,color = "yellow3")) + 
+        geom_point(data = Conf_Pred_table, aes(x=x_value,y=pred_lwr,color = "yellow4")) +
+        
         ggtitle(plot_title) + 
         theme(
           plot.title = element_text(size = 12, face = "bold"),axis.text = element_text(colour = "blue")
@@ -248,14 +258,14 @@ elf_pw_it <- function(inputs, data, x_metric_code, y_metric_code, ws_ftype_code,
         #Add legend
         scale_color_manual(
           "Legend",
-          values=c("gray66","forestgreen","blue","orange","black","red"),
-          labels=c("Full Dataset",EDAS_upper_legend,EDAS_lower_legend,Reg_upper_legend,Quantile_Legend,"Regression (Data Subset)")
+          values=c("gray66","forestgreen","blue","orange","black","red","orange","orange","turquoise1","turquoise1"),
+          labels=c("Full Dataset",EDAS_upper_legend,EDAS_lower_legend,Reg_upper_legend,Quantile_Legend,"Regression (Data Subset)","conf_upr","conf_lwr","pred_upr","pred_lwr")
         ) + 
         guides(
           colour = guide_legend(
             override.aes = list(
-              linetype=c(0,0,0,1,1,1), 
-              shape=c(16,16,16,NA,NA,NA)
+              linetype=c(0,0,0,1,1,1,0,0,0,0), 
+              shape=c(16,16,16,NA,NA,NA,16,16,16,16)
             ),
             label.position = "right"
           )
