@@ -32,7 +32,7 @@ elf_run_method <- function( method, inputs, data, x_metric_code, y_metric_code, 
   if(method == "pwit") {
     print(paste("PLOTTING - method quantreg breakpoint using piecewise function...",sep="")) 
     plt <- elf_pw_it (
-      nputs, data, x_metric_code, y_metric_code, ws_ftype_code, 
+      inputs, data, x_metric_code, y_metric_code, ws_ftype_code, 
       Feature.Name_code, Hydroid_code, search_code, token, startdate, enddate
     )
     return;
