@@ -120,9 +120,9 @@ elf_pw_it <- function(inputs, data, x_metric_code, y_metric_code, ws_ftype_code,
       
       
       Conf_Pred_table <- cbind(upper.quant_tab, conf_table, pred_table, plus_minus_table) #
-      out_name <- paste(search_code,"fe_quantreg_pwit",x_metric,y_metric,quantile,station_agg,sampres,analysis_timespan,glo,ghi, sep='_');
-      print(paste("Exporting Prediction interval table "));
-      write.csv(Conf_Pred_table, file = paste(out_name,"_Conf_Pred_information",".csv", sep=""), row.names = F, quote = FALSE)
+      #out_name <- paste(search_code,"fe_quantreg_pwit",x_metric,y_metric,quantile,station_agg,sampres,analysis_timespan,glo,ghi, sep='_');
+      #print(paste("Exporting Prediction interval table "));
+      #write.csv(Conf_Pred_table, file = paste(out_name,"_Conf_Pred_information",".csv", sep=""), row.names = F, quote = FALSE)
       ####################JLR###############
       #If statement needed in case slope is "NA"
       if (nrow(ru$coefficients) > 1) {
