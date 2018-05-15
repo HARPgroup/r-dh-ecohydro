@@ -8,7 +8,7 @@ inputs <- list(
   offset_hydrocode = 1,                     #Leave at 1 to start from begining of Watershed_Hydrocode for-loop
   pct_chg = 10,                             #Percent decrease in flow for barplots (keep at 10 for now)
   save_directory = save_directory, 
-  not_x_metric = c(
+  x_metric = c(
     'nhdp_drainage_sqmi',
     'erom_q0001e_mean',
     'erom_q0001e_jan',
@@ -24,7 +24,7 @@ inputs <- list(
     'erom_q0001e_nov',
     'erom_q0001e_dec'
   ),		
-  x_metric = 'erom_q0001e_mean', #Flow metric to be plotted on the x-axis
+  not_x_metric = 'erom_q0001e_mean', #Flow metric to be plotted on the x-axis
   not_y_metric = c(
                'nhdp_drainage_sqmi',
                'aqbio_nt_bival',

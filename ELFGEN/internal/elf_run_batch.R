@@ -36,32 +36,57 @@ source(paste(fxn_locations,"elf_store_data.R", sep = ""));
 source(paste(base_directory,"Analysis/query_elf_statistics.R", sep = "/")); 
 #####
 # Now add custom local settings here
-inputs$x_metric = c('nhdp_drainage_sqmi','erom_q0001e_mean'); #Flow metric to be plotted on the x-axis
+inputs$x_metric = c(
+  'nhdp_drainage_sqmi',
+  'erom_q0001e_mean'
+#  'erom_q0001e_jan',
+#  'erom_q0001e_feb',
+#  'erom_q0001e_mar', 
+#  'erom_q0001e_apr', 
+#  'erom_q0001e_may',
+#  'erom_q0001e_june',
+#  'erom_q0001e_july'
+);
 inputs$y_metric = 'aqbio_nt_total';
 inputs$ws_ftype = c('nhd_huc8');
-inputs$target_hydrocode = 'nhd_huc8_06010206';
+inputs$target_hydrocode = '';
 inputs$quantile = .80;
+
 inputs$send_to_rest = "NO";
 inputs$glo = 72;
 inputs$ghi = 530;
 inputs$method = "ymax"; #quantreg, pwit, ymax, twopoint, pwit_RS
 inputs$dataset_tag = 'TaxaLossJLR';
+
 inputs$token = token;
 
 #------------------------------------------------------------------------------------------------
 # 1. Get data list - expects header line format with at least target_hydrocode
 #    and optional any of the following
 # target_hydrocode,name,ghi,glo,
-#batchlist = elf_assemble_batch(inputs) 
-# or
+
+
+#   ** Use this if you want a batch list to be generated from the inputs array
+# batchlist = elf_assemble_batch(inputs) 
+#   ** or, Use this if you want to load the batch list from a file, with defaults from inputs()
 batchlist = read.csv(file=paste(fxn_locations,"test_huc8_batch.csv",sep="/"),header=TRUE)
-# 2. Iterate through each item in the list
-for (row in 1:nrow(batchlist)) {
+# 2. check for x_metric in batch list, if not there we merge from inputs$x_metric
+bnames = colnames(batchlist)
+if (!('x_metric' %in% bnames)) {
+  batchlist <- merge(batchlist,data.frame(x_metric = inputs$x_metric))
+}
+
+# Batch Start
+batch_start = 1; # if we want to skip ahead, do so here.
+batch_len = nrow(batchlist)
+batch_end = batch_len; # if we want to stop early, do so here
+# 3. Iterate through each item in the list
+for (row in batch_start:batch_end) {
   tin = inputs
   target <- batchlist[row,];
-  # 2.1 Check for custom inputs in list
+  # 3.1 Check for custom inputs in list
   eligible <- c(
-    'glo', 'ghi', 'target_hydrocode', 'x_metric', 'x_metric', 'startdate', 'enddate',
+    'glo', 'ghi', 'target_hydrocode', 'x_metric', 'y_metric', 'startdate', 'enddate',
     'bundle', 'ws_ftype', 'name', 'method', 'sampres', 'dataset_tag'
     )
   for (col in eligible) {
@@ -69,7 +94,7 @@ for (row in 1:nrow(batchlist)) {
       tin[col] <- target[col]
     }
   }
-  print(tin$target_hydrocode)
+  print(paste("Record ", row, " out of ", batch_len, " = ", tin$target_hydrocode, " (targetting records ", batch_start, " to ", batch_end, ")",sep=''))
   # get the raw data
   mydata <- vahydro_fe_data(
     Watershed_Hydrocode = tin$target_hydrocode, x_metric_code = tin$x_metric, 
@@ -78,7 +103,7 @@ for (row in 1:nrow(batchlist)) {
   );
   # filter out stuff we don't want (can be controlled via tin)
   data <- elf_cleandata(mydata, inputs = tin);
-  # 2.2 Run selected routine 
+  # 3.2 Run selected routine 
   if (!(is.data.frame(data))) {
     print("No Data Found") 
   } else {

@@ -32,10 +32,13 @@ inputs$ws_ftype = c('nhd_huc8');
 inputs$target_hydrocode = 'nhd_huc8_02080201';
 inputs$quantile = .80;
 inputs$send_to_rest = "NO";
+
 inputs$glo = 72;
 inputs$method = "pwit"; #quantreg, pwit, ymax, twopoint, pwit_RS
 inputs$ghi = 408;
 inputs$dataset_tag = 'TEST_TaxalossJLK';
+
+
 inputs$token = token;
 
 

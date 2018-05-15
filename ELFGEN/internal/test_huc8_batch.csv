@@ -1,0 +1,4 @@
+method,target_hydrocode,dataset_tag,x_metric,y_metric
+ymax,nhd_huc8_06010206,ymax75,nhdp_drainage_sqmi,aqbio_nt_total
+ymax,nhd_huc8_06010206,ymax75,erom_q0001e_mean,aqbio_nt_total
+ymax,nhd_huc8_06010206,ymax75,erom_q0001e_mean,aqbio_nt_cent

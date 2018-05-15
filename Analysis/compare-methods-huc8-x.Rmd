@@ -31,27 +31,14 @@ save_directory = paste(file_directory,"/",sep='');
 # bundle - ecoregion, landunit, watershed
 # ftype - ecoregion_iii, nhd_huc6, nhd_huc6=8, nhd_huc10
 batch <- data.frame(
-  bundle = 'watershed', ftype = 'nhd_huc8', dataset_tag = 'bpj-530', q_ftype = 'fe_quantreg')
-batch <- rbind(
-  batch, data.frame(
-    bundle = 'watershed', ftype = 'nhd_huc8', dataset_tag = 'bpj-rcc', q_ftype = 'fe_quantreg'))
-batch <- rbind(
-  batch, data.frame(
-    bundle = 'watershed', ftype = 'nhd_huc8', dataset_tag = 'bpj-530', q_ftype = 'fe_quantreg_ymax'))
-batch <- rbind(
-  batch, data.frame(
-    bundle = 'watershed', ftype = 'nhd_huc8', dataset_tag = 'bpj-446-da', q_ftype = 'fe_quantreg'))
+    bundle = 'watershed', ftype = 'nhd_huc8', dataset_tag = 'bpj-rcc', q_ftype = 'fe_quantreg')
 batch <- rbind(
   batch, data.frame(
     bundle = 'watershed', ftype = 'nhd_huc8', dataset_tag = 'HUC8_quantregwHuc6bp', q_ftype = 'fe_quantreg'))
 # bpj-408-da is the median breakpoint from the HUC6 analysis
 batch <- rbind(
   batch, data.frame(
-    bundle = 'watershed', ftype = 'nhd_huc8', dataset_tag = 'bpj-408-maf', q_ftype = 'fe_quantreg'))
-# Huc6Ghi 72=Glo - Jens HUC8 run
-batch <- rbind(
-  batch, data.frame(
-    bundle = 'watershed', ftype = 'nhd_huc8', dataset_tag = 'Huc6Ghi_72=Glo', q_ftype = 'fe_quantreg_pwit'))
+    bundle = 'watershed', ftype = 'nhd_huc8', dataset_tag = 'bpj-huc6bp-rcc', q_ftype = 'fe_quantreg_ymax'))
 
 for (row in 1:nrow(batch)) {
   bundle <- batch[row,]$bundle;
