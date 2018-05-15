@@ -238,10 +238,10 @@ elf_pw_it <- function(inputs, data, x_metric_code, y_metric_code, ws_ftype_code,
         geom_smooth(data = upper.quant, formula = y ~ x, method = "lm", show.legend = TRUE, aes(x=x_value,y=y_value,color = "green"),se=FALSE) + 
         geom_vline(xintercept = breakpt[1],linetype = "longdash",colour = "black")+
         
-        geom_point(data = Conf_Pred_table, aes(x=x_value,y=conf_upr,color = "yellow1")) + 
-        geom_point(data = Conf_Pred_table, aes(x=x_value,y=conf_lwr,color = "yellow2")) + 
-        geom_point(data = Conf_Pred_table, aes(x=x_value,y=pred_upr,color = "yellow3")) + 
-        geom_point(data = Conf_Pred_table, aes(x=x_value,y=pred_lwr,color = "yellow4")) +
+        geom_point(data = Conf_Pred_table, aes(x=x_value,y=conf_upr,color = "yellow1"), shape=43, size=1.5) + 
+        geom_point(data = Conf_Pred_table, aes(x=x_value,y=conf_lwr,color = "yellow2"), shape=43, size=1.5) + 
+        geom_point(data = Conf_Pred_table, aes(x=x_value,y=pred_upr,color = "yellow3"), shape=2, size=0.5) + 
+        geom_point(data = Conf_Pred_table, aes(x=x_value,y=pred_lwr,color = "yellow4"), shape=2, size=0.5) +
         
         ggtitle(plot_title) + 
         theme(
@@ -258,14 +258,15 @@ elf_pw_it <- function(inputs, data, x_metric_code, y_metric_code, ws_ftype_code,
         #Add legend
         scale_color_manual(
           "Legend",
-          values=c("gray66","forestgreen","blue","orange","black","red","orange","orange","turquoise1","turquoise1"),
+          values=c("gray66","forestgreen","blue","orange","black","red","orange3","orange3","turquoise1","turquoise1"),
           labels=c("Full Dataset",EDAS_upper_legend,EDAS_lower_legend,Reg_upper_legend,Quantile_Legend,"Regression (Data Subset)","conf_upr","conf_lwr","pred_upr","pred_lwr")
         ) + 
         guides(
           colour = guide_legend(
             override.aes = list(
+              size=c(1,1,1,1,1,1,2,2,1,1),
               linetype=c(0,0,0,1,1,1,0,0,0,0), 
-              shape=c(16,16,16,NA,NA,NA,16,16,16,16)
+              shape=c(16,16,16,NA,NA,NA,43,43,2,2)
             ),
             label.position = "right"
           )
