@@ -5,15 +5,18 @@ options(timeout=240); # set timeout to twice default level to avoid abort due to
 site <- "http://deq2.bse.vt.edu/d.dh"    #Specify the site of interest, either d.bet OR d.dh
 datasite <- "http://deq2.bse.vt.edu/d.dh" # where to get the raw data to analyze
 #----------------------------------------------
+base_url <- datasite
 
 #----Change Basepath here to point to your global config file:
 #basepath='/var/www/R';
+
 basepath='D:\\Jkrstolic\\R\\deqEcoflows\\GitHub\\r-dh-ecohydro\\';
 # set your local directory paths in config.local.private located in filepath above
 # this file will NOT be sent to git, so it should persist
 # so, edit config.local.private once and you should be good to go
 source(paste(basepath,'config.local.private',sep='/'));
 #source('/var/www/R/config.local.private');
+
 
 #Load Functions               
 source(paste(fxn_locations,"elf_retrieve_data.R", sep = ""));  #loads function used to retrieve F:E data from VAHydro
@@ -55,8 +58,9 @@ inputs$quantile = .80;
 inputs$send_to_rest = "NO";
 inputs$glo = 72;
 inputs$ghi = 530;
-inputs$method = "ymax"; #quantreg, pwit, ymax, twopoint, pwit_RS
-inputs$dataset_tag = 'TaxaLossJLR';
+inputs$method = "quantreg"; #quantreg, pwit, ymax, twopoint, pwit_RS
+inputs$dataset_tag = 'TaxaLossJLRtest';
+inputs$ghi_var = 'qmean_annual'
 
 inputs$token = token;
 
@@ -69,7 +73,9 @@ inputs$token = token;
 #   ** Use this if you want a batch list to be generated from the inputs array
 # batchlist = elf_assemble_batch(inputs) 
 #   ** or, Use this if you want to load the batch list from a file, with defaults from inputs()
+
 batchlist = read.csv(file=paste(fxn_locations,"test_huc8_batchshort.csv",sep="/"),header=TRUE)
+
 # 2. check for x_metric in batch list, if not there we merge from inputs$x_metric
 bnames = colnames(batchlist)
 if (!('x_metric' %in% bnames)) {
