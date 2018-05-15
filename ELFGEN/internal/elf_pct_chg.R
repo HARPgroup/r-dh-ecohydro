@@ -66,5 +66,8 @@ plt2 <- ggplot(slope_table, aes(x=xvalues, y=pct_chgs_20)) +
   theme(axis.text.x = element_text(colour="grey20",size=15,hjust=.5,vjust=.5,face="plain"),
         axis.text.y = element_text(colour="grey20",size=15,hjust=.5,vjust=.5,face="plain"))
 
+#print(head(slope_table))
+write.csv(slope_table, file = (paste(save_directory,paste("\\pctchg_",Feature.Name,"_",biometric_title,".csv",sep=""),sep="")))
+
 }
 
