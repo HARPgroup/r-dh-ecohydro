@@ -191,6 +191,7 @@ pander(ifim_metrics)
 
 ```{r ELF PLOT, fig.width=10, fig.height=8, echo=FALSE, message=FALSE, warning=FALSE,results='hide'}
 #retrieve txt file of ifim sites and corresponding ELF regions data
+datasite <- "http://deq2.bse.vt.edu/d.dh" # where to get the raw data to analyze
 ifim_sites_df <- read.table(paste(habitat_files,'ifim_sites_df.txt',sep='/'), header=TRUE)
 site_row <- ifim_sites_df [which(ifim_sites_df$site == ifim_featureid),]
 
@@ -204,6 +205,7 @@ site_row <- ifim_sites_df [which(ifim_sites_df$site == ifim_featureid),]
   
   inputs <- list(
     site = site,
+    datasite = datasite,
     offset_x_metric = 1,                      
     offset_y_metric = 1,                      
     offset_ws_ftype = 1,                     
@@ -220,12 +222,7 @@ site_row <- ifim_sites_df [which(ifim_sites_df$site == ifim_featureid),]
     send_to_rest = "NO",            
     station_agg = "max",             
     sampres = 'species',   
-    quantreg = "NO",  
-    pw_it = "NO",     
-    ymax = "NO",       
-    twopoint = "NO",   
-    pw_it_RS = "NO", 
-    pw_it_RS_IFIM = "YES",
+    method = 'pw_it_RS_IFIM',  
     glo = site_row$glo,   
     ghi = site_row$ghi, 
     token = token,

@@ -29,10 +29,11 @@ fn_dh_elfstats <- function(
     stat_quantreg_ghi = "all",
     feature_ftype = "all",
     xvar = "all",
-    dataset_tag = "all") {
+    dataset_tag = "all",
+    featureid = "all") {
 
 #------------------------------------------------------------------
-    elf_statistics <- paste(site,"export_elf_statistics",ftype,fstatus,analysis_timespan,yvar,sampres,stat_quantreg_qu,station_agg,stat_quantreg_glo,stat_quantreg_ghi,feature_ftype,xvar,dataset_tag,sep = "/");
+    elf_statistics <- paste(site,"export_elf_statistics",ftype,fstatus,analysis_timespan,yvar,sampres,stat_quantreg_qu,station_agg,stat_quantreg_glo,stat_quantreg_ghi,feature_ftype,xvar,dataset_tag,featureid,sep = "/");
     print(paste("Using URI: ", elf_statistics));
     region <- feature_ftype
     XV <-xvar

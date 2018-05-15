@@ -16,23 +16,43 @@ elf_store_data <- function(qd = list(), token = '', inputs = list(), adminid) {
   #** Create submittal if does not exist
   #****************************************************************
   
-  elf_submittal_exists <- paste(site,"elf_submittal_exists", 
-                                  qd$ftype,
-                                  "active",
-                                  qd$admincode,
-                                  qd$stats$analysis_timespan,
-                                  qd$stats$stat_quantreg_x,
-                                  qd$stats$stat_quantreg_y,
-                                  qd$stats$sampres,
-                                  qd$stats$stat_quantreg_qu,
-                                  qd$stats$station_agg,
-                                  qd$stats$stat_quantreg_glo,
-                                  qd$stats$stat_quantreg_ghi,
-                                  qd$featureid,
-                                sep = "/");
+  # ORIGINAL SUBMITTAL RETRIEVAL 
+  # elf_submittal_exists <- paste(site,"elf_submittal_exists", 
+  #                                qd$ftype,
+  #                                "active",
+  #                                qd$admincode,
+  #                                qd$stats$analysis_timespan,
+  #                                qd$stats$stat_quantreg_x,
+  #                                qd$stats$stat_quantreg_y,
+  #                                qd$stats$sampres,
+  #                                qd$stats$stat_quantreg_qu,
+  #                                qd$stats$station_agg,
+  #                                qd$stats$stat_quantreg_glo,
+  #                                qd$stats$stat_quantreg_ghi,
+  #                                qd$featureid,
+  #                              sep = "/");
+  # print(paste("Checking submittal by input parameters using: ",elf_submittal_exists, sep=''))
+  # elf_submittal_exists <- read.table(elf_submittal_exists,header = TRUE, sep = ",")
   
-  print(paste("Checking submittal by input parameters using: ",elf_submittal_exists, sep=''))
-  elf_submittal_exists <- read.table(elf_submittal_exists,header = TRUE, sep = ",")
+  # UPDATED SUBMITTAL RETRIEVAL
+  #print(paste("Checking submittal by dataset_tag = ", qd$stats$dataset_tag," and featureid = ",qd$featureid, sep=''))
+  #elf_submittal_exists <- fn_dh_elfstats(dataset_tag = qd$stats$dataset_tag, featureid = qd$featureid)
+  
+  # hybrid SUBMITTAL RETRIEVAL
+  print(
+    paste(
+      "Checking submittal by dataset_tag = ", qd$stats$dataset_tag,
+      ", y = ",qd$stats$stat_quantreg_y,
+      ", x = ",qd$stats$stat_quantreg_x,
+      " and featureid = ", qd$featureid, sep=''
+    )
+  )
+  elf_submittal_exists <- fn_dh_elfstats(
+    dataset_tag = qd$stats$dataset_tag, 
+    yvar = qd$stats$stat_quantreg_y,
+    xvar = qd$stats$stat_quantreg_x,
+    featureid = qd$featureid
+  )
   adminid <- elf_submittal_exists$s_adminid
 
   #** Create if does not exist

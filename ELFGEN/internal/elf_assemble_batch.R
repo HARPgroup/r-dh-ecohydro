@@ -7,6 +7,63 @@ library(httr);
 library(data.table);
 library(scales);
 
+elf_run_method <- function( method, inputs, data, x_metric_code, y_metric_code, ws_ftype_code, 
+    Feature.Name_code, Hydroid_code, search_code, token, startdate, enddate
+  ) {
+  
+  if(method == "quantreg") {
+    print(paste("PLOTTING - method quantreg breakpoint ...",sep="")) 
+    plt <- elf_quantreg (
+      inputs, data, x_metric_code, y_metric_code, ws_ftype_code, Feature.Name_code, 
+      Hydroid_code, search_code, token, startdate, enddate
+    )
+    return;
+  }
+  
+  if(method == "ymax") {
+    print(paste("PLOTTING - method ymax quantreg breakpoint at y-max...",sep="")) 
+    plt <- elf_ymax (
+      inputs, data, x_metric_code, y_metric_code, ws_ftype_code, Feature.Name_code, 
+      Hydroid_code, search_code, token, startdate, enddate
+    )
+    return;
+  }
+  
+  if(method == "pwit") {
+    print(paste("PLOTTING - method quantreg breakpoint using piecewise function...",sep="")) 
+    plt <- elf_pw_it (
+      inputs, data, x_metric_code, y_metric_code, ws_ftype_code, 
+      Feature.Name_code, Hydroid_code, search_code, token, startdate, enddate
+    )
+    return;
+  }
+  
+  if(method == "twopoint") {
+    print(paste("PLOTTING - method two-point function...",sep=""))
+    plt <- elf_twopoint (
+      inputs, data, x_metric_code, y_metric_code, ws_ftype_code, Feature.Name_code, 
+      Hydroid_code, search_code, token, startdate, enddate
+    )
+    return;
+  }
+  
+  if(method == "pwit_RS") {
+    print(paste("PLOTTING - method quantreg breakpoint using piecewise function (Including regression to the right of breakpoint)...",sep=""))
+    plt <-  elf_pw_it_RS (
+      inputs, data, x_metric_code, y_metric_code, ws_ftype_code, 
+      Feature.Name_code, Hydroid_code, search_code, token, startdate, enddate
+    )
+    return;
+  }
+  
+  if(method == "pw_it_RS_IFIM") {
+    print(paste("PLOTTING - method quantreg breakpoint using piecewise function (Including regression to the right of breakpoint)...",sep=""))
+    plt <- elf_pw_it_RS_IFIM (inputs, data, x_metric_code, y_metric_code, ws_ftype_code, Feature.Name_code, Hydroid_code, search_code, token, startdate, enddate)
+    return(plt)
+  }
+  
+}
+
 elf_cleandata <- function (data, inputs, startdate = FALSE, enddate = FALSE) {
   
   #makes sure all metric values are numeric and not factorial (fixes error with ni, total)
@@ -68,7 +125,7 @@ elf_cleandata <- function (data, inputs, startdate = FALSE, enddate = FALSE) {
 }
 
 elf_assemble_batch <- function(inputs = list()){
-  
+  batchlist = FALSE;
   #Load inputs
   x_metric <- inputs$x_metric 
   y_metric <- inputs$y_metric 
@@ -91,110 +148,87 @@ elf_assemble_batch <- function(inputs = list()){
   twopoint <- inputs$twopoint
   token <- inputs$token
 
-for (l in offset_ws_ftype:length(ws_ftype)) {
-     
-  print(paste("ws_ftype ",l,". of ",length(ws_ftype),". ",ws_ftype[l],sep=""))
-  #Automatic bundle specification (WILL BE ELIMINATED ONCE WE UPDATE VAHYDRO STORAGE SCHEME)
-  if(ws_ftype[l] == "hwi_region"){
-    bundle <- "ecoregion"
-  } else if(ws_ftype[l] == "state") {
-    bundle <- "landunit" 
-  } else if(ws_ftype[l] == "ecoregion_iii") {
-    bundle <- "ecoregion" 
-  } else if(ws_ftype[l] == "ecoregion_iv") {
-    bundle <- "ecoregion" 
-  } else if(ws_ftype[l] == "ecoiii_huc6") {
-    bundle <- "ecoregion" 
-  } else {
-    bundle <- "watershed" 
-  }
-  #Pull in full list of Virginia watersheds for the specified ftype
-  #If we define a hydrocode > 'XXXXXX' it will retrieve that single one
-  HUClist_url_base <- paste(site,"/?q=elfgen_regions_export/",bundle, sep = "");
-  if (!(target_hydrocode == '')) {
-    HUClist_url_full <- paste(HUClist_url_base, ws_ftype[l], target_hydrocode, sep = "/");
-  } else {
-    HUClist_url_full <- paste(HUClist_url_base, ws_ftype[l], sep = "/");
-  }
-  #print(HUClist_url_full)
-  HUClist <- read.table(HUClist_url_full,header = TRUE, sep = ",")
-  Watershed_Hydrocode <- HUClist$Hydrocode
-  Feature.Name <- HUClist$Feature.Name
-  Hydroid <- HUClist$HydroID
+  for (l in offset_ws_ftype:length(ws_ftype)) {
+       
+    print(paste("ws_ftype ",l,". of ",length(ws_ftype),". ",ws_ftype[l],sep=""))
+    #Automatic bundle specification (WILL BE ELIMINATED ONCE WE UPDATE VAHYDRO STORAGE SCHEME)
+    if(ws_ftype[l] == "hwi_region"){
+      bundle <- "ecoregion"
+    } else if(ws_ftype[l] == "state") {
+      bundle <- "landunit" 
+    } else if(ws_ftype[l] == "ecoregion_iii") {
+      bundle <- "ecoregion" 
+    } else if(ws_ftype[l] == "ecoregion_iv") {
+      bundle <- "ecoregion" 
+    } else if(ws_ftype[l] == "ecoiii_huc6") {
+      bundle <- "ecoregion" 
+    } else {
+      bundle <- "watershed" 
+    }
+    #Pull in full list of Virginia watersheds for the specified ftype
+    #If we define a hydrocode > 'XXXXXX' it will retrieve that single one
+    HUClist_url_base <- paste(site,"/?q=elfgen_regions_export/",bundle, sep = "");
+    if (!(target_hydrocode == '')) {
+      HUClist_url_full <- paste(HUClist_url_base, ws_ftype[l], target_hydrocode, sep = "/");
+    } else {
+      HUClist_url_full <- paste(HUClist_url_base, ws_ftype[l], sep = "/");
+    }
+    print(paste("Searching ", HUClist_url_full, " for target_hydrocode ", target_hydrocode, sep=''))
+    #print(HUClist_url_full)
+    HUClist <- read.table(HUClist_url_full,header = TRUE, sep = ",")
+    Watershed_Hydrocode <- HUClist$Hydrocode
+    Feature.Name <- HUClist$Feature.Name
+    Hydroid <- HUClist$HydroID
   
-for (k in offset_y_metric:length(y_metric)) {
-  print(paste("y_metric ", k, ". of ",length(y_metric),". Beginning loop for ", y_metric[k], sep=''));
-  for (j in offset_x_metric:length(x_metric)) {
-    print(paste("x_metric ", j, ". of 14. Beginning loop for ", x_metric[j], sep=''));
-    for (i in offset_hydrocode:length(Watershed_Hydrocode)) {
-      print(paste("Feature ", i, ". of ",length(Watershed_Hydrocode),". Searching for stations from ", Watershed_Hydrocode[i], sep=''));
-      search_code <- Watershed_Hydrocode[i];
-      Feature.Name_code <- as.character(Feature.Name[i]);
-      Hydroid_code <- Hydroid[i];
-      ws_ftype_code <- ws_ftype[l]
-      x_metric_code <-  x_metric[j];
-      y_metric_code <-  y_metric[k];
-
-      data <- vahydro_fe_data(
-        search_code,
-        x_metric_code,y_metric_code,
-        bundle,ws_ftype_code,sampres
-      );
-      data$tstime <- as.Date(data$tstime,origin="1970-01-01")
-      # clean up data
-      
-      if (inputs$analysis_timespan != 'full') {
-        #Need to convert timespan paramteter into startdate and endate format for subsetting data 
-        startdate <- paste(unlist(strsplit(inputs$analysis_timespan, "[-]"))[[1]],"-01-01",sep="")
-        enddate <- paste(unlist(strsplit(inputs$analysis_timespan, "[-]"))[[2]],"-12-31",sep="")
-        print(paste("startdate: ", startdate))
-        print(paste("enddate: ", enddate))
-        date_label = "subset: "
-      } else {        
-        print ("min function")
-        startdate <- min(data$tstime)
-        enddate <- max(data$tstime)   #no dates set with REST, only "full" for analysis_timespan propcode
-        print ("done min function")
-        date_label = "full timespan: "
-      }
-      
-      data <- elf_cleandata(data, inputs, startdate, enddate)
-      startdate <- paste(date_label,startdate,sep="")
-      startdate <- paste(date_label,startdate,sep="") #if plotting for full timespan, display start and end dates above plot
-      
-      if (typeof(data) == 'logical') {
-        next
-      }
-#---------------------------------------------------------------------     
-      
-      #Load Functions               
-      source(paste(fxn_locations,"elf_quantreg.R", sep = ""));       #loads elf_quantreg function
-      source(paste(fxn_locations,"elf_ymax.R", sep = ""));           #loads elf_ymax function
-      source(paste(fxn_locations,"elf_pw_it.R", sep = ""));          #loads ef_pw_it function
-      source(paste(fxn_locations,"elf_twopoint.R", sep = ""));       #loads elf_twopoint function
-      source(paste(fxn_locations,"elf_pw_it_RS.R", sep = ""));       #loads ef_pw_it_RS function
-      source(paste(fxn_locations,"elf_pct_chg.R", sep =""));         #loads percent change barplot function
-      source(paste(fxn_locations,"elf_store_data.R", sep = ""));     #loads function used to store ELF stats to VAHydro
-      source(paste(fxn_locations,"elf_pw_it_RS_IFIM.R", sep = ""));  #loads elf_pw_it_RS_IFIM function for overlaying WUA curves on ELFs
-      
-      if(quantreg == "YES") {print(paste("PLOTTING - method quantreg breakpoint ...",sep="")) 
-                            elf_quantreg (inputs, data, x_metric_code, y_metric_code, ws_ftype_code, Feature.Name_code, Hydroid_code, search_code, token, startdate, enddate)}
-      if(ymax == "YES") {print(paste("PLOTTING - method quantreg breakpoint at y-max...",sep="")) 
-                            elf_ymax (inputs, data, x_metric_code, y_metric_code, ws_ftype_code, Feature.Name_code, Hydroid_code, search_code, token, startdate, enddate)}
-      if(pw_it == "YES") {print(paste("PLOTTING - method quantreg breakpoint using piecewise function...",sep="")) 
-                            elf_pw_it (inputs, data, x_metric_code, y_metric_code, ws_ftype_code, Feature.Name_code, Hydroid_code, search_code, token, startdate, enddate)}
-      if(twopoint == "YES") {print(paste("PLOTTING - method two-point function...",sep=""))
-                            elf_twopoint (inputs, data, x_metric_code, y_metric_code, ws_ftype_code, Feature.Name_code, Hydroid_code, search_code, token, startdate, enddate)}
-
-      if(pw_it_RS == "YES") {print(paste("PLOTTING - method quantreg breakpoint using piecewise function (Including regression to the right of breakpoint)...",sep=""))
-                            plt <- elf_pw_it_RS (inputs, data, x_metric_code, y_metric_code, ws_ftype_code, Feature.Name_code, Hydroid_code, search_code, token, startdate, enddate)}
-      print(class(plt))
-      if(pw_it_RS_IFIM == "YES") {print(paste("PLOTTING - method quantreg breakpoint using piecewise function (Including regression to the right of breakpoint)...",sep=""))
-                                  elf_pw_it_RS_IFIM (inputs, data, x_metric_code, y_metric_code, ws_ftype_code, Feature.Name_code, Hydroid_code, search_code, token, startdate, enddate)}
-      
-      return(plt)
+    for (k in offset_y_metric:length(y_metric)) {
+      print(paste("y_metric ", k, ". of ",length(y_metric),". Beginning loop for ", y_metric[k], sep=''));
+      for (j in offset_x_metric:length(x_metric)) {
+        print(paste("x_metric ", j, ". of 14. Beginning loop for ", x_metric[j], sep=''));
+        for (i in offset_hydrocode:length(Watershed_Hydrocode)) {
+          print(paste("Feature ", i, ". of ",length(Watershed_Hydrocode),". Searching for stations from ", Watershed_Hydrocode[i], sep=''));
+          search_code <- Watershed_Hydrocode[i];
+          Feature.Name_code <- as.character(Feature.Name[i]);
+          Hydroid_code <- Hydroid[i];
+          ws_ftype_code <- ws_ftype[l]
+          x_metric_code <-  x_metric[j];
+          y_metric_code <-  y_metric[k];
+          if (typeof(data) == 'logical') {
+            next
+          }  
+          
+          # now, add this to a master list to return
+          if (batchlist == FALSE) {
+            batchlist = data.frame(
+              target_hydrocode = search_code, 
+              hydroid = Hydroid_code,
+              name = Feature.Name_code, 
+              method = inputs$method,
+              ws_ftype = ws_ftype_code, 
+              bundle = bundle, 
+              dataset_tag = inputs$dataset_tag, 
+              x_metric = x_metric_code, 
+              y_metric = y_metric_code,
+              sampres = sampres
+            )
+          } else {
+            batchlist <- rbind(
+              batchlist, data.frame(
+                target_hydrocode = search_code, 
+                hydroid = Hydroid_code,
+                name = Feature.Name_code, 
+                method = inputs$method,
+                ws_ftype = ws_ftype_code, 
+                bundle = bundle, 
+                dataset_tag = inputs$dataset_tag, 
+                x_metric = x_metric_code, 
+                y_metric = y_metric_code,
+                sampres = sampres
+              )
+            )
+          }
         } #closes watershed for loop  
       } #closes x_metric for loop
     } #closes y_metric for loop
   } #closes ws_ftype for loop
+  return(batchlist)
 } #close function
