@@ -5,14 +5,16 @@ options(timeout=240); # set timeout to twice default level to avoid abort due to
 site <- "http://deq2.bse.vt.edu/d.dh"    #Specify the site of interest, either d.bet OR d.dh
 datasite <- "http://deq2.bse.vt.edu/d.dh" # where to get the raw data to analyze
 #----------------------------------------------
+base_url <- datasite
 
 #----Change Basepath here to point to your global config file:
-basepath='/var/www/R';
-#basepath='C:\\Users\\nrf46657\\Desktop\\VAHydro Development\\GitHub\\r-dh-ecohydro\\';
+#basepath='/var/www/R';
+basepath='C:\\Users\\nrf46657\\Desktop\\VAHydro Development\\GitHub\\r-dh-ecohydro\\';
 # set your local directory paths in config.local.private located in filepath above
 # this file will NOT be sent to git, so it should persist
 # so, edit config.local.private once and you should be good to go
-source('/var/www/R/config.local.private');
+#source('/var/www/R/config.local.private');
+source(paste(basepath,'config.local.private',sep='/'));
 
 #Load Functions               
 source(paste(fxn_locations,"elf_retrieve_data.R", sep = ""));  #loads function used to retrieve F:E data from VAHydro
@@ -32,7 +34,7 @@ source(paste(fxn_locations,"elf_ymax.R", sep = ""));
 source(paste(fxn_locations,"elf_pw_it.R", sep = ""));
 source(paste(fxn_locations,"elf_pct_chg.R", sep = ""));
 source(paste(fxn_locations,"elf_store_data.R", sep = ""));
-source(paste(base_directory,"Analysis/query_elf_statistics.R", sep = "/")); 
+source(paste(basepath,"Analysis/query_elf_statistics.R", sep = "/")); 
 #####
 # Now add custom local settings here
 inputs$x_metric = c(
@@ -50,7 +52,7 @@ inputs$y_metric = 'aqbio_nt_total';
 inputs$ws_ftype = c('nhd_huc8');
 inputs$target_hydrocode = '';
 inputs$quantile = .80;
-inputs$send_to_rest = "YES";
+inputs$send_to_rest = "NO";
 inputs$glo = 1;
 inputs$ghi = 1000;
 inputs$method = "quantreg"; #quantreg, pwit, ymax, twopoint, pwit_RS
@@ -65,7 +67,7 @@ inputs$token = token;
 #   ** Use this if you want a batch list to be generated from the inputs array
 # batchlist = elf_assemble_batch(inputs) 
 #   ** or, Use this if you want to load the batch list from a file, with defaults from inputs()
-batchlist = read.csv(file=paste(fxn_locations,"HUC8-bpjrcc-maf.csv",sep="/"),header=TRUE)
+batchlist = read.csv(file=paste(fxn_locations,"Huc8_DAw_Huc6BP_ForQuantreg.csv",sep=""),header=TRUE)
 # 2. check for x_metric in batch list, if not there we merge from inputs$x_metric
 bnames = colnames(batchlist)
 if (!('x_metric' %in% bnames)) {
