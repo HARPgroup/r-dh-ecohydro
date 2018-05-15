@@ -95,9 +95,9 @@ print(paste("Upper quantile has ", nrow(upper.quant), "values"));
             
             
             Conf_Pred_table <- cbind(upper.quant_tab, conf_table, pred_table, plus_minus_table) #
-            #out_name <- paste(search_code,"fe_quantreg_pwit",x_metric,y_metric,quantile,station_agg,sampres,analysis_timespan,glo,ghi, sep='_');
-            #print(paste("Exporting Prediction interval table "));
-            #write.csv(Conf_Pred_table, file = paste(out_name,"_Conf_Pred_information",".csv", sep=""), row.names = F, quote = FALSE)
+            out_name <- paste(search_code,"fe_quantreg",x_metric,y_metric,quantile,station_agg,sampres,analysis_timespan, sep='_');
+            print(paste("Exporting Prediction interval table "));
+            write.csv(Conf_Pred_table, file = paste(save_directory,"/",out_name,"_Conf_Pred_information",".csv", sep=""), row.names = F, quote = FALSE)
             ####################JLR###############
             
             
