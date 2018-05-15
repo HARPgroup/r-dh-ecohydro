@@ -7,9 +7,9 @@ site <- "http://deq1.bse.vt.edu/d.dh"    #Specify the site of interest, either d
 
 #----FOR RUNNING LOCALLY:
 
-#oldbasepath='D:\\Jkrstolic\\R\\deqEcoflows\\GitHub\\r-dh-ecohydro\\ELFGEN\\internal\\';
+
 #basepath='/var/www/R';
-basepath='C:/Users/nrf46657/Desktop/VAHydro Development/GitHub/r-dh-ecohydro/';
+basepath='D:/Jkrstolic/deqEcoflows/GitHub/r-dh-ecohydro/';
 
 source(paste(basepath,'config.local.private',sep='/'));
 

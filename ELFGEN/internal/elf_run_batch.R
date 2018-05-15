@@ -33,7 +33,7 @@ source(paste(fxn_locations,"elf_ymax.R", sep = ""));
 source(paste(fxn_locations,"elf_pw_it.R", sep = ""));
 source(paste(fxn_locations,"elf_pct_chg.R", sep = ""));
 source(paste(fxn_locations,"elf_store_data.R", sep = ""));
-source(paste(base_directory,"Analysis/query_elf_statistics.R", sep = "/")); 
+source(paste(basepath,"Analysis/query_elf_statistics.R", sep = "/")); 
 #####
 # Now add custom local settings here
 inputs$x_metric = c(
@@ -69,7 +69,7 @@ inputs$token = token;
 #   ** Use this if you want a batch list to be generated from the inputs array
 # batchlist = elf_assemble_batch(inputs) 
 #   ** or, Use this if you want to load the batch list from a file, with defaults from inputs()
-batchlist = read.csv(file=paste(fxn_locations,"test_huc8_batch.csv",sep="/"),header=TRUE)
+batchlist = read.csv(file=paste(fxn_locations,"test_huc8_batchshort.csv",sep="/"),header=TRUE)
 # 2. check for x_metric in batch list, if not there we merge from inputs$x_metric
 bnames = colnames(batchlist)
 if (!('x_metric' %in% bnames)) {
