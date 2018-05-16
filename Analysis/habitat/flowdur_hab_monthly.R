@@ -4,6 +4,7 @@ rm(list = ls()) # clear variables
 library('zoo')
 library('IHA')
 library("stringr")
+library("ggplot2")
 
 site <- "http://deq1.bse.vt.edu/d.dh" 
 
@@ -180,7 +181,7 @@ qmax <- max(ifim_dataframe$discharge)
   ggplot(df, aes(x = reorder(month, order), y = pct))+
     geom_bar(stat="identity", width=0.5)+
     labs(title = paste("Percent Monthly Historic Gage Flow Coverage by WUA Table",sep=""),
-       subtitle = paste(ifim_site_name,sep=""))+
+       subtitle = paste(ifim_site_name," (Flows Area-Weighted from Gage ",gage,")",sep=""))+
     scale_y_continuous(limits = c(0, 100))+
     geom_text(aes(label=paste(round(pct,1),"%",sep="")), position=position_dodge(width=0.9), vjust=-0.25)+
     xlab("Month")+ 
