@@ -10,7 +10,7 @@ library(scales);
 elf_quantreg <- function(
   inputs, data, x_metric_code, y_metric_code, ws_ftype_code, 
   Feature.Name_code, Hydroid_code, search_code, token, 
-  startdate, enddate){
+  startdate, enddate, geom){
 
   a = FALSE
   
@@ -200,7 +200,7 @@ print (paste("Plotting ELF"));
             
             my.plot <- function() {
             # START - plotting function
-              result <- base.plot(data, full_dataset, upper.quant,
+              result <- base.plot(geom, data, full_dataset, upper.quant,
                                   yaxis_thresh, quantile,
                                   plot_title, xaxis_title, yaxis_title,
                                   EDAS_upper_legend,EDAS_lower_legend,Reg_upper_legend,Quantile_Legend)

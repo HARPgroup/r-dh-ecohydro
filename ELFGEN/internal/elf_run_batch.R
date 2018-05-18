@@ -2,8 +2,8 @@ rm(list = ls())  #clear variables
 options(timeout=240); # set timeout to twice default level to avoid abort due to high traffic
  
 #----------------------------------------------
-site <- "http://deq2.bse.vt.edu/d.alpha"    #Specify the site of interest, either d.bet OR d.dh
-datasite <- "http://deq2.bse.vt.edu/d.alpha" # where to get the raw data to analyze
+site <- "http://deq2.bse.vt.edu/d.dh"    #Specify the site of interest, either d.bet OR d.dh
+datasite <- "http://deq2.bse.vt.edu/d.dh" # where to get the raw data to analyze
 #----------------------------------------------
 base_url <- datasite
 
@@ -52,7 +52,7 @@ inputs$x_metric = c(
 );
 inputs$y_metric = 'aqbio_nt_total';
 inputs$ws_ftype = c('nhd_huc8');
-inputs$target_hydrocode = 'nhd_huc8_02070005';
+inputs$target_hydrocode = '';
 inputs$quantile = .80;
 inputs$send_to_rest = "NO";
 inputs$glo = 1;
@@ -115,12 +115,15 @@ for (row in batch_start:batch_end) {
           hydrocode = tin$target_hydrocode
         )
         , token, base_url);
+      #print(feature)
+      
       tin$name = feature$name
       tin$hydroid = feature$hydroid
     }
     if (is.null(tin$name)) {
       tin$name = tin$target_hydrocode
     }
+    
     startdate = min(data$tstime)
     enddate = max(data$tstime)
     elf_run_method(
@@ -128,7 +131,7 @@ for (row in batch_start:batch_end) {
       x_metric_code = as.character(tin$x_metric), y_metric_code = as.character(tin$y_metric), 
       ws_ftype_code = tin$ws_ftype, Feature.Name_code = tin$name, 
       Hydroid_code = tin$hydroid, search_code = tin$target_hydrocode, 
-      token = token, startdate = startdate, enddate = enddate
+      token = token, startdate = startdate, enddate = enddate, geom = feature$geom 
     )
   }
 }

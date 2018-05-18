@@ -10,14 +10,14 @@ library(rgeos); #used for geospatial processing
 library(sp); #contains SpatialPolygonsDataFrame()
 
 elf_run_method <- function( method, inputs, data, x_metric_code, y_metric_code, ws_ftype_code, 
-    Feature.Name_code, Hydroid_code, search_code, token, startdate, enddate
+    Feature.Name_code, Hydroid_code, search_code, token, startdate, enddate, geom
   ) {
   
   if(method == "quantreg") {
     print(paste("PLOTTING - method quantreg breakpoint ...",sep="")) 
     plt <- elf_quantreg (
       inputs, data, x_metric_code, y_metric_code, ws_ftype_code, Feature.Name_code, 
-      Hydroid_code, search_code, token, startdate, enddate
+      Hydroid_code, search_code, token, startdate, enddate, geom
     )
     return;
   }
@@ -26,7 +26,7 @@ elf_run_method <- function( method, inputs, data, x_metric_code, y_metric_code, 
     print(paste("PLOTTING - method ymax quantreg breakpoint at y-max...",sep="")) 
     plt <- elf_ymax (
       inputs, data, x_metric_code, y_metric_code, ws_ftype_code, Feature.Name_code, 
-      Hydroid_code, search_code, token, startdate, enddate
+      Hydroid_code, search_code, token, startdate, enddate, geom
     )
     return;
   }
@@ -35,7 +35,7 @@ elf_run_method <- function( method, inputs, data, x_metric_code, y_metric_code, 
     print(paste("PLOTTING - method quantreg breakpoint using piecewise function...",sep="")) 
     plt <- elf_pw_it (
       inputs, data, x_metric_code, y_metric_code, ws_ftype_code, 
-      Feature.Name_code, Hydroid_code, search_code, token, startdate, enddate
+      Feature.Name_code, Hydroid_code, search_code, token, startdate, enddate, geom
     )
     return;
   }
@@ -53,7 +53,7 @@ elf_run_method <- function( method, inputs, data, x_metric_code, y_metric_code, 
     print(paste("PLOTTING - method quantreg breakpoint using piecewise function (Including regression to the right of breakpoint)...",sep=""))
     plt <-  elf_pw_it_RS (
       inputs, data, x_metric_code, y_metric_code, ws_ftype_code, 
-      Feature.Name_code, Hydroid_code, search_code, token, startdate, enddate
+      Feature.Name_code, Hydroid_code, search_code, token, startdate, enddate, geom
     )
     return;
   }
@@ -236,18 +236,29 @@ elf_assemble_batch <- function(inputs = list()){
 } #close function
 
 
-base.plot <- function(data, full_dataset, upper.quant,
+base.plot <- function(geom, data, full_dataset, upper.quant,
                       yaxis_thresh, quantile,
                       plot_title, xaxis_title, yaxis_title,
                       EDAS_upper_legend,EDAS_lower_legend,Reg_upper_legend,Quantile_Legend
                       ) {
 
+  #Load Virginia geometry
+  VADF <- read.csv("VADF.csv")
+
+  
+  wsdataProjected <- SpatialPolygonsDataFrame(readWKT(geom),data.frame("id"), match.ID = TRUE)
+  #class(dataProjected)
+  wsdataProjected@data$id <- rownames(wsdataProjected@data)
+  watershedPoints <- fortify(wsdataProjected, region = "id")
+  watershedDF <- merge(watershedPoints, wsdataProjected@data, by = "id")
+  #watershedDF <- VADF
+  
   map <- ggplotGrob(ggplot(data = VADF, aes(x=long, y=lat, group = group))+
                       theme(panel.grid.major = element_blank(), 
                             panel.grid.minor = element_blank(),
                             panel.background = element_blank())+
                       geom_polygon(data = VADF, fill = "gray")+
-                      #geom_polygon(data = watershedDF, color="forestgreen", fill = NA,lwd=0.5)+
+                      geom_polygon(data = watershedDF, color="forestgreen", fill = NA,lwd=0.5)+
                       scale_x_continuous(limits = c(-85, -74))+
                       scale_y_continuous(limits = c(35, 41))+
                       theme(axis.title.x=element_blank(),
@@ -267,6 +278,15 @@ base.plot <- function(data, full_dataset, upper.quant,
     geom_smooth(data = data, method="lm",formula=y ~ x,show.legend = TRUE, aes(colour="yellow"),se=FALSE) + 
     geom_smooth(data = upper.quant, formula = y ~ x, method = "lm", show.legend = TRUE, aes(x=x_value,y=y_value,color = "green"),se=FALSE) + 
 
+    #add map to upper right of plot
+    annotation_custom(
+      grob = map,
+      xmin = 4.55,
+      xmax = 8,
+      ymin = yaxis_thresh-(0.1*yaxis_thresh),
+      ymax = yaxis_thresh+(0.3*yaxis_thresh)
+    )+
+    
     ggtitle(plot_title) + 
     theme(
       plot.title = element_text(size = 12, face = "bold"),axis.text = element_text(colour = "blue")
