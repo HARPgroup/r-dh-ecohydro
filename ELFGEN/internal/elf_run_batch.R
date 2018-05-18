@@ -2,8 +2,8 @@ rm(list = ls())  #clear variables
 options(timeout=240); # set timeout to twice default level to avoid abort due to high traffic
  
 #----------------------------------------------
-site <- "http://deq2.bse.vt.edu/d.dh"    #Specify the site of interest, either d.bet OR d.dh
-datasite <- "http://deq2.bse.vt.edu/d.dh" # where to get the raw data to analyze
+site <- "http://deq2.bse.vt.edu/d.alpha"    #Specify the site of interest, either d.bet OR d.dh
+datasite <- "http://deq2.bse.vt.edu/d.alpha" # where to get the raw data to analyze
 #----------------------------------------------
 base_url <- datasite
 
@@ -57,7 +57,7 @@ inputs$quantile = .80;
 inputs$send_to_rest = "NO";
 inputs$glo = 1;
 inputs$ghi = 1000;
-inputs$method = "pwit_RS"; #quantreg, pwit, ymax, pwit_RS, twopoint
+inputs$method = "quantreg"; #quantreg, pwit, ymax, pwit_RS, twopoint
 inputs$dataset_tag = 'jk_test';
 inputs$ghi_var = 'qmean_annual'
 inputs$token = token;

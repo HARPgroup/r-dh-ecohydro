@@ -6,6 +6,8 @@ library(grid);
 library(httr);
 library(data.table);
 library(scales);
+library(rgeos); #used for geospatial processing 
+library(sp); #contains SpatialPolygonsDataFrame()
 
 elf_run_method <- function( method, inputs, data, x_metric_code, y_metric_code, ws_ftype_code, 
     Feature.Name_code, Hydroid_code, search_code, token, startdate, enddate
@@ -240,6 +242,22 @@ base.plot <- function(data, full_dataset, upper.quant,
                       EDAS_upper_legend,EDAS_lower_legend,Reg_upper_legend,Quantile_Legend
                       ) {
 
+  map <- ggplotGrob(ggplot(data = VADF, aes(x=long, y=lat, group = group))+
+                      theme(panel.grid.major = element_blank(), 
+                            panel.grid.minor = element_blank(),
+                            panel.background = element_blank())+
+                      geom_polygon(data = VADF, fill = "gray")+
+                      #geom_polygon(data = watershedDF, color="forestgreen", fill = NA,lwd=0.5)+
+                      scale_x_continuous(limits = c(-85, -74))+
+                      scale_y_continuous(limits = c(35, 41))+
+                      theme(axis.title.x=element_blank(),
+                            axis.text.x=element_blank(),
+                            axis.ticks.x=element_blank(),
+                            axis.title.y=element_blank(),
+                            axis.text.y=element_blank(),
+                            axis.ticks.y=element_blank())
+  )
+  
   result <- ggplot(data, aes(x=x_value,y=y_value)) + ylim(0,yaxis_thresh) + 
     geom_point(data = full_dataset,aes(colour="aliceblue")) +
     geom_point(data = data,aes(colour="blue")) + 
