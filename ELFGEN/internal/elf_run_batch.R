@@ -32,13 +32,15 @@ source(paste(fxn_locations,"elf_assemble_batch.R", sep = ""));
 source(paste(fxn_locations,"elf_quantreg.R", sep = ""));
 source(paste(fxn_locations,"elf_ymax.R", sep = ""));
 source(paste(fxn_locations,"elf_pw_it.R", sep = ""));
+source(paste(fxn_locations,"elf_pw_it_RS.R", sep = ""));
+source(paste(fxn_locations,"elf_twopoint.R", sep = ""));
 source(paste(fxn_locations,"elf_pct_chg.R", sep = ""));
 source(paste(fxn_locations,"elf_store_data.R", sep = ""));
 source(paste(basepath,"Analysis/query_elf_statistics.R", sep = "/")); 
 #####
 # Now add custom local settings here
 inputs$x_metric = c(
-  'nhdp_drainage_sqmi',
+#  'nhdp_drainage_sqmi',
   'erom_q0001e_mean'
 #  'erom_q0001e_jan',
 #  'erom_q0001e_feb',
@@ -50,13 +52,13 @@ inputs$x_metric = c(
 );
 inputs$y_metric = 'aqbio_nt_total';
 inputs$ws_ftype = c('nhd_huc8');
-inputs$target_hydrocode = '';
+inputs$target_hydrocode = 'nhd_huc8_02070005';
 inputs$quantile = .80;
 inputs$send_to_rest = "NO";
 inputs$glo = 1;
 inputs$ghi = 1000;
-inputs$method = "quantreg"; #quantreg, pwit, ymax, twopoint, pwit_RS
-inputs$dataset_tag = 'bpj-rcc-region-maf';
+inputs$method = "pwit_RS"; #quantreg, pwit, ymax, pwit_RS, twopoint
+inputs$dataset_tag = 'jk_test';
 inputs$ghi_var = 'qmean_annual'
 inputs$token = token;
 
@@ -65,9 +67,9 @@ inputs$token = token;
 #    and optional any of the following
 # target_hydrocode,name,ghi,glo,
 #   ** Use this if you want a batch list to be generated from the inputs array
-# batchlist = elf_assemble_batch(inputs) 
+ batchlist = elf_assemble_batch(inputs) 
 #   ** or, Use this if you want to load the batch list from a file, with defaults from inputs()
-batchlist = read.csv(file=paste(fxn_locations,"Huc8_DAw_Huc6BP_ForQuantreg.csv",sep=""),header=TRUE)
+#batchlist = read.csv(file=paste(fxn_locations,"Huc8_DAw_Huc6BP_ForQuantreg.csv",sep=""),header=TRUE)
 # 2. check for x_metric in batch list, if not there we merge from inputs$x_metric
 bnames = colnames(batchlist)
 if (!('x_metric' %in% bnames)) {

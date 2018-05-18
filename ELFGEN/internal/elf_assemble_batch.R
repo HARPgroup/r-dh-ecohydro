@@ -232,3 +232,51 @@ elf_assemble_batch <- function(inputs = list()){
   } #closes ws_ftype for loop
   return(batchlist)
 } #close function
+
+
+base.plot <- function(data, full_dataset, upper.quant,
+                      yaxis_thresh, quantile,
+                      plot_title, xaxis_title, yaxis_title,
+                      EDAS_upper_legend,EDAS_lower_legend,Reg_upper_legend,Quantile_Legend
+                      ) {
+
+  result <- ggplot(data, aes(x=x_value,y=y_value)) + ylim(0,yaxis_thresh) + 
+    geom_point(data = full_dataset,aes(colour="aliceblue")) +
+    geom_point(data = data,aes(colour="blue")) + 
+    stat_smooth(method = "lm",fullrange=FALSE,level = .95, data = upper.quant, aes(x=x_value,y=y_value,color = "red")) +
+    geom_point(data = upper.quant, aes(x=x_value,y=y_value,color = "black")) + 
+    geom_quantile(data = data, quantiles= quantile,show.legend = TRUE,aes(color="red")) + 
+    geom_smooth(data = data, method="lm",formula=y ~ x,show.legend = TRUE, aes(colour="yellow"),se=FALSE) + 
+    geom_smooth(data = upper.quant, formula = y ~ x, method = "lm", show.legend = TRUE, aes(x=x_value,y=y_value,color = "green"),se=FALSE) + 
+
+    ggtitle(plot_title) + 
+    theme(
+      plot.title = element_text(size = 12, face = "bold"),axis.text = element_text(colour = "blue")
+    ) +
+    labs(x=xaxis_title,y=yaxis_title) + 
+    scale_x_log10(
+      limits = c(0.001,15000),
+      breaks = trans_breaks("log10", function(x) {10^x}),
+      labels = trans_format("log10", math_format(10^.x))
+    ) + 
+    annotation_logticks(sides = "b")+
+    theme(legend.key=element_rect(fill='white')) +
+    #Add legend
+    scale_color_manual(
+      "Legend",
+      values=c("gray66","forestgreen","blue","orange","black","red"),
+      labels=c("Full Dataset",EDAS_upper_legend,EDAS_lower_legend,Reg_upper_legend,Quantile_Legend,"Regression (Data Subset)")
+    ) + 
+    guides(
+      colour = guide_legend(
+        override.aes = list(
+          size=c(1,1,1,1,1,1),
+          linetype=c(0,0,0,1,1,1), 
+          shape=c(16,16,16,NA,NA,NA)
+        ),
+        label.position = "right"
+      )
+    ); 
+  return(result)
+}
+
