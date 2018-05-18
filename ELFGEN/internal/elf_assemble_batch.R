@@ -245,14 +245,13 @@ base.plot <- function(geom, data, full_dataset, upper.quant,
   #Load Virginia geometry
   VADF <- read.csv("VADF.csv")
 
-  
+  #Load watershed geometry
   wsdataProjected <- SpatialPolygonsDataFrame(readWKT(geom),data.frame("id"), match.ID = TRUE)
   #class(dataProjected)
   wsdataProjected@data$id <- rownames(wsdataProjected@data)
   watershedPoints <- fortify(wsdataProjected, region = "id")
   watershedDF <- merge(watershedPoints, wsdataProjected@data, by = "id")
-  #watershedDF <- VADF
-  
+
   map <- ggplotGrob(ggplot(data = VADF, aes(x=long, y=lat, group = group))+
                       theme(panel.grid.major = element_blank(), 
                             panel.grid.minor = element_blank(),

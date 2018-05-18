@@ -24,6 +24,7 @@ rest_pw = FALSE;
 source(paste(hydro_tools,"auth.private", sep = "/"));#load rest username and password, contained in auth.private file
 token <- rest_token(site, token, rest_uname, rest_pw);
 
+source(paste(fxn_locations,"elf_assemble_batch.R", sep = ""));
 source(paste(fxn_locations,"huc8_groupings.txt", sep = "")); 
 # Load Default inputs
 source(paste(fxn_locations,"elf_default_inputs.R", sep = ""));

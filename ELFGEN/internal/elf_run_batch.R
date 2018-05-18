@@ -51,8 +51,9 @@ inputs$x_metric = c(
 #  'erom_q0001e_july'
 );
 inputs$y_metric = 'aqbio_nt_total';
+#inputs$sampres = 'maj_fam_gen_spec';
 inputs$ws_ftype = c('nhd_huc8');
-inputs$target_hydrocode = '';
+inputs$target_hydrocode = 'nhd_huc8_06010205';
 inputs$quantile = .80;
 inputs$send_to_rest = "NO";
 inputs$glo = 1;
@@ -101,6 +102,15 @@ for (row in batch_start:batch_end) {
     y_metric_code = tin$y_metric, bundle = tin$bundle,  
     ws_ftype_code = tin$ws_ftype, sampres = tin$sampres
   );
+  
+  #note: add a 0 for the HUC6/HUC10's or else rest feature retrieval doesnt work 
+  if (inputs$ws_ftype == 'nhd_huc6') {
+    tin$target_hydrocode <- str_pad(tin$target_hydrocode, 6, "left", pad = "0");
+  }
+  if (inputs$ws_ftype == 'nhd_huc10') {
+    tin$target_hydrocode <- str_pad(tin$target_hydrocode, 10, "left", pad = "0");
+  }
+
   # filter out stuff we don't want (can be controlled via tin)
   data <- elf_cleandata(mydata, inputs = tin);
   # 3.2 Run selected routine 
@@ -115,7 +125,6 @@ for (row in batch_start:batch_end) {
           hydrocode = tin$target_hydrocode
         )
         , token, base_url);
-      #print(feature)
       
       tin$name = feature$name
       tin$hydroid = feature$hydroid
