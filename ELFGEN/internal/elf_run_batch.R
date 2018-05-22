@@ -5,14 +5,16 @@ options(timeout=240); # set timeout to twice default level to avoid abort due to
 site <- "http://deq2.bse.vt.edu/d.dh"    #Specify the site of interest, either d.bet OR d.dh
 datasite <- "http://deq2.bse.vt.edu/d.dh" # where to get the raw data to analyze
 #----------------------------------------------
+base_url <- datasite
 
 #----Change Basepath here to point to your global config file:
-basepath='/var/www/R';
-#basepath='C:\\Users\\nrf46657\\Desktop\\VAHydro Development\\GitHub\\r-dh-ecohydro\\';
+#basepath='/var/www/R';
+basepath='C:\\Users\\nrf46657\\Desktop\\VAHydro Development\\GitHub\\r-dh-ecohydro\\';
 # set your local directory paths in config.local.private located in filepath above
 # this file will NOT be sent to git, so it should persist
 # so, edit config.local.private once and you should be good to go
-source('/var/www/R/config.local.private');
+#source('/var/www/R/config.local.private');
+source(paste(basepath,'config.local.private',sep='/'));
 
 #Load Functions               
 source(paste(fxn_locations,"elf_retrieve_data.R", sep = ""));  #loads function used to retrieve F:E data from VAHydro
@@ -30,34 +32,35 @@ source(paste(fxn_locations,"elf_assemble_batch.R", sep = ""));
 source(paste(fxn_locations,"elf_quantreg.R", sep = ""));
 source(paste(fxn_locations,"elf_ymax.R", sep = ""));
 source(paste(fxn_locations,"elf_pw_it.R", sep = ""));
+source(paste(fxn_locations,"elf_pw_it_RS.R", sep = ""));
+source(paste(fxn_locations,"elf_twopoint.R", sep = ""));
 source(paste(fxn_locations,"elf_pct_chg.R", sep = ""));
 source(paste(fxn_locations,"elf_store_data.R", sep = ""));
-source(paste(base_directory,"Analysis/query_elf_statistics.R", sep = "/")); 
+source(paste(basepath,"Analysis/query_elf_statistics.R", sep = "/")); 
 #####
 # Now add custom local settings here
-#inputs$x_metric = c(
+inputs$x_metric = c(
 #  'nhdp_drainage_sqmi',
-#  'erom_q0001e_mean'
-  #  'erom_q0001e_jan',
-  #'erom_q0001e_feb',
-  #'erom_q0001e_mar', 
-  #'erom_q0001e_apr', 
-  #'erom_q0001e_may',
-  #'erom_q0001e_june',
-  #'erom_q0001e_july',
-  #'erom_q0001e_aug'
-#);
+  'erom_q0001e_mean'
+#  'erom_q0001e_jan',
+#  'erom_q0001e_feb',
+#  'erom_q0001e_mar', 
+#  'erom_q0001e_apr', 
+#  'erom_q0001e_may',
+#  'erom_q0001e_june',
+#  'erom_q0001e_july'
+);
 inputs$y_metric = 'aqbio_nt_total';
-inputs$ws_ftype = c('nhd_huc12');
-inputs$target_hydrocode = '';
-inputs$x_metric = 'erom_q0001e_feb'; #Flow metric to be plotted on the x-axis
+#inputs$sampres = 'maj_fam_gen_spec';
+inputs$ws_ftype = c('nhd_huc8');
+inputs$target_hydrocode = 'nhd_huc8_06010205';
 inputs$quantile = .80;
 inputs$send_to_rest = "NO";
 inputs$glo = 1;
-inputs$ghi = 530;
-inputs$method = "quantreg"; #quantreg, pwit, ymax, twopoint, pwit_RS
-inputs$dataset_tag = 'bpj-530';
-#inputs$ghi_var = 'qmean_annual'
+inputs$ghi = 1000;
+inputs$method = "quantreg"; #quantreg, pwit, ymax, pwit_RS, twopoint
+inputs$dataset_tag = 'jk_test';
+inputs$ghi_var = 'qmean_annual'
 inputs$token = token;
 
 #------------------------------------------------------------------------------------------------
@@ -99,6 +102,15 @@ for (row in batch_start:batch_end) {
     y_metric_code = tin$y_metric, bundle = tin$bundle,  
     ws_ftype_code = tin$ws_ftype, sampres = tin$sampres, datasite = datasite
   );
+  
+  #note: add a 0 for the HUC6/HUC10's or else rest feature retrieval doesnt work 
+  if (inputs$ws_ftype == 'nhd_huc6') {
+    tin$target_hydrocode <- str_pad(tin$target_hydrocode, 6, "left", pad = "0");
+  }
+  if (inputs$ws_ftype == 'nhd_huc10') {
+    tin$target_hydrocode <- str_pad(tin$target_hydrocode, 10, "left", pad = "0");
+  }
+
   # filter out stuff we don't want (can be controlled via tin)
   data <- elf_cleandata(mydata, inputs = tin);
   # 3.2 Run selected routine 
@@ -113,12 +125,14 @@ for (row in batch_start:batch_end) {
           hydrocode = tin$target_hydrocode
         )
         , token, base_url);
+      
       tin$name = feature$name
       tin$hydroid = feature$hydroid
     }
     if (is.null(tin$name)) {
       tin$name = tin$target_hydrocode
     }
+    
     startdate = min(data$tstime)
     enddate = max(data$tstime)
     elf_run_method(
@@ -126,7 +140,7 @@ for (row in batch_start:batch_end) {
       x_metric_code = as.character(tin$x_metric), y_metric_code = as.character(tin$y_metric), 
       ws_ftype_code = tin$ws_ftype, Feature.Name_code = tin$name, 
       Hydroid_code = tin$hydroid, search_code = tin$target_hydrocode, 
-      token = token, startdate = startdate, enddate = enddate
+      token = token, startdate = startdate, enddate = enddate, geom = feature$geom 
     )
   }
 #  lnz_data = subset(data, log(x_value) > 0)
