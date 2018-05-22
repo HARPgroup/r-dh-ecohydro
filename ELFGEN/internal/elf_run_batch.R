@@ -68,9 +68,9 @@ inputs$token = token;
 #    and optional any of the following
 # target_hydrocode,name,ghi,glo,
 #   ** Use this if you want a batch list to be generated from the inputs array
- batchlist = elf_assemble_batch(inputs) 
+batchlist = elf_assemble_batch(inputs) 
 #   ** or, Use this if you want to load the batch list from a file, with defaults from inputs()
-#batchlist = read.csv(file=paste(fxn_locations,"Huc8_DAw_Huc6BP_ForQuantreg.csv",sep=""),header=TRUE)
+# batchlist = read.csv(file=paste(fxn_locations,"HUC8-huc6-maf-all.csv",sep="/"),header=TRUE)
 # 2. check for x_metric in batch list, if not there we merge from inputs$x_metric
 bnames = colnames(batchlist)
 if (!('x_metric' %in% bnames)) {
@@ -100,7 +100,7 @@ for (row in batch_start:batch_end) {
   mydata <- vahydro_fe_data(
     Watershed_Hydrocode = tin$target_hydrocode, x_metric_code = tin$x_metric, 
     y_metric_code = tin$y_metric, bundle = tin$bundle,  
-    ws_ftype_code = tin$ws_ftype, sampres = tin$sampres
+    ws_ftype_code = tin$ws_ftype, sampres = tin$sampres, datasite = datasite
   );
   
   #note: add a 0 for the HUC6/HUC10's or else rest feature retrieval doesnt work 
@@ -143,5 +143,25 @@ for (row in batch_start:batch_end) {
       token = token, startdate = startdate, enddate = enddate, geom = feature$geom 
     )
   }
+#  lnz_data = subset(data, log(x_value) > 0)
+#  elf_plot_distribution(
+#    data = lnz_data,
+#    x_metric_code = as.character(tin$x_metric), 
+#    y_metric_code = as.character(tin$y_metric), 
+#    ws_ftype_code = tin$ws_ftype, 
+#    Feature.Name_code = tin$name, 
+#    Hydroid_code = tin$hydroid, 
+#    search_code = tin$target_hydrocode 
+#  )
+#  upper.quant <- elf_upper(lnz_data, 0.8)
+#  elf_plot_distribution(
+#    data = upper.quant,
+#    x_metric_code = as.character(tin$x_metric), 
+#    y_metric_code = as.character(tin$y_metric), 
+#    ws_ftype_code = tin$ws_ftype, 
+#    Feature.Name_code = tin$name, 
+#    Hydroid_code = tin$hydroid, 
+#    search_code = tin$target_hydrocode 
+#  )
 }
 ##############################################################################
