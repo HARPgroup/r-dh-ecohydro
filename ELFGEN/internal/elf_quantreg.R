@@ -269,7 +269,10 @@ print (paste("Plotting ELF"));
                             pct_chg = pct_chg,
                             startdate = startdate,
                             sampres =  sampres,
-                            enddate = enddate)
+                            enddate = enddate,
+                            x_metric = x_metric,  #aded by jen
+                            y_metric = y_metric,  #added by Jen
+                            search_code = search_code) #added by Jen
           elf_pct_chg (pct_inputs)
           
           filename <- paste(adminid,"pctchg.png", sep="_")

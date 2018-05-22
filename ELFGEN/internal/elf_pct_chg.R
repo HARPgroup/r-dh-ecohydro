@@ -8,7 +8,12 @@ elf_pct_chg <- function(pct_inputs = list()){
   sampres <- pct_inputs$sampres
   startdate <- pct_inputs$startdate
   enddate <- pct_inputs$enddate
-
+##added by JLR
+  search_code <- pct_inputs$search_code
+  x_metric <- pct_inputs$x_metric
+  y_metric <- pct_inputs$y_metric
+#####
+  
   its <- seq(1, 500, 0.01)
   xvalues = c(its)
   sa <- (ruslope*log(its))+ruint
@@ -17,17 +22,50 @@ elf_pct_chg <- function(pct_inputs = list()){
                             stringsAsFactors=FALSE)
   
   
-  #i <- 1
+  # #i <- 1
+  # for (i in 1:length(pct_list)) {
+  #   pct <- (its -((pct_list[i]/100)*its))
+  #   sb <- (ruslope*log(pct))+ruint    #this is solving for Y = mx+b for the new value of taxa
+  #   pct_chgb <- (((sa-sb)/sa)*100)
+  #   pct_chgs = c(pct_chgb)
+  #   slope_table_i = data.frame(pct_chgs)
+  #   names(slope_table_i) <- c(paste("pct_chg_",pct_list[i],sep=""))
+  #   slope_table <- cbind(slope_table, slope_table_i)
+  # }
+  # alternate code to export the #taxa 
+  i <- 1
   for (i in 1:length(pct_list)) {
     pct <- (its -((pct_list[i]/100)*its))
-    sb <- (ruslope*log(pct))+ruint    #this is solving for Y = mx+b for the new value of taxa
+    sb <- (ruslope*log(pct))+ruint
     pct_chgb <- (((sa-sb)/sa)*100)
     pct_chgs = c(pct_chgb)
+    taxaLoss <- (sa-sb)
     slope_table_i = data.frame(pct_chgs)
+    taxaLoss_table_i = data.frame(taxaLoss)
     names(slope_table_i) <- c(paste("pct_chg_",pct_list[i],sep=""))
-    slope_table <- cbind(slope_table, slope_table_i)
+    names(taxaLoss_table_i) <- c(paste("taxaloss_pct_chg",pct_list[i],sep=""))
+    slope_table <- cbind(slope_table, slope_table_i, taxaLoss_table_i)
   }
-  # potentially export the Slope table?
+  
+  slope_table_export <- slope_table
+  names(slope_table_export)[1]<-x_metric
+  slope_table_export <- data.frame(slope_table_export[1],
+                                   sa,
+                                   slope_table_export[2],
+                                   slope_table_export[3],
+                                   slope_table_export[4],
+                                   slope_table_export[5],
+                                   slope_table_export[6],
+                                   slope_table_export[7],
+                                   slope_table_export[8],
+                                   slope_table_export[9],
+                                   slope_table_export[10],
+                                   slope_table_export[11],
+                                   slope_table_export[12],
+                                   slope_table_export[13]
+  )
+  
+  
 title_projname <- sampres
 
 #Plot titles
@@ -68,7 +106,11 @@ plt2 <- ggplot(slope_table, aes(x=xvalues, y=pct_chgs_20)) +
         axis.text.y = element_text(colour="grey20",size=15,hjust=.5,vjust=.5,face="plain"))
 
 #print(head(slope_table))
-write.csv(slope_table, file = (paste(save_directory,paste("\\pctchg_",Feature.Name,"_",biometric_title,".csv",sep=""),sep="")))
+out_name <- paste(search_code,"fe_quantreg",x_metric,y_metric, sep='_');
+print(paste("Exporting Taxaloss table "));
+write.csv(slope_table_export, file = paste(save_directory,paste("/",out_name,"_Taxaloss_information",".csv", sep=""), sep=""), row.names = F, quote = FALSE)
+
+#write.csv(slope_table_export, file = (paste(save_directory,paste("\\pctchg_",Feature.Name,"_",biometric_title,".csv",sep=""),sep="")))
 
 }
 
