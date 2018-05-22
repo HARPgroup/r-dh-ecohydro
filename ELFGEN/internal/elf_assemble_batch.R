@@ -124,6 +124,13 @@ elf_cleandata <- function (data, inputs, startdate = FALSE, enddate = FALSE) {
   
 }
 
+elf_upper <- function(data, quantile) {
+  upper <- rq(y_value ~ log(x_value),data = data, tau = quantile) #calculate the quantile regression
+  newy <- c(log(data$x_value)*coef(upper)[2]+coef(upper)[1])            #find the upper quantile values of y for each value of DA based on the quantile regression
+  upper.quant <- subset(data, data$y_value > newy)                        #create a subset of the data that only includes the stations with NT values higher than the y values just calculated
+  return(upper.quant)
+} 
+
 elf_assemble_batch <- function(inputs = list()){
   batchlist = FALSE;
   #Load inputs
@@ -232,3 +239,18 @@ elf_assemble_batch <- function(inputs = list()){
   } #closes ws_ftype for loop
   return(batchlist)
 } #close function
+
+
+
+elf_plot_distribution <- function(
+  data,
+  x_metric_code, 
+  y_metric_code, 
+  ws_ftype_code, 
+  Feature.Name_code, 
+  Hydroid_code, 
+  search_code) {
+  
+  hist(data$y_value / log(data$x_value))
+  
+}
