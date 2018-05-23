@@ -41,7 +41,7 @@ source(paste(basepath,"Analysis/query_elf_statistics.R", sep = "/"));
 # Now add custom local settings here
 inputs$x_metric = c(
 #  'nhdp_drainage_sqmi',
-  'erom_q0001e_mean'
+  'erom_q0001e_mean',
   'erom_q0001e_jan',
   'erom_q0001e_feb',
   'erom_q0001e_mar', 
@@ -73,7 +73,6 @@ inputs$token = token;
 #    and optional any of the following
 # target_hydrocode,name,ghi,glo,
 #   ** Use this if you want a batch list to be generated from the inputs array
-<<<<<<< HEAD
 #batchlist = elf_assemble_batch(inputs) 
 #   ** or, Use this if you want to load the batch list from a file, with defaults from inputs()
 batchlist = read.csv(file=paste(fxn_locations,"Huc8-huc6-maf-all.csv",sep=""),header=TRUE)
@@ -84,7 +83,7 @@ if (!('x_metric' %in% bnames)) {
 }
 
 # Batch Start
-batch_start = 1; # if we want to skip ahead, do so here.
+batch_start = 101; # if we want to skip ahead, do so here.
 batch_len = nrow(batchlist)
 batch_end = batch_len; # if we want to stop early, do so here
 # 3. Iterate through each item in the list
@@ -123,7 +122,7 @@ for (row in batch_start:batch_end) {
   if (!(is.data.frame(data))) {
     print("No Data Found") 
   } else {
-    if (is.null(tin$hydroid)) {
+    if (is.null(tin$hydroid) || is.null(tin$geom)) {
       feature <- getFeature(
         list(
           ftype = tin$ws_ftype,
