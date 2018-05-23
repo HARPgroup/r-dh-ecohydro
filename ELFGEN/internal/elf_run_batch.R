@@ -50,7 +50,7 @@ inputs$x_metric = c(
   'erom_q0001e_june',
   'erom_q0001e_july',
   'erom_q0001e_aug',
-  'erom_q0001e_sep',
+  'erom_q0001e_sept',
   'erom_q0001e_oct',
   'erom_q0001e_nov',
   'erom_q0001e_dec'
@@ -83,7 +83,7 @@ if (!('x_metric' %in% bnames)) {
 }
 
 # Batch Start
-batch_start = 101; # if we want to skip ahead, do so here.
+batch_start = 1075; # if we want to skip ahead, do so here.
 batch_len = nrow(batchlist)
 batch_end = batch_len; # if we want to stop early, do so here
 # 3. Iterate through each item in the list
