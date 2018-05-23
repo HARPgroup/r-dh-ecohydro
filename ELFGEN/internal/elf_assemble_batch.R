@@ -262,7 +262,7 @@ base.plot <- function(geom, data, full_dataset, upper.quant,
                       ) {
 
   #Load Virginia geometry
-  VADF <- read.csv("VADF.csv")
+  VADF <- read.csv(file=paste(fxn_locations,"VADF.csv",sep=""), header=TRUE, sep=",")
 
   #Load watershed geometry
   wsdataProjected <- SpatialPolygonsDataFrame(readWKT(geom),data.frame("id"), match.ID = TRUE)
