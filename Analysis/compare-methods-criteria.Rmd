@@ -13,41 +13,19 @@ source(paste(base_directory,"Analysis/plot_elf_statistics.R", sep = "/"));
 base_url <- 'http://deq2.bse.vt.edu/d.dh'
 
 
-metric <- 'aqbio_nt_total'; # aqbio_nt_total, aqbio_nt_cent, aqbio_nt_darter, aqbio_nt_benins
-q_ftype <- "fe_quantreg";
-dataset_tag = 'bpj-530'; # bpj-530, bpj-rcc, 'HUC8_quantregwHuc6bp' (huc 6)
-analysis_timespan = "full";
-sampres = "species";
-selected <- 'all'; # all or hydrocode
-quantile <- 0.8;
+metric <- 'aqbio_nt_benins'; # aqbio_nt_total, aqbio_nt_cent, aqbio_nt_darter, aqbio_nt_benins
 pmax = 0.01;
+mmin = 0.0;
 Rmin = 0.0;
-#stat_quantreg_glo <- 0; 
-#stat_quantreg_ghi <- 530; 
-# ftype = fe_quantreg, fe_quantreg_pwit, fe_quantreg_ymax, fe_twopoint
-# analysis_timespan = full, 1990-2010, 1970-1980, ...
-# this is BS - save_directory should be fixed
 save_directory = paste(file_directory,"/",sep='');
-# Huc6Ghi_72=Glo ->
-# bundle - ecoregion, landunit, watershed
-# ftype - ecoregion_iii, nhd_huc6, nhd_huc6=8, nhd_huc10
-
-# recreation of BPJ-rcc with all Drainage area?
+# recreateion of BPJ-rcc with all Drainage area?
 batch <- data.frame(
-    bundle = 'watershed', ftype = 'nhd_huc8', dataset_tag = 'bpj-huc6bp-rcc', q_ftype = 'fe_elf')
-
-# bpj-rcc
-batch <- rbind(
-  batch, data.frame(
-    bundle = 'watershed', ftype = 'nhd_huc8', dataset_tag = 'bpj-rcc', q_ftype = 'fe_quantreg')
-)
-
-# Using 75% value from ymax analysis of all HUC8s
-batch <- rbind(
-  batch, data.frame(
     bundle = 'watershed', ftype = 'nhd_huc8', dataset_tag = 'bpj-530', q_ftype = 'fe_quantreg')
-)
 
+#batch <- rbind(
+#  batch, data.frame(
+#    bundle = 'watershed', ftype = 'nhd_huc8', dataset_tag = 'HUC8_quantregwHuc6bp', q_ftype = 'fe_quantreg')
+#)
 
 for (row in 1:nrow(batch)) {
   bundle <- batch[row,]$bundle;
@@ -71,29 +49,43 @@ for (row in 1:nrow(batch)) {
   # filter our data?
   data = rawdata; # make a copy to start so we can compare raw to filtered if desired
   tot <- nrow(subset(data, in_xvar == 'nhdp_drainage_sqmi'))
-  #data = subset(data, out_n >= 20)
-  data = subset(data, out_m > 0)
-  data = subset(data, out_p < pmax); # 
-  data = subset(data, out_rsq_adj > Rmin)
+  ymin = 0.0; # restrain plot
   mtch <- nrow(subset(data, in_xvar == 'nhdp_drainage_sqmi'))
   
-  #data = subset(data, isheadwater > 0)
-  # render it
-  ymin = 0.0; # restrain plot
-  labeltext = paste(q_ftype, ":", dataset_tag, '\n', ' ( p<', pmax, 'R>', Rmin, ' ', mtch, ' of ', tot,' )',sep='')
+  # ALL
+  labeltext = paste(q_ftype, ":", dataset_tag, '\n', '(ALL', mtch, ' of ', tot,' )',sep='')
   plot_monthly(data, labeltext, xmetric = 'out_rsq_adj', ymetric = metric, ymin=ymin);
   mmax = ceiling(max(data$out_m))
   #plot_monthly(data, labeltext, xmetric = 'out_m', ymetric = metric, ymin=0, ymax=mmax);
   plot_monthly_count (data, subname = dataset_tag, xmetric = "out_rsq_adj", 
   ymin = 0.0, ymax = 1.0)
   
-  # Show variation in slope
-  ymin = 0.0; # restrain plot
-  labeltext = paste(q_ftype, ":", dataset_tag, '\n', ' ( p<', pmax, 'R>', Rmin, ' ', mtch, ' of ', tot,' )',sep='')
+  # R > 0
+  data = subset(data, out_rsq_adj > Rmin)
+  labeltext = paste(q_ftype, ":", dataset_tag, '\n', '(R>', Rmin, ' ', mtch, ' of ', tot,' )',sep='')
+  plot_monthly(data, labeltext, xmetric = 'out_rsq_adj', ymetric = metric, ymin=ymin);
   mmax = ceiling(max(data$out_m))
-#  plot_monthly(data, labeltext, xmetric = 'out_m', ymetric = metric, ymin=ymin, ymax=mmax);
-  
   #plot_monthly(data, labeltext, xmetric = 'out_m', ymetric = metric, ymin=0, ymax=mmax);
+  plot_monthly_count (data, subname = dataset_tag, xmetric = "out_rsq_adj", 
+  ymin = 0.0, ymax = 1.0)
+  
+  # m > 0
+  data = subset(data, out_m > mmin)
+  labeltext = paste(q_ftype, ":", dataset_tag, '\n', ' ( R>', Rmin, ' ', 'm>', mmin, ' ', mtch, ' of ', tot,' )',sep='')
+  plot_monthly(data, labeltext, xmetric = 'out_rsq_adj', ymetric = metric, ymin=ymin);
+  mmax = ceiling(max(data$out_m))
+  #plot_monthly(data, labeltext, xmetric = 'out_m', ymetric = metric, ymin=0, ymax=mmax);
+  plot_monthly_count (data, subname = dataset_tag, xmetric = "out_rsq_adj", 
+  ymin = 0.0, ymax = 1.0)
+  
+  # p < 0.01
+  data = subset(data, out_p < pmax); # 
+  labeltext = paste(q_ftype, ":", dataset_tag, '\n', ' ( p<', pmax, 'R>', Rmin, ' ', 'm>', mmin, ' ', mtch, ' of ', tot,' )',sep='')
+  plot_monthly(data, labeltext, xmetric = 'out_rsq_adj', ymetric = metric, ymin=ymin);
+  mmax = ceiling(max(data$out_m))
+  #plot_monthly(data, labeltext, xmetric = 'out_m', ymetric = metric, ymin=0, ymax=mmax);
+  plot_monthly_count (data, subname = dataset_tag, xmetric = "out_rsq_adj", 
+  ymin = 0.0, ymax = 1.0)
   
 }
 

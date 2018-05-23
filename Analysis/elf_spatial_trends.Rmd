@@ -18,7 +18,8 @@ quant = 0.8
 # HUC8_quantregwHuc6bp
 # Huc6 customGhiGlo
 huc6_rawdata = 
-  fn_dh_elfstats ( ftype = 'fe_quantreg', analysis_timespan = "full", yvar = yvar,
+  fn_dh_elfstats ( ftype = 'fe_quantreg', 
+  site = base_url, analysis_timespan = "full", yvar = yvar,
   sampres = "species", stat_quantreg_qu = quant, feature_ftype = 'nhd_huc6', stat_quantreg_ghi = 'all', 
   stat_quantreg_glo = 'all', dataset_tag = 'bpj-530'
 );
@@ -26,33 +27,44 @@ huc6_rawdata =
 huc6_qmean_data = huc6_rawdata;
 huc6_qmean_data = subset(huc6_qmean_data, in_xvar == 'erom_q0001e_mean')
 huc6_qmean_data = subset(huc6_qmean_data, out_m > 0)
+huc6_qmean_data = subset(huc6_qmean_data, out_rsq_adj > 0)
+huc6_qmean_data = subset(huc6_qmean_data, out_p <= 0.01)
 
 huc8_rawdata = 
-  fn_dh_elfstats ( ftype = 'fe_quantreg', analysis_timespan = "full", yvar = yvar,
+  fn_dh_elfstats ( ftype = 'fe_quantreg', 
+    site = base_url, analysis_timespan = "full", yvar = yvar,
     sampres = "species", stat_quantreg_qu = quant, feature_ftype = 'nhd_huc8', stat_quantreg_ghi = 'all', 
     stat_quantreg_glo = 'all', dataset_tag = 'bpj-rcc'
   );
 huc8_qmean_data = huc8_rawdata;
 huc8_qmean_data = subset(huc8_qmean_data, in_xvar == 'erom_q0001e_mean')
 huc8_qmean_data = subset(huc8_qmean_data, out_m > 0)
+huc8_qmean_data = subset(huc8_qmean_data, out_rsq_adj > 0)
+huc8_qmean_data = subset(huc8_qmean_data, out_p <= 0.01)
 
 huc10_rawdata = 
-  fn_dh_elfstats ( ftype = 'fe_quantreg', analysis_timespan = "full", yvar = yvar,
+  fn_dh_elfstats ( ftype = 'fe_quantreg',
+    site = base_url, analysis_timespan = "full", yvar = yvar,
     sampres = "species", stat_quantreg_qu = quant, feature_ftype = 'nhd_huc10', stat_quantreg_ghi = 'all',
     stat_quantreg_glo = 'all', dataset_tag = 'bpj-530'
   );
 huc10_qmean_data = huc10_rawdata;
 huc10_qmean_data = subset(huc10_qmean_data, in_xvar == 'erom_q0001e_mean')
 huc10_qmean_data = subset(huc10_qmean_data, out_m > 0)
+huc10_qmean_data = subset(huc10_qmean_data, out_rsq_adj > 0)
+huc10_qmean_data = subset(huc10_qmean_data, out_p <= 0.01)
 
 ecoiii_rawdata = 
-  fn_dh_elfstats ( ftype = 'fe_quantreg', analysis_timespan = "full", yvar = yvar,
+  fn_dh_elfstats ( ftype = 'fe_quantreg',
+    site = base_url, analysis_timespan = "full", yvar = yvar,
     sampres = "species", stat_quantreg_qu = quant, feature_ftype = 'ecoregion_iii', stat_quantreg_ghi = 'all',
     stat_quantreg_glo = 'all', dataset_tag = 'bpj-530'
   );
 ecoiii_qmean_data = ecoiii_rawdata;
 ecoiii_qmean_data = subset(ecoiii_qmean_data, in_xvar == 'erom_q0001e_mean')
 ecoiii_qmean_data = subset(ecoiii_qmean_data, out_m > 0)
+ecoiii_qmean_data = subset(ecoiii_qmean_data, out_rsq_adj > 0)
+ecoiii_qmean_data = subset(ecoiii_qmean_data, out_p <= 0.01)
 
 ```
 Automated routines were used to detect Ecological Limit Functions (ELF) as a variety of spatial scales including Omernik Eco-Region iii, the NHD HUC 6, HUC 8, and HUC 10.  The characteristics of the ELF were estimated by the upper 20% quantile of the data set described by y = f(ln(x)), where y was a number of taxa metric, and x was drainage area, mean annual flow, or mean monthly flow as estmated by the EROM model.  Because the datasets demonstrated an increasing NT as watershed area increased up to a certain point (refered to here as the "RCC Breakpoint"), then leveled off or began to decrease, it was important to restrict analysis of data to the left side of this breakpoint.  Initially, the breakpoint selected  was by inspection of a scatterplot of the entire multi-state dataset, resulting in 530 square miles.  Upon reviewing HUC6 data, however, it became clear that there were different RCC breakpoints evident in the different river basins.
@@ -71,10 +83,6 @@ noms <- c('Eco iii', 'HUC6', 'HUC8', 'HUC10')
 #    main = 'Spatial Resolution Rsq (all p)'
 #  );
 
-huc6_qmean_data = subset(huc6_qmean_data, out_p <= 0.01)
-huc8_qmean_data = subset(huc8_qmean_data, out_p <= 0.01)
-huc10_qmean_data = subset(huc10_qmean_data, out_p <= 0.01)
-ecoiii_qmean_data = subset(ecoiii_qmean_data, out_p <= 0.01)
 boxplot(
     ecoiii_qmean_data$out_rsq_adj, 
     huc6_qmean_data$out_rsq_adj, 
