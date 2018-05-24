@@ -118,7 +118,11 @@ elf_pw_it <- function(inputs, data, x_metric_code, y_metric_code, ws_ftype_code,
       plus_minus <- round(((pred_table$pred_upr - pred_table$pred_lwr)/2), 1) #plus or minus this value
       plus_minus_table = data.frame(plus_minus)
       
-      Conf_Pred_table <- cbind(upper.quant_tab, conf_table, pred_table, plus_minus_table) #
+      press <- press(regupper) 
+      press_table = data.frame(press)
+      names(press_table)[1] <- "PRESS"
+      
+      Conf_Pred_table <- cbind(upper.quant_tab, conf_table, pred_table, plus_minus_table, press_table) #
 
       out_name <- paste(search_code,"fe_quantreg_pwit",x_metric,y_metric,quantile,station_agg,sampres,analysis_timespan,glo,ghi, sep='_');
       print(paste("Exporting Prediction interval table "));

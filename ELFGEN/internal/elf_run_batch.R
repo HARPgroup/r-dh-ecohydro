@@ -74,7 +74,7 @@ inputs$token = token;
 # batchlist = elf_assemble_batch(inputs) 
 #   ** or, Use this if you want to load the batch list from a file, with defaults from inputs()
 
-batchlist = read.csv(file=paste(fxn_locations,"RCC_HUC8taxaloss.csv",sep="/"),header=TRUE)
+batchlist = read.csv(file=paste(fxn_locations,"test_huc6_press.csv",sep="/"),header=TRUE)  #RCC_HUC8taxaloss.csv
 
 # 2. check for x_metric in batch list, if not there we merge from inputs$x_metric
 bnames = colnames(batchlist)
