@@ -1,6 +1,6 @@
 #
 #
-base_url <- "http://deq1.bse.vt.edu/d.dh/"
+base_url <- "http://deq2.bse.vt.edu/d.dh/"
 
 #Set location of "fn_dh_elfstats" function. Choose one below
 path <- "D:/Jkrstolic/R/deqEcoflows/GitHub/r-dh-ecohydro/Analysis/"
@@ -40,7 +40,7 @@ dataframe <- fn_dh_elfstats(feature_ftype = 'nhd_huc8', stat_quantreg_ghi=530, y
 # EXAMPLE FOR RETRIEVING DATASETS BY dataset_tag
 #dataframe <- fn_dh_elfstats(feature_ftype = 'nhd_huc6', yvar = 'aqbio_nt_total', sampres = 'species', dataset_tag = 'test_tag_1')
 
-dataframe <- fn_dh_elfstats(dataset_tag = 'bpj_rcc')
+dataframe <- fn_dh_elfstats(dataset_tag = 'taxaLoss_PI_PressHuc8')
 
 #*****************************************************
 #*****************************************************

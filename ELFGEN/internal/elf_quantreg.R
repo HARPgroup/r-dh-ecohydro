@@ -6,6 +6,7 @@ library(grid);
 library(httr);
 library(data.table);
 library(scales);
+library(smwrStats);
 
 elf_quantreg <- function(
   inputs, data, x_metric_code, y_metric_code, ws_ftype_code, 

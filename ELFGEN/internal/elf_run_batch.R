@@ -55,7 +55,7 @@ inputs$ws_ftype = c('nhd_huc8');
 inputs$target_hydrocode = '';
 inputs$quantile = .80;
 
-inputs$send_to_rest = "NO";
+inputs$send_to_rest = "YES";
 inputs$glo = 72;
 inputs$ghi = 530;
 inputs$method = "quantreg"; #quantreg, pwit, ymax, twopoint, pwit_RS
@@ -74,7 +74,7 @@ inputs$token = token;
 # batchlist = elf_assemble_batch(inputs) 
 #   ** or, Use this if you want to load the batch list from a file, with defaults from inputs()
 
-batchlist = read.csv(file=paste(fxn_locations,"test_huc6_press.csv",sep="/"),header=TRUE)  #RCC_HUC8taxaloss.csv
+batchlist = read.csv(file=paste(fxn_locations,"HUC8_CustomRCC_BP.csv",sep="/"),header=TRUE)  #RCC_HUC8taxaloss.csv
 
 # 2. check for x_metric in batch list, if not there we merge from inputs$x_metric
 bnames = colnames(batchlist)
