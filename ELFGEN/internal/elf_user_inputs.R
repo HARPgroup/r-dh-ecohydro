@@ -7,6 +7,7 @@ datasite <- "http://deq2.bse.vt.edu/d.dh" # where to get the raw data to analyze
 #----------------------------------------------
 
 basepath='D:\\Jkrstolic\\R\\deqEcoflows\\GitHub\\r-dh-ecohydro\\';
+#basepath='C:\\Users\\nrf46657\\Desktop\\VAHydro Development\\GitHub\\r-dh-ecohydro\\';
 
 
 #----Change Basepath here to point to your global config file:
@@ -29,6 +30,7 @@ token <- rest_token(site, token, rest_uname, rest_pw);
 source(paste(fxn_locations,"elf_assemble_batch.R", sep = ""));
 source(paste(fxn_locations,"huc8_groupings.txt", sep = "")); 
 
+
 # Load Default inputs
 source(paste(fxn_locations,"elf_default_inputs.R", sep = ""));
 #####
@@ -49,7 +51,6 @@ inputs$dataset_tag = 'TEST_TaxalossJLK';
 
 
 inputs$token = token;
-
 
 #------------------------------------------------------------------------------------------------
 elf_retrieve_data (inputs) 
