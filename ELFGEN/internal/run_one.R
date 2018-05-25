@@ -11,6 +11,7 @@ library(data.table);
 library(scales);
 #----------------------------------------------
 site <- "http://deq2.bse.vt.edu/d.dh"    #Specify the site of interest, either d.bet OR d.dh
+datasite <- "http://deq2.bse.vt.edu/d.dh"    #Specify the site of interest, either d.bet OR d.dh
 #----------------------------------------------
 #----FOR RUNNING LOCALLY:
 # Only need to change 1 path here - set to wherever this code is located
@@ -36,47 +37,67 @@ source(paste(fxn_locations,"elf_default_inputs.R", sep = ""));
 #####
 inputs$x_metric = 'erom_q0001e_mean'; #Flow metric to be plotted on the x-axis
 inputs$y_metric = 'aqbio_nt_total';
-inputs$ws_ftype = c('nhd_huc10');
+inputs$ws_ftype = c('state');
+inputs$bundle = 'landunit';
 inputs$target_hydrocode = 'usa_state_virginia';
 inputs$quantile = .80;
 inputs$send_to_rest = "NO";
 inputs$glo = 1;
-inputs$ghi = 530;
-inputs$dataset_tag = 'ymax75';
+inputs$ghi = 1000;
+inputs$method = "ymax"; #quantreg, pwit, ymax, twopoint, pwit_RS
+inputs$dataset_tag = 'fe_ymax';
 inputs$token = token;
 
 
 ##### Data Acquisition #####
 #retrieve raw data
 mydata <- vahydro_fe_data(
-  'usa_state_virginia', "erom_q0001e_mean", "aqbio_nt_total", 
-  'landunit',  "state", "species"
+  inputs$target_hydrocode, inputs$x_metric, inputs$y_metric, 
+  inputs$bundle, inputs$ws_ftype, "species"
 );
 data <- elf_cleandata(mydata, inputs);
 # do ymax calcs and plot
-elf_ymax(
-  inputs, data, x_metric_code = "erom_q0001e_mean", 
-  y_metric_code = "aqbio_nt_total", ws_ftype_code = 'landunit', 
-  Feature.Name_code = 'Virginia', Hydroid_code = 'usa_state_virginia', 
-  search_code = 'usa_state_virginia', token, 
-  startdate = min(data$tstime), enddate = max(data$tstime))
+#elf_ymax(
+#  inputs, data, x_metric_code = "erom_q0001e_mean", 
+#  y_metric_code = "aqbio_nt_total", ws_ftype_code = 'landunit', 
+#  Feature.Name_code = 'Virginia', Hydroid_code = 'usa_state_virginia', 
+#  search_code = 'usa_state_virginia', token, 
+#  startdate = min(data$tstime), enddate = max(data$tstime))
 
 #perform quantile regression calculation and plot 
 elf_quantreg(
  inputs, data, x_metric_code = inputs$x_metric, 
  y_metric_code = inputs$y_metric, 
  ws_ftype_code = NULL, 
- Feature.Name_code = 'Roanoke ELF', 
- Hydroid_code = NULL, 
+ Feature.Name_code = 'Virginia', 
+ Hydroid_code = inputs$target_hydrocode, 
  search_code = NULL, token, 
  min(data$tstime), max(data$tstime)
 )
+
+#perform quantile regression calculation and plot 
+elf_ymax(
+  inputs, data, x_metric_code = inputs$x_metric, 
+  y_metric_code = inputs$y_metric, 
+  ws_ftype_code = NULL, 
+  Feature.Name_code = 'Virginia', 
+  Hydroid_code = inputs$target_hydrocode, 
+  search_code = NULL, token, 
+  min(data$tstime), max(data$tstime)
+)
+
 plot(log(data$x_value), data$y_value)
 reg <- lm(y_value~log(x_value),data)
 abline(lm(y_value~log(x_value),data))
 lines(log(data$x_value[order(data$x_value)]), loess(y_value~log(x_value),data)$fitted[order(data$x_value)],col="blue",lwd=3)
 lines(table$x[order(table$x)],(loess(as.character(pct_chg_10) ~ x,data=table))$fitted[order(table$x)],col="blue",lwd=3)
 
+summary(reg)
+
+ndata <- subset(data, x_value < 100.0)
+plot(ndata$x_value, ndata$y_value)
+reg <- lm(y_value~x_value,ndata)
+abline(lm(y_value~x_value,ndata))
 summary(reg)
 
 #for setting ghi = max x_value

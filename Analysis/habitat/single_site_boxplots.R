@@ -46,7 +46,7 @@ ifim_sites <- c(397290,397291,397292,397293,
                 397286,397287,397288,397289,
                 397297,397298,397284,397285)
 
-#ifim_sites <- c(397284)
+ifim_sites <- c(397290)
 stat_method <- "median" #"mean" or " median"
  
 for (x in 1:length(ifim_sites)){

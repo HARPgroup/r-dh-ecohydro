@@ -17,7 +17,7 @@
 
 # Query Inputs -----------------------------------------------------
 fn_dh_elfstats <- function(
-    site = "http://deq1.bse.vt.edu/d.dh",
+    site = "http://deq2.bse.vt.edu/d.dh",
     ftype = "all",
     fstatus = "active",
     analysis_timespan = "full",

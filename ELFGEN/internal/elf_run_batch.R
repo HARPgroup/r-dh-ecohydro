@@ -7,8 +7,6 @@ datasite <- "http://deq2.bse.vt.edu/d.dh" # where to get the raw data to analyze
 #----------------------------------------------
 base_url <- datasite
 
-#----Change Basepath here to point to your global config file:
-#basepath='/var/www/R';
 
 basepath='D:\\Jkrstolic\\R\\deqEcoflows\\GitHub\\r-dh-ecohydro\\';
 # set your local directory paths in config.local.private located in filepath above
@@ -34,33 +32,41 @@ source(paste(fxn_locations,"elf_assemble_batch.R", sep = ""));
 source(paste(fxn_locations,"elf_quantreg.R", sep = ""));
 source(paste(fxn_locations,"elf_ymax.R", sep = ""));
 source(paste(fxn_locations,"elf_pw_it.R", sep = ""));
+source(paste(fxn_locations,"elf_pw_it_RS.R", sep = ""));
+source(paste(fxn_locations,"elf_twopoint.R", sep = ""));
 source(paste(fxn_locations,"elf_pct_chg.R", sep = ""));
 source(paste(fxn_locations,"elf_store_data.R", sep = ""));
 source(paste(basepath,"Analysis/query_elf_statistics.R", sep = "/")); 
 #####
 # Now add custom local settings here
 inputs$x_metric = c(
-  'nhdp_drainage_sqmi',
-  'erom_q0001e_mean'
-#  'erom_q0001e_jan',
-#  'erom_q0001e_feb',
-#  'erom_q0001e_mar', 
-#  'erom_q0001e_apr', 
-#  'erom_q0001e_may',
-#  'erom_q0001e_june',
-#  'erom_q0001e_july'
+#  'nhdp_drainage_sqmi',
+  'erom_q0001e_mean',
+  'erom_q0001e_jan',
+  'erom_q0001e_feb',
+  'erom_q0001e_mar', 
+  'erom_q0001e_apr', 
+  'erom_q0001e_may',
+  'erom_q0001e_june',
+  'erom_q0001e_july',
+  'erom_q0001e_aug',
+  'erom_q0001e_sept',
+  'erom_q0001e_oct',
+  'erom_q0001e_nov',
+  'erom_q0001e_dec'
 );
 inputs$y_metric = 'aqbio_nt_total';
+#inputs$sampres = 'maj_fam_gen_spec';
 inputs$ws_ftype = c('nhd_huc8');
 inputs$target_hydrocode = '';
 inputs$quantile = .80;
+
 
 inputs$send_to_rest = "YES";
 inputs$glo = 72;
 inputs$ghi = 530;
 inputs$method = "quantreg"; #quantreg, pwit, ymax, twopoint, pwit_RS
 inputs$dataset_tag = 'RCC_HUC8PredInt';
-inputs$ghi_var = 'qmean_annual'
 
 inputs$token = token;
 
@@ -71,10 +77,12 @@ inputs$token = token;
 
 
 #   ** Use this if you want a batch list to be generated from the inputs array
-# batchlist = elf_assemble_batch(inputs) 
+#batchlist = elf_assemble_batch(inputs) 
 #   ** or, Use this if you want to load the batch list from a file, with defaults from inputs()
 
+
 batchlist = read.csv(file=paste(fxn_locations,"HUC8_CustomRCC_BP.csv",sep="/"),header=TRUE)  #RCC_HUC8taxaloss.csv
+
 
 # 2. check for x_metric in batch list, if not there we merge from inputs$x_metric
 bnames = colnames(batchlist)
@@ -83,7 +91,7 @@ if (!('x_metric' %in% bnames)) {
 }
 
 # Batch Start
-batch_start = 1; # if we want to skip ahead, do so here.
+batch_start = 1075; # if we want to skip ahead, do so here.
 batch_len = nrow(batchlist)
 batch_end = batch_len; # if we want to stop early, do so here
 # 3. Iterate through each item in the list
@@ -105,15 +113,24 @@ for (row in batch_start:batch_end) {
   mydata <- vahydro_fe_data(
     Watershed_Hydrocode = tin$target_hydrocode, x_metric_code = tin$x_metric, 
     y_metric_code = tin$y_metric, bundle = tin$bundle,  
-    ws_ftype_code = tin$ws_ftype, sampres = tin$sampres
+    ws_ftype_code = tin$ws_ftype, sampres = tin$sampres, datasite = datasite
   );
+  
+  #note: add a 0 for the HUC6/HUC10's or else rest feature retrieval doesnt work 
+  if (inputs$ws_ftype == 'nhd_huc6') {
+    tin$target_hydrocode <- str_pad(tin$target_hydrocode, 6, "left", pad = "0");
+  }
+  if (inputs$ws_ftype == 'nhd_huc10') {
+    tin$target_hydrocode <- str_pad(tin$target_hydrocode, 10, "left", pad = "0");
+  }
+
   # filter out stuff we don't want (can be controlled via tin)
   data <- elf_cleandata(mydata, inputs = tin);
   # 3.2 Run selected routine 
   if (!(is.data.frame(data))) {
     print("No Data Found") 
   } else {
-    if (is.null(tin$hydroid)) {
+    if (is.null(tin$hydroid) || is.null(tin$geom)) {
       feature <- getFeature(
         list(
           ftype = tin$ws_ftype,
@@ -121,12 +138,14 @@ for (row in batch_start:batch_end) {
           hydrocode = tin$target_hydrocode
         )
         , token, base_url);
+      
       tin$name = feature$name
       tin$hydroid = feature$hydroid
     }
     if (is.null(tin$name)) {
       tin$name = tin$target_hydrocode
     }
+    
     startdate = min(data$tstime)
     enddate = max(data$tstime)
     elf_run_method(
@@ -134,8 +153,28 @@ for (row in batch_start:batch_end) {
       x_metric_code = as.character(tin$x_metric), y_metric_code = as.character(tin$y_metric), 
       ws_ftype_code = tin$ws_ftype, Feature.Name_code = tin$name, 
       Hydroid_code = tin$hydroid, search_code = tin$target_hydrocode, 
-      token = token, startdate = startdate, enddate = enddate
+      token = token, startdate = startdate, enddate = enddate, geom = feature$geom 
     )
   }
+#  lnz_data = subset(data, log(x_value) > 0)
+#  elf_plot_distribution(
+#    data = lnz_data,
+#    x_metric_code = as.character(tin$x_metric), 
+#    y_metric_code = as.character(tin$y_metric), 
+#    ws_ftype_code = tin$ws_ftype, 
+#    Feature.Name_code = tin$name, 
+#    Hydroid_code = tin$hydroid, 
+#    search_code = tin$target_hydrocode 
+#  )
+#  upper.quant <- elf_upper(lnz_data, 0.8)
+#  elf_plot_distribution(
+#    data = upper.quant,
+#    x_metric_code = as.character(tin$x_metric), 
+#    y_metric_code = as.character(tin$y_metric), 
+#    ws_ftype_code = tin$ws_ftype, 
+#    Feature.Name_code = tin$name, 
+#    Hydroid_code = tin$hydroid, 
+#    search_code = tin$target_hydrocode 
+#  )
 }
 ##############################################################################

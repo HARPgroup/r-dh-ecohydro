@@ -59,8 +59,11 @@ ifim_site <- getFeature(list(hydroid = ifim_featureid), token, site, feature)
 ifim_site_name <- as.character(ifim_site$name)
 
 inputs = list(varkey = 'usgs_siteid',featureid = ifim_featureid,entity_type = 'dh_feature')
-gage <- getProperty(inputs,site,prop)
-gage <- as.character(gage$propcode)
+gageprop <- getProperty(inputs,site,prop)
+gage <- as.character(gageprop$propcode)
+gage_factor <- as.numeric(as.character(gageprop$propvalue))
+
+
 
 ifim_da_sqmi <- getProperty(list(featureid = ifim_featureid,
                                  varkey = 'nhdp_drainage_sqmi',
@@ -391,10 +394,12 @@ include_graphics(elf_pctchg)
 
 f_0 <- f_fxn(gage,0.0)
 flow.ts.range_0 <- flow.ts.range_fxn(f_0,"current_year")
+flow.ts.range_0$Flow <- ((flow.ts.range_0$Flow)*gage_factor)
 wua.at.q_0 <- wua.at.q_fxn(flow.ts.range_0)
 
 f_10 <- f_fxn(gage,0.10)
 flow.ts.range_10 <- flow.ts.range_fxn(f_10,"current_year")
+flow.ts.range_10$Flow <- ((flow.ts.range_10$Flow)*gage_factor)
 wua.at.q_10 <- wua.at.q_fxn(flow.ts.range_10)
 
 ```
@@ -407,10 +412,12 @@ hab_ts_plot_overlay_fxn(flow.ts.range_0,wua.at.q_0,flow.ts.range_10,wua.at.q_10,
 
 f_0 <- f_fxn(gage,0.0)
 flow.ts.range_0 <- flow.ts.range_fxn(f_0,"ten_year")
+flow.ts.range_0$Flow <- ((flow.ts.range_0$Flow)*gage_factor)
 wua.at.q_0 <- wua.at.q_fxn(flow.ts.range_0)
 
 f_10 <- f_fxn(gage,0.10)
 flow.ts.range_10 <- flow.ts.range_fxn(f_10,"ten_year")
+flow.ts.range_10$Flow <- ((flow.ts.range_10$Flow)*gage_factor)
 wua.at.q_10 <- wua.at.q_fxn(flow.ts.range_10)
 
 ```
@@ -423,30 +430,37 @@ hab_ts_plot_overlay_fxn(flow.ts.range_0,wua.at.q_0,flow.ts.range_10,wua.at.q_10,
 
 f_0 <- f_fxn(gage,0.0)
 flow.ts.range_0 <- flow.ts.range_fxn(f_0,"current_year")
+flow.ts.range_0$Flow <- ((flow.ts.range_0$Flow)*gage_factor)
 wua.at.q_0 <- wua.at.q_fxn(flow.ts.range_0)
 
 f_5 <- f_fxn(gage,0.05)
 flow.ts.range_5 <- flow.ts.range_fxn(f_5,"current_year")
+flow.ts.range_5$Flow <- ((flow.ts.range_5$Flow)*gage_factor)
 wua.at.q_5 <- wua.at.q_fxn(flow.ts.range_5)
 
 f_10 <- f_fxn(gage,0.10)
 flow.ts.range_10 <- flow.ts.range_fxn(f_10,"current_year")
+flow.ts.range_10$Flow <- ((flow.ts.range_10$Flow)*gage_factor)
 wua.at.q_10 <- wua.at.q_fxn(flow.ts.range_10)
 
 f_20 <- f_fxn(gage,0.20)
 flow.ts.range_20 <- flow.ts.range_fxn(f_20,"current_year")
+flow.ts.range_20$Flow <- ((flow.ts.range_20$Flow)*gage_factor)
 wua.at.q_20 <- wua.at.q_fxn(flow.ts.range_20)
 
 f_30 <- f_fxn(gage,0.30)
 flow.ts.range_30 <- flow.ts.range_fxn(f_30,"current_year")
+flow.ts.range_30$Flow <- ((flow.ts.range_30$Flow)*gage_factor)
 wua.at.q_30 <- wua.at.q_fxn(flow.ts.range_30)
 
 f_40 <- f_fxn(gage,0.40)
 flow.ts.range_40 <- flow.ts.range_fxn(f_40,"current_year")
+flow.ts.range_40$Flow <- ((flow.ts.range_40$Flow)*gage_factor)
 wua.at.q_40 <- wua.at.q_fxn(flow.ts.range_40)
 
 f_50 <- f_fxn(gage,0.50)
 flow.ts.range_50 <- flow.ts.range_fxn(f_50,"current_year")
+flow.ts.range_50$Flow <- ((flow.ts.range_50$Flow)*gage_factor)
 wua.at.q_50 <- wua.at.q_fxn(flow.ts.range_50)
 
 ```

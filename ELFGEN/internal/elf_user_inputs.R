@@ -8,7 +8,13 @@ datasite <- "http://deq2.bse.vt.edu/d.dh" # where to get the raw data to analyze
 
 basepath='D:\\Jkrstolic\\R\\deqEcoflows\\GitHub\\r-dh-ecohydro\\';
 
-#source('/var/www/R/config.local.private');
+
+#----Change Basepath here to point to your global config file:
+
+# set your local directory paths in config.local.private located in filepath above
+# this file will NOT be sent to git, so it should persist
+# so, edit config.local.private once and you should be good to go
+
 source(paste(basepath,'config.local.private',sep='/'));
 
 #Load Functions               
@@ -20,6 +26,7 @@ rest_pw = FALSE;
 source(paste(hydro_tools,"auth.private", sep = "/"));#load rest username and password, contained in auth.private file
 token <- rest_token(site, token, rest_uname, rest_pw);
 
+source(paste(fxn_locations,"elf_assemble_batch.R", sep = ""));
 source(paste(fxn_locations,"huc8_groupings.txt", sep = "")); 
 
 # Load Default inputs
@@ -28,8 +35,10 @@ source(paste(fxn_locations,"elf_default_inputs.R", sep = ""));
 # Now add custom local settings here
 inputs$x_metric = 'erom_q0001e_mean'; #Flow metric to be plotted on the x-axis
 inputs$y_metric = 'aqbio_nt_total';
+
 inputs$ws_ftype = c('nhd_huc8');
 inputs$target_hydrocode = 'nhd_huc8_02080201';
+
 inputs$quantile = .80;
 inputs$send_to_rest = "NO";
 
