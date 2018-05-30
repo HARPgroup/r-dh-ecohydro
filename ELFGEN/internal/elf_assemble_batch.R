@@ -8,10 +8,11 @@ library(data.table);
 library(scales);
 library(rgeos); #used for geospatial processing 
 library(sp); #contains SpatialPolygonsDataFrame()
+library(ggsn); #used for adding scale bar and north arrow to map
 
 elf_run_method <- function( method, inputs, data, x_metric_code, y_metric_code, ws_ftype_code, 
-    Feature.Name_code, Hydroid_code, search_code, token, startdate, enddate, geom
-  ) {
+                            Feature.Name_code, Hydroid_code, search_code, token, startdate, enddate, geom
+) {
   
   if(method == "quantreg") {
     print(paste("PLOTTING - method quantreg breakpoint ...",sep="")) 
@@ -156,9 +157,9 @@ elf_assemble_batch <- function(inputs = list()){
   pw_it_RS_IFIM <- inputs$pw_it_RS_IFIM  
   twopoint <- inputs$twopoint
   token <- inputs$token
-
+  
   for (l in offset_ws_ftype:length(ws_ftype)) {
-       
+    
     print(paste("ws_ftype ",l,". of ",length(ws_ftype),". ",ws_ftype[l],sep=""))
     #Automatic bundle specification (WILL BE ELIMINATED ONCE WE UPDATE VAHYDRO STORAGE SCHEME)
     if(ws_ftype[l] == "hwi_region"){
@@ -188,7 +189,7 @@ elf_assemble_batch <- function(inputs = list()){
     Watershed_Hydrocode <- HUClist$Hydrocode
     Feature.Name <- HUClist$Feature.Name
     Hydroid <- HUClist$HydroID
-  
+    
     for (k in offset_y_metric:length(y_metric)) {
       print(paste("y_metric ", k, ". of ",length(y_metric),". Beginning loop for ", y_metric[k], sep=''));
       for (j in offset_x_metric:length(x_metric)) {
@@ -259,32 +260,142 @@ base.plot <- function(geom, data, full_dataset, upper.quant,
                       yaxis_thresh, quantile,
                       plot_title, xaxis_title, yaxis_title,
                       EDAS_upper_legend,EDAS_lower_legend,Reg_upper_legend,Quantile_Legend
-                      ) {
-
-  #Load Virginia geometry
-  VADF <- read.csv(file=paste(fxn_locations,"VADF.csv",sep=""), header=TRUE, sep=",")
-
-  #Load watershed geometry
-  wsdataProjected <- SpatialPolygonsDataFrame(readWKT(geom),data.frame("id"), match.ID = TRUE)
+) {
+  
+  
+  # SPECIFY BOUNDING BOX: *should really calculate bb from the VADF shape, but for now hard code
+  bb=readWKT("POLYGON((-85 35, -74 35,  -74 41, -85 41, -85 35))")
+  bbProjected <- SpatialPolygonsDataFrame(bb,data.frame("id"), match.ID = FALSE)
+  bbProjected@data$id <- rownames(bbProjected@data)
+  bbPoints <- fortify(bbProjected, region = "id")
+  bbDF <- merge(bbPoints, bbProjected@data, by = "id")
+  
+  # CLIP WATERSHED GEOMETRY TO BOUNDING BOX
+  watershed_geom <- readWKT(geom)
+  watershed_geom_clip <- gIntersection(bb, watershed_geom)
+  wsdataProjected <- SpatialPolygonsDataFrame(watershed_geom_clip,data.frame("id"), match.ID = FALSE)
   #class(dataProjected)
   wsdataProjected@data$id <- rownames(wsdataProjected@data)
   watershedPoints <- fortify(wsdataProjected, region = "id")
   watershedDF <- merge(watershedPoints, wsdataProjected@data, by = "id")
-
+  
+  #LOAD STATE GEOMETRY
+  STATES <- read.table(file=paste(fxn_locations,"STATES.tsv",sep=""), header=TRUE, sep="\t")
+  
+  VA <- STATES[which(STATES$state == "VA"),]
+  VA_geom <- readWKT(VA$geom)
+  VA_geom_clip <- gIntersection(bb, VA_geom)
+  VAProjected <- SpatialPolygonsDataFrame(VA_geom_clip,data.frame("id"), match.ID = TRUE)
+  VAProjected@data$id <- rownames(VAProjected@data)
+  VAPoints <- fortify( VAProjected, region = "id")
+  VADF <- merge(VAPoints,  VAProjected@data, by = "id")
+  
+  TN <- STATES[which(STATES$state == "TN"),]
+  TN_geom <- readWKT(TN$geom)
+  TN_geom_clip <- gIntersection(bb, TN_geom)
+  TNProjected <- SpatialPolygonsDataFrame(TN_geom_clip,data.frame("id"), match.ID = TRUE)
+  TNProjected@data$id <- rownames(TNProjected@data)
+  TNPoints <- fortify( TNProjected, region = "id")
+  TNDF <- merge(TNPoints,  TNProjected@data, by = "id")
+  
+  NC <- STATES[which(STATES$state == "NC"),]
+  NC_geom <- readWKT(NC$geom)
+  NC_geom_clip <- gIntersection(bb, NC_geom)
+  NCProjected <- SpatialPolygonsDataFrame(NC_geom_clip,data.frame("id"), match.ID = TRUE)
+  NCProjected@data$id <- rownames(NCProjected@data)
+  NCPoints <- fortify( NCProjected, region = "id")
+  NCDF <- merge(NCPoints,  NCProjected@data, by = "id")
+  
+  KY <- STATES[which(STATES$state == "KY"),]
+  KY_geom <- readWKT(KY$geom)
+  KY_geom_clip <- gIntersection(bb, KY_geom)
+  KYProjected <- SpatialPolygonsDataFrame(KY_geom_clip,data.frame("id"), match.ID = TRUE)
+  KYProjected@data$id <- rownames(KYProjected@data)
+  KYPoints <- fortify( KYProjected, region = "id")
+  KYDF <- merge(KYPoints,  KYProjected@data, by = "id")
+  
+  WV <- STATES[which(STATES$state == "WV"),]
+  WV_geom <- readWKT(WV$geom)
+  WV_geom_clip <- gIntersection(bb, WV_geom)
+  WVProjected <- SpatialPolygonsDataFrame(WV_geom_clip,data.frame("id"), match.ID = TRUE)
+  WVProjected@data$id <- rownames(WVProjected@data)
+  WVPoints <- fortify( WVProjected, region = "id")
+  WVDF <- merge(WVPoints,  WVProjected@data, by = "id")
+  
+  MD <- STATES[which(STATES$state == "MD"),]
+  MD_geom <- readWKT(MD$geom)
+  MD_geom_clip <- gIntersection(bb, MD_geom)
+  MDProjected <- SpatialPolygonsDataFrame(MD_geom_clip,data.frame("id"), match.ID = TRUE)
+  MDProjected@data$id <- rownames(MDProjected@data)
+  MDPoints <- fortify( MDProjected, region = "id")
+  MDDF <- merge(MDPoints,  MDProjected@data, by = "id")
+  
+  DE <- STATES[which(STATES$state == "DE"),]
+  DE_geom <- readWKT(DE$geom)
+  DE_geom_clip <- gIntersection(bb, DE_geom)
+  DEProjected <- SpatialPolygonsDataFrame(DE_geom_clip,data.frame("id"), match.ID = TRUE)
+  DEProjected@data$id <- rownames(DEProjected@data)
+  DEPoints <- fortify( DEProjected, region = "id")
+  DEDF <- merge(DEPoints,  DEProjected@data, by = "id")
+  
+  PA <- STATES[which(STATES$state == "PA"),]
+  PA_geom <- readWKT(PA$geom)
+  PA_geom_clip <- gIntersection(bb, PA_geom)
+  PAProjected <- SpatialPolygonsDataFrame(PA_geom_clip,data.frame("id"), match.ID = TRUE)
+  PAProjected@data$id <- rownames(PAProjected@data)
+  PAPoints <- fortify( PAProjected, region = "id")
+  PADF <- merge(PAPoints,  PAProjected@data, by = "id")
+  
+  NJ <- STATES[which(STATES$state == "NJ"),]
+  NJ_geom <- readWKT(NJ$geom)
+  NJ_geom_clip <- gIntersection(bb, NJ_geom)
+  NJProjected <- SpatialPolygonsDataFrame(NJ_geom_clip,data.frame("id"), match.ID = TRUE)
+  NJProjected@data$id <- rownames(NJProjected@data)
+  NJPoints <- fortify( NJProjected, region = "id")
+  NJDF <- merge(NJPoints,  NJProjected@data, by = "id")
+  
+  OH <- STATES[which(STATES$state == "OH"),]
+  OH_geom <- readWKT(OH$geom)
+  OH_geom_clip <- gIntersection(bb, OH_geom)
+  OHProjected <- SpatialPolygonsDataFrame(OH_geom_clip,data.frame("id"), match.ID = TRUE)
+  OHProjected@data$id <- rownames(OHProjected@data)
+  OHPoints <- fortify( OHProjected, region = "id")
+  OHDF <- merge(OHPoints,  OHProjected@data, by = "id")
+  
   map <- ggplotGrob(ggplot(data = VADF, aes(x=long, y=lat, group = group))+
-                      theme(panel.grid.major = element_blank(), 
-                            panel.grid.minor = element_blank(),
-                            panel.background = element_blank())+
-                      geom_polygon(data = VADF, fill = "gray")+
-                      geom_polygon(data = watershedDF, color="forestgreen", fill = NA,lwd=0.5)+
+                      geom_polygon(data = VADF, color="gray46", fill = "gray")+
+                      geom_polygon(data = TNDF, color="gray46", fill = NA, lwd=0.5)+
+                      geom_polygon(data = NCDF, color="gray46", fill = NA, lwd=0.5)+
+                      geom_polygon(data = KYDF, color="gray46", fill = NA, lwd=0.5)+
+                      geom_polygon(data = WVDF, color="gray46", fill = NA, lwd=0.5)+
+                      geom_polygon(data = MDDF, color="gray46", fill = NA, lwd=0.5)+
+                      geom_polygon(data = DEDF, color="gray46", fill = NA, lwd=0.5)+
+                      geom_polygon(data = PADF, color="gray46", fill = NA, lwd=0.5)+
+                      geom_polygon(data = NJDF, color="gray46", fill = NA, lwd=0.5)+
+                      geom_polygon(data = OHDF, color="gray46", fill = NA, lwd=0.5)+
+                      
+                      geom_polygon(data = watershedDF, color="forestgreen", fill = "forestgreen",alpha = 0.5,lwd=0.5)+
+                      
+                      geom_polygon(data = bbDF, color="black", fill = NA,lwd=0.5)+
+                      
+                      #ADD NORTH ARROW AND SCALE BAR
+                      north(bbDF, location = 'topleft', symbol = 12, scale=0.2)+
+                      #scalebar(bbDF, dist = 100, dd2km = TRUE, model = 'WGS84',st.bottom=FALSE,st.size=1.5,st.dist=0.04)+ #text too small to read 
+                      scalebar(bbDF, dist = 100, dd2km = TRUE, model = 'WGS84',st.bottom=TRUE,st.size=1.5,st.dist=0.04)+
+                      
                       scale_x_continuous(limits = c(-85, -74))+
                       scale_y_continuous(limits = c(35, 41))+
+                      
                       theme(axis.title.x=element_blank(),
                             axis.text.x=element_blank(),
                             axis.ticks.x=element_blank(),
                             axis.title.y=element_blank(),
                             axis.text.y=element_blank(),
-                            axis.ticks.y=element_blank())
+                            axis.ticks.y=element_blank(),
+                            panel.grid.major = element_blank(), 
+                            panel.grid.minor = element_blank(),
+                            panel.background = element_blank(),
+                            panel.border = element_blank())
   )
   
   result <- ggplot(data, aes(x=x_value,y=y_value)) + ylim(0,yaxis_thresh) + 
@@ -295,12 +406,12 @@ base.plot <- function(geom, data, full_dataset, upper.quant,
     geom_quantile(data = data, quantiles= quantile,show.legend = TRUE,aes(color="red")) + 
     geom_smooth(data = data, method="lm",formula=y ~ x,show.legend = TRUE, aes(colour="yellow"),se=FALSE) + 
     geom_smooth(data = upper.quant, formula = y ~ x, method = "lm", show.legend = TRUE, aes(x=x_value,y=y_value,color = "green"),se=FALSE) + 
-
+    
     #add map to upper right of plot
     annotation_custom(
       grob = map,
-      xmin = 4.55,
-      xmax = 8,
+      xmin = 4.54,
+      xmax = 7.72,
       ymin = yaxis_thresh-(0.1*yaxis_thresh),
       ymax = yaxis_thresh+(0.3*yaxis_thresh)
     )+

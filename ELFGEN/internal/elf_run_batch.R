@@ -8,8 +8,8 @@ datasite <- "http://deq2.bse.vt.edu/d.dh" # where to get the raw data to analyze
 base_url <- datasite
 
 #----Change Basepath here to point to your global config file:
-basepath='/var/www/R';
-#basepath='C:\\Users\\nrf46657\\Desktop\\VAHydro Development\\GitHub\\r-dh-ecohydro\\';
+#basepath='/var/www/R';
+basepath='C:\\Users\\nrf46657\\Desktop\\VAHydro Development\\GitHub\\r-dh-ecohydro\\';
 # set your local directory paths in config.local.private located in filepath above
 # this file will NOT be sent to git, so it should persist
 # so, edit config.local.private once and you should be good to go
@@ -64,7 +64,7 @@ inputs$send_to_rest = "NO";
 inputs$glo = 1;
 inputs$ghi = 1000;
 inputs$method = "quantreg"; #quantreg, pwit, ymax, pwit_RS, twopoint
-inputs$dataset_tag = 'bpj-huc6bp-dart';
+inputs$dataset_tag = 'jk-test';
 inputs$ghi_var = 'qmean_annual'
 inputs$token = token;
 
