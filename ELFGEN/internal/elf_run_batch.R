@@ -83,7 +83,7 @@ if (!('x_metric' %in% bnames)) {
 }
 
 # Batch Start
-batch_start = 1075; # if we want to skip ahead, do so here.
+batch_start = 1; # if we want to skip ahead, do so here.
 batch_len = nrow(batchlist)
 batch_end = batch_len; # if we want to stop early, do so here
 # 3. Iterate through each item in the list
