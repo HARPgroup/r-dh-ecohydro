@@ -84,9 +84,9 @@ if (!('x_metric' %in% bnames)) {
 }
 
 # Batch Start
-batch_start = 1; # if we want to skip ahead, do so here.
+batch_start = 1; # use 911 after finishing fist one # if we want to skip ahead, do so here.
 batch_len = nrow(batchlist)
-batch_end = batch_len; # if we want to stop early, do so here
+batch_end = batch_len; #default = batch_len; # if we want to stop early, do so here
 # 3. Iterate through each item in the list
 for (row in batch_start:batch_end) {
   tin = inputs

@@ -151,5 +151,4 @@ for (row in 1:nrow(batch)) {
   );
 }
 pander(ss)
-
 ```
