@@ -1,10 +1,10 @@
 ---
-title: "ELF Monthly Comparisons"
+  title: "ELF Monthly Comparisons"
 output: word_document
 ---
-#Simulated range and variability of percent loss of taxa for different biometrics
-
-
+  #Simulated range and variability of percent loss of taxa for different biometrics
+  
+  
 ```{r, echo=FALSE}
 # install.packages('gdata')
 options(timeout=2000);
@@ -18,12 +18,12 @@ base_url <- 'http://deq2.bse.vt.edu/d.dh'
 
 metric <- 'aqbio_nt_total'; # aqbio_nt_total, aqbio_nt_cent, aqbio_nt_darter, aqbio_nt_benins
 q_ftype <- "fe_quantreg";
-dataset_tag = 'bpj-530'; # bpj-530, bpj-rcc, 'HUC8_quantregwHuc6bp' (huc 6)
+dataset_tag = 'benthic-bpj-100'; # benthic-bpj-100, bpj-rcc, 'HUC8_quantregwHuc6bp' (huc 6)
 analysis_timespan = "full";
-sampres = "species";
+sampres = "maj_fam_gen_spec";
 selected <- 'all'; # all or hydrocode
 quantile <- 0.8;
-pmax = 0.01;
+pmax = 0.15;
 Rmin = 0.0;
 #stat_quantreg_glo <- 0; 
 #stat_quantreg_ghi <- 530; 
@@ -33,48 +33,35 @@ Rmin = 0.0;
 save_directory = paste(file_directory,"/",sep='');
 # Huc6Ghi_72=Glo ->
 # bundle - ecoregion, landunit, watershed
-# ftype - ecoregion_iii, nhd_huc6, nhd_huc6=8, nhd_huc10
+# ftype - ecoregion_iii, nhd_huc6, nhd_huc6=8, nhd_huc6
 
 # recreation of BPJ-rcc with all Drainage area?
 batch <- data.frame(
-    bundle = 'watershed', ftype = 'nhd_huc8', dataset_tag = 'bpj-huc6bp-rcc', q_ftype = 'fe_elf', metric = 'aqbio_nt_total')
+  bundle = 'watershed', ftype = 'nhd_huc6', dataset_tag = 'benthic-bpj-100', q_ftype = 'fe_elf', metric = 'aqbio_benthic_nt_total')
 
-# bpj-rcc
+# bpj-200
 batch <- rbind(
   batch, data.frame(
-    bundle = 'watershed', ftype = 'nhd_huc8', dataset_tag = 'bpj-huc6bp-minnow', q_ftype = 'fe_elf', metric = 'aqbio_nt_minnow')
+    bundle = 'watershed', ftype = 'nhd_huc6', dataset_tag = 'benthic-bpj-200', q_ftype = 'fe_elf', metric = 'aqbio_benthic_nt_total')
 )
 
-# Using 75% value from ymax analysis of all HUC8s
+# bpj-300
 batch <- rbind(
   batch, data.frame(
-    bundle = 'watershed', ftype = 'nhd_huc8', dataset_tag = 'bpj-huc6bp-cent', q_ftype = 'fe_elf', metric = 'aqbio_nt_cent')
+    bundle = 'watershed', ftype = 'nhd_huc6', dataset_tag = 'benthic-bpj-300', q_ftype = 'fe_elf', metric = 'aqbio_benthic_nt_total')
 )
 
-# Using 75% value from ymax analysis of all HUC8s
-batch <- rbind(
-  batch, data.frame(
-    bundle = 'watershed', ftype = 'nhd_huc8', dataset_tag = 'bpj-huc6bp-benins', q_ftype = 'fe_elf', metric = 'aqbio_nt_benins')
-)
-
-# darter
-batch <- rbind(
-  batch, data.frame(
-    bundle = 'watershed', ftype = 'nhd_huc8', dataset_tag = 'bpj-huc6bp-darter', q_ftype = 'fe_elf', metric = 'aqbio_nt_darter')
-)
-
-# Using 75% value from ymax analysis of all HUC8s
-batch <- rbind(
-  batch, data.frame(
-    bundle = 'watershed', ftype = 'nhd_huc8', dataset_tag = 'bpj-huc6bp-native', q_ftype = 'fe_elf', metric = 'aqbio_nt_native')
-)
-
+# bpj-530
+#batch <- rbind(
+#  batch, data.frame(
+#    bundle = 'watershed', ftype = 'nhd_huc6', dataset_tag = 'benthic-bpj-530', #q_ftype = 'fe_elf', metric = 'aqbio_benthic_nt_total')
+#)
 
 # Summary Stats
 ss = data.frame(
   "Biometric" = character(), 
-  'Med R(all/max/DA/Qmean)' =  numeric(), 
-  "Count" = character(), 
+  "Med R(all/max/DA/Qmean)" =  numeric(), 
+  "Count (DA)/ghi" = character(), 
   "Criteria" = character(), 
   stringsAsFactors = FALSE) ;
 
@@ -85,16 +72,16 @@ for (row in 1:nrow(batch)) {
   q_ftype <- batch[row,]$q_ftype;
   metric <- batch[row,]$metric;
   rawdata = fn_dh_elfstats (
-      ftype = q_ftype,
-      site = base_url,
-      analysis_timespan = analysis_timespan,
-      yvar = metric,
-      sampres = sampres, # e.g. species, e.
-      stat_quantreg_qu = quantile, # upper quantile to use
-      feature_ftype = ftype,
-      #stat_quantreg_ghi = stat_quantreg_ghi, #
-      #stat_quantreg_glo = stat_quantreg_glo, # use 1 for pwit, 0 for quantreg
-      dataset_tag = dataset_tag
+    ftype = q_ftype,
+    site = base_url,
+    analysis_timespan = analysis_timespan,
+    yvar = metric,
+    sampres = sampres, # e.g. species, e.
+    stat_quantreg_qu = quantile, # upper quantile to use
+    feature_ftype = ftype,
+    #stat_quantreg_ghi = stat_quantreg_ghi, #
+    #stat_quantreg_glo = stat_quantreg_glo, # use 1 for pwit, 0 for quantreg
+    dataset_tag = dataset_tag
   );
   
   
@@ -111,25 +98,26 @@ for (row in 1:nrow(batch)) {
   # render it
   ymin = 0.0; # restrain plot
   crit_label =  paste('p<', pmax, 'R>', Rmin,sep='')
-  labeltext = paste(q_ftype, ":", dataset_tag, '\n', ' ( p<', pmax, 'R>', Rmin, ' ', mtch, ' of ', tot,' )',sep='')
+  labeltext = paste(q_ftype, ":", dataset_tag, '\n', ' (', crit_label, mtch, ' of ', tot,' )',sep='')
   plot_monthly(data, labeltext, xmetric = 'out_rsq_adj', ymetric = metric, ymin=ymin);
   mmax = ceiling(max(data$out_m))
+  ghi = ceiling(max(data$in_ghi))
   #plot_monthly(data, labeltext, xmetric = 'out_m', ymetric = metric, ymin=0, ymax=mmax);
   plot_monthly_count (data, subname = dataset_tag, xmetric = "out_rsq_adj", 
-  ymin = 0.0, ymax = 1.0)
+                      ymin = 0.0, ymax = 1.0)
   
   # Show variation in slope
   ymin = 0.0; # restrain plot
   labeltext = paste(q_ftype, ":", dataset_tag, '\n', ' ( p<', pmax, 'R>', Rmin, ' ', mtch, ' of ', tot,' )',sep='')
-  mmax = ceiling(max(data$out_m))
-
+  
   # add to summary table
+  
   mmx = 'tbd'; # max of medians should go here to find month with highest median
   ss <- rbind(
     ss, 
     data.frame(
       "Biometric" = metric, 
-      'Med R(all/max/DA/Qmean)' = 
+      "Med R(all/max/DA/Qmean)" = 
         paste(
           round(median(data$out_rsq_adj),2),  
           mmx, 
@@ -137,14 +125,10 @@ for (row in 1:nrow(batch)) {
           round(median(subset(data, in_xvar == 'erom_q0001e_mean')$out_rsq_adj),2),
           sep="/"
         ),
-      "Count (DA)" = mtch, 
+      "Count (DA)/ghi" = paste(mtch,ghi,sep="/"), 
       "Criteria" = crit_label, 
       stringsAsFactors = FALSE)
   );
-  
 }
-names(ss) <- c("Biometric",'Med R(all/max/DA/Qmean/Best)',"Count","Criteria");
-
 pander(ss)
-
 ```

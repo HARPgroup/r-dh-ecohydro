@@ -34,7 +34,7 @@ huc8_rawdata =
   fn_dh_elfstats ( ftype = 'fe_quantreg', 
     site = base_url, analysis_timespan = "full", yvar = yvar,
     sampres = "species", stat_quantreg_qu = quant, feature_ftype = 'nhd_huc8', stat_quantreg_ghi = 'all', 
-    stat_quantreg_glo = 'all', dataset_tag = 'bpj-rcc'
+    stat_quantreg_glo = 'all', dataset_tag = 'bpj-530'
   );
 huc8_qmean_data = huc8_rawdata;
 huc8_qmean_data = subset(huc8_qmean_data, in_xvar == 'erom_q0001e_mean')

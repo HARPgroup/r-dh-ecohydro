@@ -7,15 +7,16 @@ output: word_document
 # install.packages('gdata')
 options(timeout=2000);
 library('gdata')
+library('pander')
 source("/var/www/R/config.local.private");
 source(paste(base_directory,"Analysis/query_elf_statistics.R", sep = "/")); 
 source(paste(base_directory,"Analysis/plot_elf_statistics.R", sep = "/")); 
 
 bundle <- 'watershed'; # ecoregion, landunit, watershed
-ftype <- 'nhd_huc8'; # ecoregion_iii, nhd_huc6, nhd_huc8, nhd_huc10
+ftype <- 'nhd_huc10'; # ecoregion_iii, nhd_huc6, nhd_huc8, nhd_huc10
 metric <- 'aqbio_nt_minnow'; # aqbio_nt_total, aqbio_nt_cent, aqbio_nt_darter, aqbio_nt_benins
 q_ftype <- "fe_elf";
-dataset_tag = 'bpj-huc6bp-minnow'; # bpj-530, bpj-rcc, 'HUC8_quantregwHuc6bp' (huc 6)
+dataset_tag = 'bpj-530'; # bpj-530, bpj-rcc, 'HUC8_quantregwHuc6bp' (huc 6)
 analysis_timespan = "full";
 sampres = "species";
 selected <- 'all'; # all or hydrocode
@@ -73,6 +74,40 @@ plot_monthly(data, labeltext, ymetric = metric, xmetric = 'out_rsq_adj', ymin=ym
 mmax = ceiling(max(data$out_m))
 plot_monthly(data, labeltext, ymetric = metric, xmetric = 'out_m', ymin=0, ymax=mmax);
 
+  # add to summary table
+  
+mmx = 'tbd'; # max of medians should go here to find month with highest median
+ss = data.frame(
+  "x-Variable" = character(), 
+  "0%" =  numeric(), 
+  "25%" =  numeric(), 
+  "50%" =  numeric(), 
+  "75%" =  numeric(), 
+  "100%" =  numeric(), 
+  stringsAsFactors = FALSE
+) ;
+for(i in erom_vars) {
+  dset = subset(data, in_xvar == i)
+  qq = quantile(dset$out_rsq_adj)
+  ss <- rbind(
+    ss,
+    data.frame(
+      "x-Variable" = i,  
+      "0%" = as.numeric(qq["0%"]), 
+      "25%" = as.numeric(qq["25%"]), 
+      "50%" = as.numeric(qq["50%"]), 
+      "75%" = as.numeric(qq["75%"]), 
+      "100%" = as.numeric(qq["100%"])
+    )
+  )
+}
+names(ss) <- c("x-Variable", "0%", "25%", "50%", "75%", "100%")
+```
+* Biometric: `r metric`
+* Spatial Grouping: `r ftype`
+
+```{r, echo=FALSE,warning=FALSE,message=FALSE,error=FALSE}
+pander(ss, table.split.table=Inf);
 ```
 * Location: `r selected`
 * quantile: `r quantile`
