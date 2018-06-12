@@ -1,3 +1,10 @@
+erom_vars = c(
+  'nhdp_drainage_sqmi', 'erom_q0001e_mean', 'erom_q0001e_jan', 
+  'erom_q0001e_feb', 'erom_q0001e_mar', 'erom_q0001e_apr', 
+  'erom_q0001e_may', 'erom_q0001e_june', 'erom_q0001e_july', 
+  'erom_q0001e_aug', 'erom_q0001e_sept', 'erom_q0001e_oct', 
+  'erom_q0001e_nov', 'erom_q0001e_dec'
+);
 
 plot_monthly <- function (data, subname = 'all', xmetric = "out_rsq_adj", ymetric = 'nt_total', ymin = 0.5, ymax = 1.0) {
   # dataset_tag: bpj-530, bpj-rcc
@@ -79,4 +86,89 @@ plot_monthly_count <- function (
     barplot(ns, names.arg=n, main=paste("# of Sig. Relationships", subname), 
             xlab="DA/Flow Variable")
   } 
+}
+
+erom_monthly_keyed <- function(data) {
+  # returns list of intersecting locations
+  data.keyed <- list(
+    'da' = subset(data, in_xvar == 'nhdp_drainage_sqmi'),
+    'mean' = subset(data, in_xvar == 'erom_q0001e_mean'),
+    'jan' = subset(data, in_xvar == 'erom_q0001e_jan'),
+    'feb' = subset(data, in_xvar == 'erom_q0001e_feb'),
+    'mar' = subset(data, in_xvar == 'erom_q0001e_mar'),
+    'apr' = subset(data, in_xvar == 'erom_q0001e_apr'),
+    'may' = subset(data, in_xvar == 'erom_q0001e_may'),
+    'jun' = subset(data, in_xvar == 'erom_q0001e_june'),
+    'jul' = subset(data, in_xvar == 'erom_q0001e_july'),
+    'aug' = subset(data, in_xvar == 'erom_q0001e_aug'),
+    'sep' = subset(data, in_xvar == 'erom_q0001e_sept'),
+    'oct' = subset(data, in_xvar == 'erom_q0001e_oct'),
+    'nov' = subset(data, in_xvar == 'erom_q0001e_nov'),
+    'dec' = subset(data, in_xvar == 'erom_q0001e_dec')
+  );
+  return(data.keyed);
+}
+
+erom_monthly_frame <- function(data) {
+  # returns list of intersecting locations
+  data.df <- list(
+    'da' = subset(data, in_xvar == 'nhdp_drainage_sqmi'),
+    'mean' = subset(data, in_xvar == 'erom_q0001e_mean'),
+    'jan' = subset(data, in_xvar == 'erom_q0001e_jan'),
+    'feb' = subset(data, in_xvar == 'erom_q0001e_feb'),
+    'mar' = subset(data, in_xvar == 'erom_q0001e_mar'),
+    'apr' = subset(data, in_xvar == 'erom_q0001e_apr'),
+    'may' = subset(data, in_xvar == 'erom_q0001e_may'),
+    'jun' = subset(data, in_xvar == 'erom_q0001e_june'),
+    'jul' = subset(data, in_xvar == 'erom_q0001e_july'),
+    'aug' = subset(data, in_xvar == 'erom_q0001e_aug'),
+    'sep' = subset(data, in_xvar == 'erom_q0001e_sept'),
+    'oct' = subset(data, in_xvar == 'erom_q0001e_oct'),
+    'nov' = subset(data, in_xvar == 'erom_q0001e_nov'),
+    'dec' = subset(data, in_xvar == 'erom_q0001e_dec')
+  );
+  row.names(data.df) <- c(
+    'da', 'mean', 'jan', 'feb', 'mar', 'apr', 'may', 
+    'june', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'
+  );
+  return(data.df);
+}
+
+# Obtain list of all data with common hydrocodes present
+erom_monthly_intersect <- function(data) {
+  data.keyed <- erom_monthly_keyed(data);
+  all_codes <- list(
+    as.list(data.keyed['da']$da['containing_hydrocode'])$containing_hydrocode,
+    as.list(data.keyed['mean']$mean['containing_hydrocode'])$containing_hydrocode,
+    as.list(data.keyed['jan']$jan['containing_hydrocode'])$containing_hydrocode,
+    as.list(data.keyed['feb']$feb['containing_hydrocode'])$containing_hydrocode,
+    as.list(data.keyed['mar']$mar['containing_hydrocode'])$containing_hydrocode,
+    as.list(data.keyed['apr']$apr['containing_hydrocode'])$containing_hydrocode,
+    as.list(data.keyed['may']$may['containing_hydrocode'])$containing_hydrocode,
+    as.list(data.keyed['jun']$jun['containing_hydrocode'])$containing_hydrocode,
+    as.list(data.keyed['jul']$jul['containing_hydrocode'])$containing_hydrocode,
+    as.list(data.keyed['aug']$aug['containing_hydrocode'])$containing_hydrocode,
+    as.list(data.keyed['sep']$sep['containing_hydrocode'])$containing_hydrocode,
+    as.list(data.keyed['oct']$oct['containing_hydrocode'])$containing_hydrocode,
+    as.list(data.keyed['nov']$nov['containing_hydrocode'])$containing_hydrocode,
+    as.list(data.keyed['dec']$dec['containing_hydrocode'])$containing_hydrocode
+  )
+  comlocs <- Reduce(
+    intersect, all_codes
+  )
+  return(comlocs)
+}
+
+
+# Obtain list of  data where da/mean have common hydrocodes present
+erom_monthly_intersect <- function(data) {
+  data.keyed <- erom_monthly_keyed(data);
+  all_codes <- list(
+    as.list(data.keyed['da']$da['containing_hydrocode'])$containing_hydrocode,
+    as.list(data.keyed['mean']$mean['containing_hydrocode'])$containing_hydrocode
+ )
+  comlocs <- Reduce(
+    intersect, all_codes
+  )
+  return(comlocs)
 }

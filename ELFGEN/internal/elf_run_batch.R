@@ -36,36 +36,37 @@ source(paste(fxn_locations,"elf_pw_it_RS.R", sep = ""));
 source(paste(fxn_locations,"elf_twopoint.R", sep = ""));
 source(paste(fxn_locations,"elf_pct_chg.R", sep = ""));
 source(paste(fxn_locations,"elf_store_data.R", sep = ""));
-source(paste(basepath,"Analysis/query_elf_statistics.R", sep = "/")); 
+source(paste(base_directory,"Analysis/query_elf_statistics.R", sep = "/")); 
 #####
 # Now add custom local settings here
 inputs$x_metric = c(
-#  'nhdp_drainage_sqmi',
+  'nhdp_drainage_sqmi',
   'erom_q0001e_mean'
-#  'erom_q0001e_jan',
-#  'erom_q0001e_feb',
-#  'erom_q0001e_mar', 
-#  'erom_q0001e_apr', 
-#  'erom_q0001e_may',
-#  'erom_q0001e_june',
-#  'erom_q0001e_july',
-#  'erom_q0001e_aug',
-#  'erom_q0001e_sept',
-#  'erom_q0001e_oct',
-#  'erom_q0001e_nov',
-#  'erom_q0001e_dec'
+  'erom_q0001e_jan',
+  'erom_q0001e_feb',
+  'erom_q0001e_mar', 
+  'erom_q0001e_apr', 
+  'erom_q0001e_may',
+  'erom_q0001e_june',
+  'erom_q0001e_july',
+  'erom_q0001e_aug',
+  'erom_q0001e_sept',
+  'erom_q0001e_oct',
+  'erom_q0001e_nov',
+  'erom_q0001e_dec'
 );
-inputs$y_metric = 'aqbio_nt_total';
-#inputs$sampres = 'maj_fam_gen_spec';
-inputs$ws_ftype = c('nhd_huc6');
-inputs$target_hydrocode = '060101';
+
+inputs$y_metric = 'aqbio_benthic_nt_total';
+inputs$sampres = 'maj_fam_gen_spec';
+inputs$ws_ftype = c('nhd_huc8');
+inputs$target_hydrocode = '';
 inputs$quantile = .80;
 inputs$send_to_rest = "NO";
-inputs$glo = 1;
-inputs$ghi = 530;
-inputs$method = "twopoint"; #quantreg, pwit, ymax, pwit_RS, twopoint
-inputs$dataset_tag = 'jk-test';
-inputs$ghi_var = ''
+inputs$glo = 0;
+inputs$ghi = 100;
+inputs$method = "pwit"; #quantreg, pwit, ymax, pwit_RS, twopoint
+inputs$dataset_tag = 'benthic-bpj-100';
+inputs$ghi_var = 'qmean_annual'
 inputs$token = token;
 
 #------------------------------------------------------------------------------------------------

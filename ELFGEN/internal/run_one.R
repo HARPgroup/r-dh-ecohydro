@@ -35,17 +35,18 @@ token <- rest_token(site, token, rest_uname, rest_pw);
 # Load Default inputs
 source(paste(fxn_locations,"elf_default_inputs.R", sep = ""));
 #####
-inputs$x_metric = 'erom_q0001e_mean'; #Flow metric to be plotted on the x-axis
-inputs$y_metric = 'aqbio_nt_cent';
-inputs$ws_ftype = c('state');
-inputs$bundle = 'landunit';
-inputs$target_hydrocode = 'usa_state_virginia';
+inputs$x_metric = 'erom_q0001e_aug'; #Flow metric to be plotted on the x-axis
+inputs$y_metric = 'aqbio_benthic_nt_darter';
+inputs$ws_ftype = c('nhd_huc10');
+inputs$bundle = 'watershed';
+inputs$target_hydrocode = '0207001006';
 inputs$quantile = .80;
 inputs$send_to_rest = "NO";
+inputs$sampres = 'maj_fam_gen_spec';
 inputs$glo = 1;
-inputs$ghi = 1000;
+inputs$ghi = 100;
 inputs$method = "pwit"; #quantreg, pwit, ymax, twopoint, pwit_RS
-inputs$dataset_tag = 'fe_pwit';
+inputs$dataset_tag = 'ymax';
 inputs$token = token;
 
 
@@ -53,7 +54,7 @@ inputs$token = token;
 #retrieve raw data
 mydata <- vahydro_fe_data(
   inputs$target_hydrocode, inputs$x_metric, inputs$y_metric, 
-  inputs$bundle, inputs$ws_ftype, "species"
+  inputs$bundle, inputs$ws_ftype, inputs$sampres
 );
 data <- elf_cleandata(mydata, inputs);
 # do ymax calcs and plot
@@ -115,6 +116,8 @@ inputs$ghi <- max(mydata$x_value);
 
 ##### Plot PWIT ####
 # modify elf_pwit to do analysis and return results
+inputs$glo = 100;
+inputs$ghi = 200;
 elf_pw_it (
   inputs, data, inputs$x_metric, 
   inputs$y_metric, ws_ftype_code = NULL, 

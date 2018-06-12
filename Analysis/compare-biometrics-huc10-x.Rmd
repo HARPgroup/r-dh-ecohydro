@@ -98,6 +98,17 @@ for (row in 1:nrow(batch)) {
   data = subset(data, out_m > 0)
   data = subset(data, out_p < pmax); # 
   data = subset(data, out_rsq_adj > Rmin)
+  #***********************
+  # BEGIN - Intersections
+  #***********************
+  # Choose One or NONE of the Two Intersections
+  # only show watersheds in all sets
+  #data = subset(data,containing_hydrocode %in% erom_monthly_intersect(data))
+  # OR only show watersheds in all sets
+  #data = subset(data,containing_hydrocode %in% erom_daq_intersect(data))
+  #***********************
+  # END - Intersections
+  #***********************
   mtch <- nrow(subset(data, in_xvar == 'nhdp_drainage_sqmi'))
   
   #data = subset(data, isheadwater > 0)
