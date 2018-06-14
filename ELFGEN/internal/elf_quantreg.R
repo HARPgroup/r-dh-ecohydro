@@ -226,7 +226,7 @@ print (paste("Plotting ELF"));
             print(class(a)) 
             
             # END plotting function
-              filename <- paste(adminid,"elf.png", sep="_")
+              filename <- paste(adminid,"elf.tiff", sep="_")
               ggsave(file=filename, path = save_directory, width=8, height=6)
 
               
@@ -251,7 +251,7 @@ print (paste("Plotting ELF"));
                             search_code = search_code) #added by Jen
           elf_pct_chg (pct_inputs)
           
-          filename <- paste(adminid,"pctchg.png", sep="_")
+          filename <- paste(adminid,"pctchg.tiff", sep="_")
           ggsave(file=filename, path = save_directory, width=8, height=5)
         } else {
           print (paste("Y-Intercept is negative, not generating barplot"));        

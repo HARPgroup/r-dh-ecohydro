@@ -2,11 +2,14 @@
 title: "ELF Monthly Comparisons"
 output: word_document
 ---
+#Simulated range and variability of percent loss of taxa for different biometrics
+
 
 ```{r, echo=FALSE}
 # install.packages('gdata')
 options(timeout=2000);
 library('gdata')
+library(pander);
 source("/var/www/R/config.local.private");
 source(paste(base_directory,"Analysis/query_elf_statistics.R", sep = "/")); 
 source(paste(base_directory,"Analysis/plot_elf_statistics.R", sep = "/")); 
@@ -34,20 +37,52 @@ save_directory = paste(file_directory,"/",sep='');
 
 # recreation of BPJ-rcc with all Drainage area?
 batch <- data.frame(
-    bundle = 'watershed', ftype = 'nhd_huc8', dataset_tag = 'bpj-huc6bp-cent', q_ftype = 'fe_elf', metric = 'aqbio_nt_cent')
+    bundle = 'watershed', ftype = 'nhd_huc6', dataset_tag = 'bpj-huc6-rcc', q_ftype = 'fe_elf', metric = 'aqbio_nt_total')
 
-
-# Using 75% value from ymax analysis of all HUC8s
+# bpj-rcc
 batch <- rbind(
   batch, data.frame(
-    bundle = 'watershed', ftype = 'nhd_huc8', dataset_tag = 'bpj-530', q_ftype = 'fe_quantreg', metric = 'aqbio_nt_cent')
+    bundle = 'watershed', ftype = 'nhd_huc6', dataset_tag = 'BenthicPWITupdate', q_ftype = 'fe_pwit', metric = 'aqbio_nt_total')
+)
+
+# bpj-rcc
+batch <- rbind(
+  batch, data.frame(
+    bundle = 'watershed', ftype = 'nhd_huc6', dataset_tag = 'bpj-huc6-rcc', q_ftype = 'fe_elf', metric = 'aqbio_nt_minnow')
 )
 
 # Using 75% value from ymax analysis of all HUC8s
 batch <- rbind(
   batch, data.frame(
-    bundle = 'watershed', ftype = 'nhd_huc8', dataset_tag = 'bpj-huc6bp-rcc', q_ftype = 'fe_elf', metric = 'aqbio_nt_total')
+    bundle = 'watershed', ftype = 'nhd_huc6', dataset_tag = 'bpj-huc6-rcc', q_ftype = 'fe_elf', metric = 'aqbio_nt_cent')
 )
+
+# Using 75% value from ymax analysis of all HUC8s
+batch <- rbind(
+  batch, data.frame(
+    bundle = 'watershed', ftype = 'nhd_huc6', dataset_tag = 'bpj-huc6-rcc', q_ftype = 'fe_elf', metric = 'aqbio_nt_benins')
+)
+
+# darter
+batch <- rbind(
+  batch, data.frame(
+    bundle = 'watershed', ftype = 'nhd_huc6', dataset_tag = 'bpj-huc6-rcc', q_ftype = 'fe_elf', metric = 'aqbio_nt_darter')
+)
+
+# Using 75% value from ymax analysis of all HUC8s
+batch <- rbind(
+  batch, data.frame(
+    bundle = 'watershed', ftype = 'nhd_huc6', dataset_tag = 'bpj-huc6-rcc', q_ftype = 'fe_elf', metric = 'aqbio_nt_native')
+)
+
+
+# Summary Stats
+ss = data.frame(
+  "Biometric" = character(), 
+  'Med R(all/max/DA/Qmean)' =  numeric(), 
+  "Count" = character(), 
+  "Criteria" = character(), 
+  stringsAsFactors = FALSE) ;
 
 for (row in 1:nrow(batch)) {
   bundle <- batch[row,]$bundle;
@@ -81,6 +116,7 @@ for (row in 1:nrow(batch)) {
   #data = subset(data, isheadwater > 0)
   # render it
   ymin = 0.0; # restrain plot
+  crit_label =  paste('p<', pmax, 'R>', Rmin,sep='')
   labeltext = paste(q_ftype, ":", dataset_tag, '\n', ' ( p<', pmax, 'R>', Rmin, ' ', mtch, ' of ', tot,' )',sep='')
   plot_monthly(data, labeltext, xmetric = 'out_rsq_adj', ymetric = metric, ymin=ymin);
   mmax = ceiling(max(data$out_m))
@@ -92,10 +128,29 @@ for (row in 1:nrow(batch)) {
   ymin = 0.0; # restrain plot
   labeltext = paste(q_ftype, ":", dataset_tag, '\n', ' ( p<', pmax, 'R>', Rmin, ' ', mtch, ' of ', tot,' )',sep='')
   mmax = ceiling(max(data$out_m))
-#  plot_monthly(data, labeltext, xmetric = 'out_m', ymetric = metric, ymin=ymin, ymax=mmax);
-  
-  #plot_monthly(data, labeltext, xmetric = 'out_m', ymetric = metric, ymin=0, ymax=mmax);
+
+  # add to summary table
+  mmx = 'tbd'; # max of medians should go here to find month with highest median
+  ss <- rbind(
+    ss, 
+    data.frame(
+      "Biometric" = metric, 
+      'Med R(all/max/DA/Qmean)' = 
+        paste(
+          round(median(data$out_rsq_adj),2),  
+          mmx, 
+          round(median(subset(data, in_xvar == 'nhdp_drainage_sqmi')$out_rsq_adj),2),
+          round(median(subset(data, in_xvar == 'erom_q0001e_mean')$out_rsq_adj),2),
+          sep="/"
+        ),
+      "Count (DA)" = mtch, 
+      "Criteria" = crit_label, 
+      stringsAsFactors = FALSE)
+  );
   
 }
+names(ss) <- c("Biometric",'Med R(all/max/DA/Qmean/Best)',"Count","Criteria");
+
+pander(ss)
 
 ```

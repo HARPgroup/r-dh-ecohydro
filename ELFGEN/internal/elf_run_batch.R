@@ -36,11 +36,11 @@ source(paste(fxn_locations,"elf_pw_it_RS.R", sep = ""));
 source(paste(fxn_locations,"elf_twopoint.R", sep = ""));
 source(paste(fxn_locations,"elf_pct_chg.R", sep = ""));
 source(paste(fxn_locations,"elf_store_data.R", sep = ""));
-source(paste(basepath,"Analysis/query_elf_statistics.R", sep = "/")); 
+source(paste(base_directory,"Analysis/query_elf_statistics.R", sep = "/")); 
 #####
 # Now add custom local settings here
 inputs$x_metric = c(
-#  'nhdp_drainage_sqmi',
+  'nhdp_drainage_sqmi',
   'erom_q0001e_mean',
   'erom_q0001e_jan',
   'erom_q0001e_feb',
@@ -55,14 +55,17 @@ inputs$x_metric = c(
   'erom_q0001e_nov',
   'erom_q0001e_dec'
 );
+
 inputs$y_metric = 'aqbio_nt_total';
 #inputs$sampres = 'maj_fam_gen_spec';
 inputs$ws_ftype = c('nhd_huc10');
+
 inputs$target_hydrocode = '';
 inputs$quantile = .80;
 
 
 inputs$send_to_rest = "NO";
+
 inputs$glo = 72;
 inputs$ghi = 530;
 inputs$method = "quantreg"; #quantreg, pwit, ymax, twopoint, pwit_RS
@@ -77,9 +80,8 @@ inputs$token = token;
 
 
 #   ** Use this if you want a batch list to be generated from the inputs array
-#batchlist = elf_assemble_batch(inputs) 
+batchlist = elf_assemble_batch(inputs) 
 #   ** or, Use this if you want to load the batch list from a file, with defaults from inputs()
-
 
 batchlist = read.csv(file=paste(fxn_locations,"HUC10_CustomRCC_BP.csv",sep="/"),header=TRUE)  #RCC_HUC8taxaloss.csv
 
@@ -91,9 +93,11 @@ if (!('x_metric' %in% bnames)) {
 }
 
 # Batch Start
-batch_start = 1; # if we want to skip ahead, do so here.
+
+batch_start = 1; # use 911 after finishing fist one # if we want to skip ahead, do so here.
+
 batch_len = nrow(batchlist)
-batch_end = batch_len; # if we want to stop early, do so here
+batch_end = batch_len; #default = batch_len; # if we want to stop early, do so here
 # 3. Iterate through each item in the list
 for (row in batch_start:batch_end) {
   tin = inputs

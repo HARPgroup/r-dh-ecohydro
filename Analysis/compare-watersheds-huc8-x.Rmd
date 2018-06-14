@@ -1,0 +1,70 @@
+---
+  title: "ELF Monthly Comparisons"
+output: word_document
+---
+ # In Progress -- Answer Question: 
+ # Do 2 watersheds REALLY have different ELFs?
+  
+  
+```{r, echo=FALSE}
+# *************************************
+# In Progress -- Answer Question: 
+#   Do 2 watersheds REALLY have different ELFs?
+# *************************************
+# install.packages('gdata')
+options(timeout=2000);
+library('gdata')
+library(pander);
+source("/var/www/R/config.local.private");
+source(paste(base_directory,"Analysis/query_elf_statistics.R", sep = "/")); 
+source(paste(base_directory,"Analysis/plot_elf_statistics.R", sep = "/")); 
+base_url <- 'http://deq2.bse.vt.edu/d.dh'
+
+
+bundle = 'watershed';
+ftype = 'nhd_huc8';
+dataset_tag = 'bpj-huc6bp-rcc';
+q_ftype = 'fe_elf';
+metric = 'aqbio_nt_total'; # bpj-530, bpj-rcc, 'HUC8_quantregwHuc6bp' (huc 6)
+analysis_timespan = "full";
+sampres = "species";
+selected <- 'all'; # all or hydrocode
+quantile <- 0.8;
+pmax = 0.01;
+Rmin = 0.0;
+#stat_quantreg_glo <- 0; 
+#stat_quantreg_ghi <- 530; 
+# ftype = fe_quantreg, fe_quantreg_pwit, fe_quantreg_ymax, fe_twopoint
+# analysis_timespan = full, 1990-2010, 1970-1980, ...
+# this is BS - save_directory should be fixed
+save_directory = paste(file_directory,"/",sep='');
+# Huc6Ghi_72=Glo ->
+# bundle - ecoregion, landunit, watershed
+# ftype - ecoregion_iii, nhd_huc6, nhd_huc6=8, nhd_huc10
+
+rawdata = fn_dh_elfstats (
+  ftype = q_ftype,
+  site = base_url,
+  analysis_timespan = analysis_timespan,
+  yvar = metric,
+  sampres = sampres, # e.g. species, e.
+  stat_quantreg_qu = quantile, # upper quantile to use
+  feature_ftype = ftype,
+  #stat_quantreg_ghi = stat_quantreg_ghi, #
+  #stat_quantreg_glo = stat_quantreg_glo, # use 1 for pwit, 0 for quantreg
+  dataset_tag = dataset_tag
+);
+  
+  
+# filter our data?
+data = rawdata; # make a copy to start so we can compare raw to filtered if desired
+tot <- nrow(subset(data, in_xvar == 'nhdp_drainage_sqmi'))
+#data = subset(data, out_n >= 20)
+data = subset(data, out_m > 0)
+data = subset(data, out_p < pmax); # 
+data = subset(data, out_rsq_adj > Rmin)
+mtch <- nrow(subset(data, in_xvar == 'nhdp_drainage_sqmi'))
+
+# Now, get all data associated with these hydrocodes, tagged by hydrocode
+
+```
