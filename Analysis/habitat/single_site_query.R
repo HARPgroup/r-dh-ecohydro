@@ -27,8 +27,7 @@ token <- rest_token(site, token, rest_uname, rest_pw);
 #'North_Anna'         sites = 397286,397287,397288,397289
 #'Roanoke'            sites = 397297,397298
 
-ifim_featureid <- 397290
-
+ifim_featureid <- 397298
 #-------------------------------------------------------------------------------
 # RETRIEVE SITE DATA
 ifim_dataframe <- vahydro_prop_matrix(ifim_featureid,'ifim_habitat_table')
