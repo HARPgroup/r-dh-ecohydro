@@ -6,7 +6,149 @@ erom_vars = c(
   'erom_q0001e_nov', 'erom_q0001e_dec'
 );
 
-plot_monthly <- function (data, subname = 'all', xmetric = "out_rsq_adj", ymetric = 'nt_total', ymin = 0.5, ymax = 1.0) {
+elf_quantile_table <- function (data) {
+  ss = data.frame(
+    "x-Variable" = character(), 
+    "0%" =  numeric(), 
+    "25%" =  numeric(), 
+    "50%" =  numeric(), 
+    "75%" =  numeric(), 
+    "100%" =  numeric(), 
+    stringsAsFactors = FALSE
+  ) ;
+  for(i in erom_vars) {
+    dset = subset(data, in_xvar == i)
+    qq = quantile(dset$out_rsq_adj)
+    ss <- rbind(
+      ss,
+      data.frame(
+        "x-Variable" = i,  
+        "0%" = as.numeric(qq["0%"]), 
+        "25%" = as.numeric(qq["25%"]), 
+        "50%" = as.numeric(qq["50%"]), 
+        "75%" = as.numeric(qq["75%"]), 
+        "100%" = as.numeric(qq["100%"])
+      )
+    )
+  }
+  names(ss) <- c("x-Variable", "0%", "25%", "50%", "75%", "100%")
+  return(ss)
+}
+
+erom_var_readable <- function(varname) {
+  lookers = list(
+    'nhdp_drainage_sqmi' = 'da', 
+    'erom_q0001e_mean' = 'maf', 
+    'erom_q0001e_jan' = 'jan', 
+    'erom_q0001e_feb' = 'feb', 
+    'erom_q0001e_mar' = 'mar', 
+    'erom_q0001e_apr' = 'apr', 
+    'erom_q0001e_may' = 'may', 
+    'erom_q0001e_june' = 'jun', 
+    'erom_q0001e_july' = 'jul', 
+    'erom_q0001e_aug' = 'aug', 
+    'erom_q0001e_sept' = 'sep', 
+    'erom_q0001e_oct' = 'oct', 
+    'erom_q0001e_nov' = 'nov', 
+    'erom_q0001e_dec' = 'dec'
+  )
+  return(lookers[varname])
+}
+
+
+elf_monthly_batch_summary <- function (batch, mmin = 0.0, pmin = 0.01, Rmin = 0.0) {
+  # Summary Stats
+  ss = data.frame(
+    "Biometric" = character(), 
+    'Med R(all/DA/Qmean)' =  numeric(),  
+    "Best" = character(), 
+    "Count" = character(), 
+    "Criteria" = character(), 
+    stringsAsFactors = FALSE) ;
+  
+  for (row in 1:nrow(batch)) {
+    bundle <- batch[row,]$bundle;
+    ftype <- batch[row,]$ftype;
+    dataset_tag <- batch[row,]$dataset_tag;
+    q_ftype <- batch[row,]$q_ftype;
+    metric <- batch[row,]$metric;
+    rawdata = fn_dh_elfstats (
+      ftype = q_ftype,
+      feature_ftype = ftype,
+      yvar = metric,
+      dataset_tag = dataset_tag
+    );
+    
+    
+    # filter our data?
+    data = rawdata; # make a copy to start so we can compare raw to filtered if desired
+    tot <- nrow(subset(data, in_xvar == 'nhdp_drainage_sqmi'))
+    #data = subset(data, out_n >= 20)
+    data = subset(data, out_m > mmin)
+    data = subset(data, out_p < pmax); # 
+    data = subset(data, out_rsq_adj > Rmin)
+    #***********************
+    # BEGIN - Intersections
+    #***********************
+    # Choose One or NONE of the Two Intersections
+    # only show watersheds in all sets
+    #data = subset(data,containing_hydrocode %in% erom_monthly_intersect(data))
+    # OR only show watersheds in all sets
+    #data = subset(data,containing_hydrocode %in% erom_daq_intersect(data))
+    #***********************
+    # END - Intersections
+    #***********************
+    mtch <- nrow(subset(data, in_xvar == 'nhdp_drainage_sqmi'))
+    if (mtch > 0) {
+      #data = subset(data, isheadwater > 0)
+      # render it
+      ymin = 0.0; # restrain plot
+      crit_label =  paste('p<', pmax, 'R>', Rmin,sep='')
+      labeltext = paste(q_ftype, ":", dataset_tag, '\n', ' (', crit_label, mtch, ' of ', tot,' )',sep='')
+      plot_monthly(data, labeltext, xmetric = 'out_rsq_adj', ymetric = metric, ymin=ymin);
+      mmax = ceiling(max(data$out_m))
+      #plot_monthly(data, labeltext, xmetric = 'out_m', ymetric = metric, ymin=0, ymax=mmax);
+      plot_monthly_count (data, subname = dataset_tag, xmetric = "out_rsq_adj", 
+                          ymin = 0.0, ymax = 1.0)
+      
+      # Show variation in slope
+      ymin = 0.0; # restrain plot
+      labeltext = paste(q_ftype, ":", dataset_tag, '\n', ' ( p<', pmax, 'R>', Rmin, ' ', mtch, ' of ', tot,' )',sep='')
+      mmax = ceiling(max(data$out_m))
+      #  plot_monthly(data, labeltext, xmetric = 'out_m', ymetric = metric, ymin=ymin, ymax=mmax);
+      
+      #plot_monthly(data, labeltext, xmetric = 'out_m', ymetric = metric, ymin=0, ymax=mmax);
+      
+      # add to summary table
+      meds <- aggregate(out_rsq_adj ~ in_xvar, data = data, median)
+      mmx = meds[which.max(meds$out_rsq_adj),];
+      ss <- rbind(
+        ss, 
+        data.frame(
+          "Biometric" = metric, 
+          'Med R(all/DA/Qmean)' = 
+            paste(
+              round(median(data$out_rsq_adj),2), 
+              round(median(subset(data, in_xvar == 'nhdp_drainage_sqmi')$out_rsq_adj),2),
+              round(median(subset(data, in_xvar == 'erom_q0001e_mean')$out_rsq_adj),2),
+              sep="/"
+            ),
+          "Best" = paste(erom_var_readable(as.character(mmx$in_xvar)), round(mmx$out_rsq_adj,2),sep=':'),
+          "Count (DA)" = mtch, 
+          "Criteria" = crit_label, 
+          stringsAsFactors = FALSE)
+      );
+    }
+    
+  }
+  names(ss) <- c("Biometric",'Med R(all/DA/Qmean)','Best',"Count","Criteria");
+  return (ss)
+}
+
+plot_monthly <- function (
+    data, subname = 'all', xmetric = "out_rsq_adj", 
+    ymetric = 'nt_total', ymin = 0.5, ymax = 1.0
+  ) {
   # dataset_tag: bpj-530, bpj-rcc
   data.da <- subset(data, in_xvar == 'nhdp_drainage_sqmi');
   data.mean <- subset(data, in_xvar == 'erom_q0001e_mean');
@@ -22,8 +164,10 @@ plot_monthly <- function (data, subname = 'all', xmetric = "out_rsq_adj", ymetri
   data.oct <- subset(data, in_xvar == 'erom_q0001e_oct');
   data.nov <- subset(data, in_xvar == 'erom_q0001e_nov');
   data.dec <- subset(data, in_xvar == 'erom_q0001e_dec');
+  yvar = as.character(data[1,]$in_yvar)
+  quantile = as.numeric(data[1,]$in_quantile)
   n = c('DA', 'Mean', 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December')
-  title <- paste(ftype, " Q=", 100.*(1.0 - quantile), "%", subname);
+  title <- paste(yvar, " Q=", 100.*(1.0 - quantile), "%", subname);
   if (length(data.da$s_adminid) > 1) {
     boxplot(
       data.da[,xmetric], data.mean[,xmetric], data.jan[,xmetric], data.feb[,xmetric], data.mar[,xmetric], 

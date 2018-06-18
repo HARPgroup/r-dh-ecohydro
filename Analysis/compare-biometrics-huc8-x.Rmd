@@ -5,7 +5,7 @@ output: word_document
 #Simulated range and variability of percent loss of taxa for different biometrics
 
 
-```{r, echo=FALSE}
+```{r, echo=FALSE,warning=FALSE,message=FALSE,error=FALSE}
 # install.packages('gdata')
 options(timeout=2000);
 library('gdata')
@@ -74,100 +74,13 @@ batch <- rbind(
 # Using 75% value from ymax analysis of all HUC8s
 batch <- rbind(
   batch, data.frame(
-    bundle = 'watershed', ftype = 'nhd_huc8', dataset_tag = 'bpj-huc6bp-native', q_ftype = 'fe_elf', metric = 'aqbio_nt_native')
+    bundle = 'watershed', ftype = 'nhd_huc8', dataset_tag = 'bpj-rcc', q_ftype = 'fe_elf', metric = 'aqbio_nt_cypr_native')
 )
 
 
-# Summary Stats
-ss = data.frame(
-  "Biometric" = character(), 
-  'Med R(all/max/DA/Qmean)' =  numeric(), 
-  "Count" = character(), 
-  "Criteria" = character(), 
-  stringsAsFactors = FALSE) ;
+ss = elf_monthly_batch_summary(batch)
 
-for (row in 1:nrow(batch)) {
-  bundle <- batch[row,]$bundle;
-  ftype <- batch[row,]$ftype;
-  dataset_tag <- batch[row,]$dataset_tag;
-  q_ftype <- batch[row,]$q_ftype;
-  metric <- batch[row,]$metric;
-  rawdata = fn_dh_elfstats (
-      ftype = q_ftype,
-      site = base_url,
-      analysis_timespan = analysis_timespan,
-      yvar = metric,
-      sampres = sampres, # e.g. species, e.
-      stat_quantreg_qu = quantile, # upper quantile to use
-      feature_ftype = ftype,
-      #stat_quantreg_ghi = stat_quantreg_ghi, #
-      #stat_quantreg_glo = stat_quantreg_glo, # use 1 for pwit, 0 for quantreg
-      dataset_tag = dataset_tag
-  );
-  
-  
-  # filter our data?
-  data = rawdata; # make a copy to start so we can compare raw to filtered if desired
-  tot <- nrow(subset(data, in_xvar == 'nhdp_drainage_sqmi'))
-  #data = subset(data, out_n >= 20)
-  data = subset(data, out_m > 0)
-  data = subset(data, out_p < pmax); # 
-  data = subset(data, out_rsq_adj > Rmin)
-  mtch <- nrow(subset(data, in_xvar == 'nhdp_drainage_sqmi'))
-  
-  #data = subset(data, isheadwater > 0)
-  # render it
-  ymin = 0.0; # restrain plot
-  crit_label =  paste('p<', pmax, 'R>', Rmin,sep='')
-  labeltext = paste(q_ftype, ":", dataset_tag, '\n', ' (', crit_label, ' of ', tot,' )',sep='')
-  plot_monthly(data, labeltext, xmetric = 'out_rsq_adj', ymetric = metric, ymin=ymin);
-  mmax = ceiling(max(data$out_m))
-  #plot_monthly(data, labeltext, xmetric = 'out_m', ymetric = metric, ymin=0, ymax=mmax);
-  plot_monthly_count (data, subname = dataset_tag, xmetric = "out_rsq_adj", 
-  ymin = 0.0, ymax = 1.0)
-  
-  # Show variation in slope
-  ymin = 0.0; # restrain plot
-  labeltext = paste(q_ftype, ":", dataset_tag, '\n', ' ( p<', pmax, 'R>', Rmin, ' ', mtch, ' of ', tot,' )',sep='')
-  mmax = ceiling(max(data$out_m))
-
-  # add to summary table
-  mmx = 'tbd'; # max of medians should go here to find month with highest median
-  ss <- rbind(
-    ss, 
-    data.frame(
-      "Biometric" = metric, 
-      'Med R(all/max/DA/Qmean)' = 
-        paste(
-          round(median(data$out_rsq_adj),2),  
-          mmx, 
-          round(median(subset(data, in_xvar == 'nhdp_drainage_sqmi')$out_rsq_adj),2),
-          round(median(subset(data, in_xvar == 'erom_q0001e_mean')$out_rsq_adj),2),
-          sep="/"
-        ),
-      "Count (DA)" = mtch, 
-      "Criteria" = crit_label, 
-      stringsAsFactors = FALSE)
-  );
-  
-  # add to summary table
-  ss <- rbind(
-    ss, 
-    data.frame(
-      "Biometric" = metric, 
-      "Med R(all/DA/Qmean)" = 
-        paste(
-          round(median(data$out_rsq_adj),2), 
-          round(median(subset(data, in_xvar == 'nhdp_drainage_sqmi')$out_rsq_adj),2),
-          round(median(subset(data, in_xvar == 'erom_q0001e_mean')$out_rsq_adj),2),
-          sep="/"
-        ),
-      "Count (DA)" = mtch, 
-      "Criteria" = crit_label, 
-      stringsAsFactors = FALSE)
-  );
-}
-names(ss) <- c("Biometric",'Med R(all/max/DA/Qmean/Best)',"Count","Criteria");
-pander(ss)
+```{r, echo=FALSE,warning=FALSE,message=FALSE,error=FALSE}
+pander(ss, table.split.table=Inf);
 
 ```

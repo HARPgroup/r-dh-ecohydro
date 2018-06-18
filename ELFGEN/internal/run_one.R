@@ -36,13 +36,13 @@ token <- rest_token(site, token, rest_uname, rest_pw);
 source(paste(fxn_locations,"elf_default_inputs.R", sep = ""));
 #####
 inputs$x_metric = 'erom_q0001e_aug'; #Flow metric to be plotted on the x-axis
-inputs$y_metric = 'aqbio_benthic_nt_darter';
-inputs$ws_ftype = c('nhd_huc10');
+inputs$y_metric = 'aqbio_nt_minnow';
+inputs$ws_ftype = c('nhd_huc8');
 inputs$bundle = 'watershed';
 inputs$target_hydrocode = '0207001006';
 inputs$quantile = .80;
 inputs$send_to_rest = "NO";
-inputs$sampres = 'maj_fam_gen_spec';
+inputs$sampres = 'species';
 inputs$glo = 1;
 inputs$ghi = 100;
 inputs$method = "pwit"; #quantreg, pwit, ymax, twopoint, pwit_RS

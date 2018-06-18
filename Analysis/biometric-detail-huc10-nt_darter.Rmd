@@ -32,10 +32,10 @@ save_directory = paste(file_directory,"/",sep='');
 rawdata = fn_dh_elfstats (
     ftype = q_ftype,
     site = base_url,
-    analysis_timespan = analysis_timespan,
+    #analysis_timespan = analysis_timespan,
     yvar = metric,
-    sampres = sampres, # e.g. species, e.
-    stat_quantreg_qu = quantile, # upper quantile to use
+    #sampres = sampres, # e.g. species, e.
+    #stat_quantreg_qu = quantile, # upper quantile to use
     feature_ftype = ftype,
     #stat_quantreg_ghi = stat_quantreg_ghi, #
     #stat_quantreg_glo = stat_quantreg_glo, # use 1 for pwit, 0 for quantreg
@@ -117,11 +117,11 @@ pander(ss, table.split.table=Inf);
 * Timespan: `r analysis_timespan`
 ```{r, echo=FALSE,fig.width=3, fig.show='hold'}
 cs = c( 'sqmi', 'mean', 'jan', 'feb', 'mar', 'apr', 'may', 'june', 'july', 'aug', 'sept', 'oct', 'nov', 'dec');
-data.da <- subset(data, in_xvar == 'nhdp_drainage_sqmi');
+data.da <- subset(rawdata, in_xvar == 'nhdp_drainage_sqmi');
 # coloring bar plots: https://stackoverflow.com/questions/16121903/r-barplot-y-axis-scale-too-short
 for (i in 1:nrow(data.da)) {
   hc = as.character(data.da$containing_hydrocode[i])
-  data.hc = subset(data, containing_hydrocode == hc & in_xvar != 'nhdp_drainage_sqkm')
+  data.hc = subset(rawdata, containing_hydrocode == hc & in_xvar != 'nhdp_drainage_sqmi')
   data.sorted = c(
     subset(data.hc, in_xvar == 'nhdp_drainage_sqmi')$out_rsq_adj,
     subset(data.hc, in_xvar == 'erom_q0001e_mean')$out_rsq_adj,
