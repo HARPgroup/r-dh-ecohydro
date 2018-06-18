@@ -8,8 +8,8 @@ datasite <- "http://deq2.bse.vt.edu/d.dh" # where to get the raw data to analyze
 base_url <- datasite
 
 #----Change Basepath here to point to your global config file:
-basepath='/var/www/R';
-#basepath='C:\\Users\\nrf46657\\Desktop\\VAHydro Development\\GitHub\\r-dh-ecohydro\\';
+#basepath='/var/www/R';
+basepath='C:\\Users\\nrf46657\\Desktop\\VAHydro Development\\GitHub\\r-dh-ecohydro\\';
 # set your local directory paths in config.local.private located in filepath above
 # this file will NOT be sent to git, so it should persist
 # so, edit config.local.private once and you should be good to go
@@ -40,32 +40,32 @@ source(paste(base_directory,"Analysis/query_elf_statistics.R", sep = "/"));
 #####
 # Now add custom local settings here
 inputs$x_metric = c(
-  'nhdp_drainage_sqmi',
+#  'nhdp_drainage_sqmi',
   'erom_q0001e_mean'
-  'erom_q0001e_jan',
-  'erom_q0001e_feb',
-  'erom_q0001e_mar', 
-  'erom_q0001e_apr', 
-  'erom_q0001e_may',
-  'erom_q0001e_june',
-  'erom_q0001e_july',
-  'erom_q0001e_aug',
-  'erom_q0001e_sept',
-  'erom_q0001e_oct',
-  'erom_q0001e_nov',
-  'erom_q0001e_dec'
+#  'erom_q0001e_jan',
+#  'erom_q0001e_feb',
+#  'erom_q0001e_mar', 
+#  'erom_q0001e_apr', 
+#  'erom_q0001e_may',
+#  'erom_q0001e_june',
+#  'erom_q0001e_july',
+#  'erom_q0001e_aug',
+#  'erom_q0001e_sept',
+#  'erom_q0001e_oct',
+#  'erom_q0001e_nov',
+#  'erom_q0001e_dec'
 );
 
-inputs$y_metric = 'aqbio_nt_minnow';
+inputs$y_metric = 'aqbio_nt_total';
 inputs$sampres = 'species';
-inputs$ws_ftype = c('nhd_huc6');
+inputs$ws_ftype = c('hwi_region');
 inputs$target_hydrocode = '';
 inputs$quantile = .80;
 inputs$send_to_rest = "NO";
 inputs$glo = 0;
 inputs$ghi = 100;
 inputs$method = "quantreg"; #quantreg, pwit, ymax, pwit_RS, twopoint
-inputs$dataset_tag = 'bpj-huc6-rcc';
+inputs$dataset_tag = 'jk-test';
 inputs$ghi_var = 'qmean_annual'
 inputs$token = token;
 
@@ -74,9 +74,9 @@ inputs$token = token;
 #    and optional any of the following
 # target_hydrocode,name,ghi,glo,
 #   ** Use this if you want a batch list to be generated from the inputs array
-#batchlist = elf_assemble_batch(inputs) 
+batchlist = elf_assemble_batch(inputs) 
 #   ** or, Use this if you want to load the batch list from a file, with defaults from inputs()
-batchlist = read.csv(file=paste(fxn_locations,"Huc6_batchlistsMAFQuantReg.csv",sep=""),header=TRUE)
+#batchlist = read.csv(file=paste(fxn_locations,"Huc6_batchlistsMAFQuantReg.csv",sep=""),header=TRUE)
 # 2. check for x_metric in batch list, if not there we merge from inputs$x_metric
 bnames = colnames(batchlist)
 if (!('x_metric' %in% bnames)) {

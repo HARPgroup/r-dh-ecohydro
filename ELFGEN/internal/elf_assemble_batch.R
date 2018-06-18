@@ -270,6 +270,27 @@ base.plot <- function(geom, data, full_dataset, upper.quant,
   bbPoints <- fortify(bbProjected, region = "id")
   bbDF <- merge(bbPoints, bbProjected@data, by = "id")
   
+  #-------------------------------------------------------------------------------------------- 
+  # Geoprocess edas stations 
+  STATIONS_data <- full_dataset
+  split_1 <- read.table(text = as.character(STATIONS_data$geom), sep = "(", colClasses = "character")
+  split_2 <- read.table(text = split_1$V2, sep = ")", colClasses = "character")
+  split_3 <- read.table(text = split_2$V1, sep = " ", colClasses = "character")
+  STATIONSDF <- data.frame(x=as.numeric(split_3$V1),y=as.numeric(split_3$V2),X.id.="id",id="1")
+  
+  BLUSTATIONS_data <- data
+  BLUsplit_1 <- read.table(text = as.character(BLUSTATIONS_data$geom), sep = "(", colClasses = "character")
+  BLUsplit_2 <- read.table(text = BLUsplit_1$V2, sep = ")", colClasses = "character")
+  BLUsplit_3 <- read.table(text = BLUsplit_2$V1, sep = " ", colClasses = "character")
+  BLUSTATIONSDF <- data.frame(x=as.numeric(BLUsplit_3$V1),y=as.numeric(BLUsplit_3$V2),X.id.="id",id="1")
+  
+  GRNSTATIONS_data <- upper.quant
+  GRNsplit_1 <- read.table(text = as.character(GRNSTATIONS_data$geom), sep = "(", colClasses = "character")
+  GRNsplit_2 <- read.table(text = GRNsplit_1$V2, sep = ")", colClasses = "character")
+  GRNsplit_3 <- read.table(text = GRNsplit_2$V1, sep = " ", colClasses = "character")
+  GRNSTATIONSDF <- data.frame(x=as.numeric(GRNsplit_3$V1),y=as.numeric(GRNsplit_3$V2),X.id.="id",id="1")
+  #--------------------------------------------------------------------------------------------
+  
   # CLIP WATERSHED GEOMETRY TO BOUNDING BOX
   watershed_geom <- readWKT(geom)
   watershed_geom_clip <- gIntersection(bb, watershed_geom)
@@ -377,7 +398,11 @@ base.plot <- function(geom, data, full_dataset, upper.quant,
                       geom_polygon(data = NJDF, color="gray46", fill = NA, lwd=0.5)+
                       geom_polygon(data = OHDF, color="gray46", fill = NA, lwd=0.5)+
                       
-                      geom_polygon(data = watershedDF, color="forestgreen", fill = "forestgreen",alpha = 0.5,lwd=0.5)+
+                      geom_polygon(data = watershedDF, color="khaki4", fill = "yellow",alpha = 0.25,lwd=0.5)+
+                      geom_point(aes(x = x, y = y, group = id), data = STATIONSDF, color="gray66", size = 0.025)+
+                      geom_point(aes(x = x, y = y, group = id), data = BLUSTATIONSDF, color="blue", size = 0.025)+
+                      geom_point(aes(x = x, y = y, group = id), data = GRNSTATIONSDF, color="forestgreen", size = 0.025)+
+                      
                       
                       geom_polygon(data = bbDF, color="black", fill = NA,lwd=0.5)+
                       
@@ -426,8 +451,8 @@ base.plot <- function(geom, data, full_dataset, upper.quant,
     labs(x=xaxis_title,y=yaxis_title) + 
     scale_x_log10(
       limits = c(0.001,15000),
-      breaks = trans_breaks("log10", function(x) {10^x}),
-      labels = trans_format("log10", math_format(10^.x))
+      breaks = c(0.001,0.01,0.1,1.0,10,100,1000,10000),
+      labels =c("0.001","0.01","0.1","1.0","10","100","1,000","10,000")
     ) + 
     annotation_logticks(sides = "b")+
     theme(legend.key=element_rect(fill='white')) +
