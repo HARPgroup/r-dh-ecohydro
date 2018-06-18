@@ -44,7 +44,8 @@ ifim_sites <- c(397290,397291,397292,397293,
 
 #ifim_sites <- c(397290)
 stat_method <- "median" #"mean" or " median"
- 
+pctchg <- "5.0"
+
 for (x in 1:length(ifim_sites)){
   ifim_featureid <- ifim_sites[x]
 
@@ -81,7 +82,7 @@ flow.ts.range_0$Flow <- ((flow.ts.range_0$Flow)*gage_factor)
 wua.at.q_0 <- wua.at.q_fxn(flow.ts.range_0)
 wua.at.q_0 <- data.frame(flow.ts.range_0,wua.at.q_0)
 
-f_10 <- f_fxn(gage,0.30)
+f_10 <- f_fxn(gage,(as.numeric(pctchg)/100))
 flow.ts.range_10 <- flow.ts.range_fxn(f_10,"all")
 flow.ts.range_10$Flow <- ((flow.ts.range_10$Flow)*gage_factor)
 wua.at.q_10 <- wua.at.q_fxn(flow.ts.range_10)
@@ -224,7 +225,7 @@ ggplot(box_table, aes(flow,pctchg))+
   geom_boxplot(fill='#A4A4A4', color="darkred")+
   geom_text(aes(label=metric),hjust=0, vjust=0)+
   geom_hline(yintercept=0,col='#A4A4A4')+
-  labs(title = paste("Percent Habitat Change with 30% Flow Reduction (",stat_method," monthly)",sep=""),
+  labs(title = paste("Percent Habitat Change with ",pctchg,"% Flow Reduction (",stat_method," monthly)",sep=""),
        subtitle = paste(ifim_site_name,":\nDrainage Area: ",ifim_da_sqmi," sqmi\nUSGS: ",gage," (",start_date," to ",end_date,")",sep=""))+
 
   xlab("Flow (cfs)")+ 
@@ -243,10 +244,10 @@ dir.create(output_dir, showWarnings = FALSE) #creates output directory if doesn'
 output_dir <- paste(save_directory,"\\WUA-CSV\\",stat_method,sep="")
 dir.create(output_dir, showWarnings = FALSE) #creates output sub-directory if doesn't exist 
 
-write.csv(table_export, file = paste(output_dir,"\\",ifim_site_name,"_30pct_",stat_method,".csv",sep=""))
+write.csv(table_export, file = paste(output_dir,"\\",ifim_site_name,"_",pctchg,"pct_",stat_method,".csv",sep=""))
 
 
-filename <- paste(ifim_site_name,"30pct",stat_method,"boxplot.png", sep="_")
+filename <- paste(ifim_site_name,pctchg,"pct",stat_method,"boxplot.png", sep="_")
 ggsave(file=filename, path = output_dir, width=14, height=8)
 }
 
