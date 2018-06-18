@@ -197,6 +197,10 @@ box_table <- rbind(box_table, box_table_i)
 
 #-------------------------------------------------------------------------------------------------
 
+if (length(which(box_table$metric=="boat")) != 0 ){
+  print("Removing boat")
+  box_table <- box_table[-which(box_table$metric=="boat"),]
+}
 
 if (length(which(box_table$metric=="canoe")) != 0 ){
   print("Removing canoe")
