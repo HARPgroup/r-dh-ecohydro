@@ -56,16 +56,16 @@ inputs$x_metric = c(
   'erom_q0001e_dec'
 );
 
-inputs$y_metric = 'aqbio_benthic_nt_total';
-inputs$sampres = 'maj_fam_gen_spec';
-inputs$ws_ftype = c('nhd_huc8');
+inputs$y_metric = 'aqbio_nt_minnow';
+inputs$sampres = 'species';
+inputs$ws_ftype = c('nhd_huc6');
 inputs$target_hydrocode = '';
 inputs$quantile = .80;
 inputs$send_to_rest = "NO";
 inputs$glo = 0;
 inputs$ghi = 100;
-inputs$method = "pwit"; #quantreg, pwit, ymax, pwit_RS, twopoint
-inputs$dataset_tag = 'benthic-bpj-100';
+inputs$method = "quantreg"; #quantreg, pwit, ymax, pwit_RS, twopoint
+inputs$dataset_tag = 'bpj-huc6-rcc';
 inputs$ghi_var = 'qmean_annual'
 inputs$token = token;
 
@@ -74,9 +74,9 @@ inputs$token = token;
 #    and optional any of the following
 # target_hydrocode,name,ghi,glo,
 #   ** Use this if you want a batch list to be generated from the inputs array
-batchlist = elf_assemble_batch(inputs) 
+#batchlist = elf_assemble_batch(inputs) 
 #   ** or, Use this if you want to load the batch list from a file, with defaults from inputs()
-#batchlist = read.csv(file=paste(fxn_locations,"Huc8-huc6-maf-all.csv",sep=""),header=TRUE)
+batchlist = read.csv(file=paste(fxn_locations,"Huc6_batchlistsMAFQuantReg.csv",sep=""),header=TRUE)
 # 2. check for x_metric in batch list, if not there we merge from inputs$x_metric
 bnames = colnames(batchlist)
 if (!('x_metric' %in% bnames)) {
