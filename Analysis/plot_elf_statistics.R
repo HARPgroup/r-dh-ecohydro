@@ -303,33 +303,6 @@ erom_monthly_intersect <- function(data) {
   return(comlocs)
 }
 
-elf_quantile_table <- function(data, ss = FALSE) {
-  if (!is.array(ss)) {
-    ss = data.frame(
-      "x-Variable" = character(), 
-      "0%" =  numeric(), 
-      "25%" =  numeric(), 
-      "50%" =  numeric(), 
-      "75%" =  numeric(), 
-      "100%" =  numeric(), 
-      stringsAsFactors = FALSE
-    ) ;
-  }
-  qq = quantile(data$out_rsq_adj)
-  ss <- rbind(
-    ss,
-    data.frame(
-      "x-Variable" = i,  
-      "0%" = as.numeric(qq["0%"]), 
-      "25%" = as.numeric(qq["25%"]), 
-      "50%" = as.numeric(qq["50%"]), 
-      "75%" = as.numeric(qq["75%"]), 
-      "100%" = as.numeric(qq["100%"])
-    )
-  )
-  names(ss) <- c("x-Variable", "0%", "25%", "50%", "75%", "100%")
-  return (ss)
-}
 
 # Obtain list of  data where da/mean have common hydrocodes present
 erom_monthly_intersect <- function(data) {

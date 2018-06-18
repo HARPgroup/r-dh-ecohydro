@@ -9,12 +9,17 @@ options(timeout=1024);
 library('gdata')
 source("/var/www/R/config.local.private");
 source(paste(base_directory,"Analysis/query_elf_statistics.R", sep = "/")); 
+source(paste(base_directory,"Analysis/plot_elf_statistics.R", sep = "/")); 
 save_directory = paste(file_directory,"/",sep='');
 
 # vars
 yvar = 'aqbio_nt_cypr_native';#aqbio_nt_total, aqbio_nt_cent, aqbio_nt_darter, aqbio_nt_benins, aqbio_nt_minnow, aqbio_nt_cypr_native
 xvar = 'erom_q0001e_mean';
 quant = 0.8
+pmin <- 0.01
+Rmin <- -1.0
+mmin <- -100
+  
 # Get the BPJ auto-determined PWIT left side regression
 # HUC8_quantregwHuc6bp
 # Huc6 customGhiGlo
