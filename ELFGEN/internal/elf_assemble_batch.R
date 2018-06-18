@@ -273,6 +273,9 @@ base.plot <- function(geom, data, full_dataset, upper.quant,
   # CLIP WATERSHED GEOMETRY TO BOUNDING BOX
   watershed_geom <- readWKT(geom)
   watershed_geom_clip <- gIntersection(bb, watershed_geom)
+  if (is.null(watershed_geom_clip)) {
+    watershed_geom_clip = watershed_geom
+  }
   wsdataProjected <- SpatialPolygonsDataFrame(watershed_geom_clip,data.frame("id"), match.ID = FALSE)
   #class(dataProjected)
   wsdataProjected@data$id <- rownames(wsdataProjected@data)
