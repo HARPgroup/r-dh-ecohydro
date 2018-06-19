@@ -250,7 +250,7 @@ elf_pw_it <- function(inputs, data, x_metric_code, y_metric_code, ws_ftype_code,
       print(class(a)) 
       
       # END plotting function
-      filename <- paste(adminid,"elf.tiff", sep="_")
+      filename <- paste(adminid,"elf.png", sep="_")
       ggsave(file=filename, path = save_directory, width=8, height=6)
       
       
@@ -274,7 +274,7 @@ elf_pw_it <- function(inputs, data, x_metric_code, y_metric_code, ws_ftype_code,
           #write file from here? CSV
           #write.csv(slope_table_export, file = paste(save_directory,"\\pctchg_","_",y_metric,".csv",sep=""))
         
-          filename <- paste(adminid,"pctchg.tiff", sep="_")
+          filename <- paste(adminid,"pctchg.png", sep="_")
           ggsave(file=filename, path = save_directory, width=8, height=5)
         } else {
           print (paste("Y-Intercept is negative, not generating barplot"));        

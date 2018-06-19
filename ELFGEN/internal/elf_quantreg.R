@@ -73,31 +73,31 @@ print(paste("Upper quantile has ", nrow(upper.quant), "values"));
             ####################################################
             #############JLR#######################################
             #Added by JLR to include prediction intervals
-            upper.quant_tab <- data.frame(upper.quant)
-            predict(regupper, interval="confidence") 
-            a <- predict(regupper, interval="confidence")
+#            upper.quant_tab <- data.frame(upper.quant)
+#            predict(regupper, interval="confidence") 
+#            a <- predict(regupper, interval="confidence")
             
-            predict(regupper, interval="prediction") 
-            p <- predict(regupper, interval="prediction")
+#            predict(regupper, interval="prediction") 
+#            p <- predict(regupper, interval="prediction")
             
-            conf_table = data.frame(a)
-            names(conf_table) [1] <- "conf_fit"
-            names(conf_table) [2] <-  'conf_lwr'
-            names(conf_table) [3] <-  'conf_upr'
+#            conf_table = data.frame(a)
+#            names(conf_table) [1] <- "conf_fit"
+#            names(conf_table) [2] <-  'conf_lwr'
+#            names(conf_table) [3] <-  'conf_upr'
             
-            pred_table = data.frame(p)
-            names(pred_table) [1] <- "pred_fit"
-            names(pred_table) [2] <-  'pred_lwr'
-            names(pred_table) [3] <-  'pred_upr'
+#            pred_table = data.frame(p)
+#            names(pred_table) [1] <- "pred_fit"
+#            names(pred_table) [2] <-  'pred_lwr'
+#            names(pred_table) [3] <-  'pred_upr'
             
-            plus_minus <- round(((pred_table$pred_upr - pred_table$pred_lwr)/2), 1) #plus or minus this value
-            plus_minus_table = data.frame(plus_minus)
+#            plus_minus <- round(((pred_table$pred_upr - pred_table$pred_lwr)/2), 1) #plus or minus this value
+#            plus_minus_table = data.frame(plus_minus)
             
             
-            Conf_Pred_table <- cbind(upper.quant_tab, conf_table, pred_table, plus_minus_table) #
-            out_name <- paste(search_code,"fe_quantreg",x_metric,y_metric,quantile,station_agg,sampres,analysis_timespan, sep='_');
-            print(paste("Exporting Prediction interval table "));
-            write.csv(Conf_Pred_table, file = paste(save_directory,"/",out_name,"_Conf_Pred_information",".csv", sep=""), row.names = F, quote = FALSE)
+#            Conf_Pred_table <- cbind(upper.quant_tab, conf_table, pred_table, plus_minus_table) #
+#            out_name <- paste(search_code,"fe_quantreg",x_metric,y_metric,quantile,station_agg,sampres,analysis_timespan, sep='_');
+#            print(paste("Exporting Prediction interval table "));
+#            write.csv(Conf_Pred_table, file = paste(save_directory,"/",out_name,"_Conf_Pred_information",".csv", sep=""), row.names = F, quote = FALSE)
             ####################JLR###############
             
             
@@ -220,7 +220,7 @@ print (paste("Plotting ELF"));
             print(class(a)) 
             
             # END plotting function
-              filename <- paste(adminid,"elf.tiff", sep="_")
+              filename <- paste(adminid,"elf.png", sep="_")
               ggsave(file=filename, path = save_directory, width=8, height=6)
 
               
@@ -242,7 +242,7 @@ print (paste("Plotting ELF"));
                             enddate = enddate)
           elf_pct_chg (pct_inputs)
           
-          filename <- paste(adminid,"pctchg.tiff", sep="_")
+          filename <- paste(adminid,"pctchg.png", sep="_")
           ggsave(file=filename, path = save_directory, width=8, height=5)
         } else {
           print (paste("Y-Intercept is negative, not generating barplot"));        

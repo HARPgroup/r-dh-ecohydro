@@ -288,7 +288,7 @@ elf_pw_it_RS_IFIM <- function(inputs, data, x_metric_code, y_metric_code, ws_fty
 
        
       # END plotting function
-#      filename <- paste(adminid,"elf.tiff", sep="_")
+#      filename <- paste(adminid,"elf.png", sep="_")
 #      ggsave(file=filename, path = save_directory, width=8, height=6)
       
       
@@ -313,7 +313,7 @@ elf_pw_it_RS_IFIM <- function(inputs, data, x_metric_code, y_metric_code, ws_fty
                              y_metric = y_metric)
            elf_pct_chg_hab (pct_inputs)
           # 
-           filename <- paste(adminid,"pctchg.tiff", sep="_")
+           filename <- paste(adminid,"pctchg.png", sep="_")
            ggsave(file=filename, path = save_directory, width=8, height=5)
         } else {
           print (paste("Y-Intercept is negative, not generating barplot"));        
