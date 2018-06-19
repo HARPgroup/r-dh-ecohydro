@@ -446,7 +446,9 @@ base.plot <- function(geom, data, full_dataset, upper.quant,
     
     ggtitle(plot_title) + 
     theme(
-      plot.title = element_text(size = 12, face = "bold"),axis.text = element_text(colour = "blue")
+      plot.title = element_text(size = 12, face = "bold"),
+      axis.text = element_text(colour = "blue"),
+      panel.grid.minor.x = element_blank()
     ) +
     labs(x=xaxis_title,y=yaxis_title) + 
     scale_x_log10(
