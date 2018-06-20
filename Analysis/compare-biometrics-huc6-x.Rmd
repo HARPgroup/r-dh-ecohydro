@@ -37,36 +37,36 @@ save_directory = paste(file_directory,"/",sep='');
 
 # recreation of BPJ-rcc with all Drainage area?
 batch <- data.frame(
-    bundle = 'watershed', ftype = 'nhd_huc6', dataset_tag = 'bpj-huc6-rcc', q_ftype = 'fe_elf', metric = 'aqbio_nt_total')
+    bundle = 'watershed', ftype = 'nhd_huc6', dataset_tag = 'bpj-huc6-rcc', q_ftype = 'fe_elf', metric = 'aqbio_nt_total', title = "HUC6 - Total # of Taxa")
 
 # darter
 batch <- rbind(
   batch, data.frame(
-    bundle = 'watershed', ftype = 'nhd_huc6', dataset_tag = 'bpj-huc6-rcc', q_ftype = 'fe_elf', metric = 'aqbio_nt_darter')
+    bundle = 'watershed', ftype = 'nhd_huc6', dataset_tag = 'bpj-huc6-rcc', q_ftype = 'fe_elf', metric = 'aqbio_nt_darter', title = "HUC8 - # of Taxa Darters")
 )
 
 # bpj-rcc
 batch <- rbind(
   batch, data.frame(
-    bundle = 'watershed', ftype = 'nhd_huc6', dataset_tag = 'bpj-huc6-rcc', q_ftype = 'fe_elf', metric = 'aqbio_nt_minnow')
+    bundle = 'watershed', ftype = 'nhd_huc6', dataset_tag = 'bpj-huc6-rcc', q_ftype = 'fe_elf', metric = 'aqbio_nt_minnow', title = "HUC8 - # of Taxa True Minnows")
 )
 
 # Using 75% value from ymax analysis of all HUC8s
 batch <- rbind(
   batch, data.frame(
-    bundle = 'watershed', ftype = 'nhd_huc6', dataset_tag = 'bpj-huc6-rcc', q_ftype = 'fe_elf', metric = 'aqbio_nt_cent')
+    bundle = 'watershed', ftype = 'nhd_huc6', dataset_tag = 'bpj-huc6-rcc', q_ftype = 'fe_elf', metric = 'aqbio_nt_cent', title = "HUC8 - # of Taxa Centrarchids")
 )
 
 # Using 75% value from ymax analysis of all HUC8s
 batch <- rbind(
   batch, data.frame(
-    bundle = 'watershed', ftype = 'nhd_huc6', dataset_tag = 'bpj-huc6-rcc', q_ftype = 'fe_elf', metric = 'aqbio_nt_benins')
+    bundle = 'watershed', ftype = 'nhd_huc6', dataset_tag = 'bpj-huc6-rcc', q_ftype = 'fe_elf', metric = 'aqbio_nt_benins', title = "HUC8 - # of Taxa Benthic Insectivores")
 )
 
 # Using 75% value from ymax analysis of all HUC8s
 batch <- rbind(
   batch, data.frame(
-    bundle = 'watershed', ftype = 'nhd_huc6', dataset_tag = 'bpj-huc6-rcc', q_ftype = 'fe_elf', metric = 'aqbio_nt_cypr_native')
+    bundle = 'watershed', ftype = 'nhd_huc6', dataset_tag = 'bpj-huc6-rcc', q_ftype = 'fe_elf', metric = 'aqbio_nt_cypr_native', title = "HUC8 - # of Taxa Native Cyprinidae")
 )
 
 # plots box-whisker and bar charts of R2 for each month/flow/da, returns summary

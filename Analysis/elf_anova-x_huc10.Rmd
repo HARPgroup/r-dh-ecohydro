@@ -12,7 +12,8 @@ source(paste(base_directory,"Analysis/query_elf_statistics.R", sep = "/"));
 save_directory = paste(file_directory,"/",sep='');
 
 # vars
-yvar = 'aqbio_nt_minnow';#aqbio_nt_total, aqbio_nt_cent, aqbio_nt_darter, aqbio_nt_benins, aqbio_nt_minnow
+yvar = 'aqbio_nt_cent';#aqbio_nt_total, aqbio_nt_cent, aqbio_nt_darter, aqbio_nt_benins, aqbio_nt_minnow
+plot_title = 'NT Centrarchid';
 quant = 0.8
 ftype = 'nhd_huc10';
 aftype = 'fe_elf';
@@ -31,12 +32,48 @@ anova_data = subset(anova_data, out_p <= 0.01)
 fit <- aov(out_rsq_adj ~ in_xvar, data=anova_data)
 summary(fit)
 
-  plot_monthly(anova_data, yvar, xmetric = 'out_rsq_adj', ymetric = yvar, ymin=0);
+  plot_monthly(anova_data, yvar, xmetric = 'out_rsq_adj', ymetric = yvar, ymin=0, title = plot_title);
   
-daqmean = subset(anova_data, in_xvar == 'nhdp_drainage_sqmi' | in_xvar == 'erom_q0001e_jan')
-fit <- aov(out_rsq_adj ~ in_xvar, data=daqmean)
+daq = subset(anova_data, in_xvar == 'nhdp_drainage_sqmi' | in_xvar == 'erom_q0001e_mean')
+fit <- aov(out_rsq_adj ~ in_xvar, data=daq)
 summary(fit) 
-  
+daq = subset(anova_data, in_xvar == 'nhdp_drainage_sqmi' | in_xvar == 'erom_q0001e_jan')
+fit <- aov(out_rsq_adj ~ in_xvar, data=daq)
+summary(fit) 
+daq = subset(anova_data, in_xvar == 'nhdp_drainage_sqmi' | in_xvar == 'erom_q0001e_feb')
+fit <- aov(out_rsq_adj ~ in_xvar, data=daq)
+summary(fit) 
+daq = subset(anova_data, in_xvar == 'nhdp_drainage_sqmi' | in_xvar == 'erom_q0001e_mar')
+fit <- aov(out_rsq_adj ~ in_xvar, data=daq)
+summary(fit) 
+daq = subset(anova_data, in_xvar == 'nhdp_drainage_sqmi' | in_xvar == 'erom_q0001e_apr')
+fit <- aov(out_rsq_adj ~ in_xvar, data=daq)
+summary(fit) 
+daq = subset(anova_data, in_xvar == 'nhdp_drainage_sqmi' | in_xvar == 'erom_q0001e_may')
+fit <- aov(out_rsq_adj ~ in_xvar, data=daq)
+summary(fit) 
+daq = subset(anova_data, in_xvar == 'nhdp_drainage_sqmi' | in_xvar == 'erom_q0001e_june')
+fit <- aov(out_rsq_adj ~ in_xvar, data=daq)
+summary(fit) 
+daq = subset(anova_data, in_xvar == 'nhdp_drainage_sqmi' | in_xvar == 'erom_q0001e_july')
+fit <- aov(out_rsq_adj ~ in_xvar, data=daq)
+summary(fit) 
+daq = subset(anova_data, in_xvar == 'nhdp_drainage_sqmi' | in_xvar == 'erom_q0001e_aug')
+fit <- aov(out_rsq_adj ~ in_xvar, data=daq)
+summary(fit) 
+daq = subset(anova_data, in_xvar == 'nhdp_drainage_sqmi' | in_xvar == 'erom_q0001e_sept')
+fit <- aov(out_rsq_adj ~ in_xvar, data=daq)
+summary(fit) 
+daq = subset(anova_data, in_xvar == 'nhdp_drainage_sqmi' | in_xvar == 'erom_q0001e_oct')
+fit <- aov(out_rsq_adj ~ in_xvar, data=daq)
+summary(fit) 
+daq = subset(anova_data, in_xvar == 'nhdp_drainage_sqmi' | in_xvar == 'erom_q0001e_nov')
+fit <- aov(out_rsq_adj ~ in_xvar, data=daq)
+summary(fit) 
+daq = subset(anova_data, in_xvar == 'nhdp_drainage_sqmi' | in_xvar == 'erom_q0001e_dec')
+fit <- aov(out_rsq_adj ~ in_xvar, data=daq)
+summary(fit) 
+
 ```
 Automated routines were used to detect Ecological Limit Functions (ELF) as a variety of spatial scales including Omernik Eco-Region iii, the NHD HUC 6, HUC 8, and HUC 10.  The characteristics of the ELF were estimated by the upper 20% quantile of the data set described by y = f(ln(x)), where y was a number of taxa metric, and x was drainage area, mean annual flow, or mean monthly flow as estmated by the EROM model.  Because the datasets demonstrated an increasing NT as watershed area increased up to a certain point (refered to here as the "RCC Breakpoint"), then leveled off or began to decrease, it was important to restrict analysis of data to the left side of this breakpoint.  Initially, the breakpoint selected  was by inspection of a scatterplot of the entire multi-state dataset, resulting in 530 square miles.  Upon reviewing HUC6 data, however, it became clear that there were different RCC breakpoints evident in the different river basins.
 

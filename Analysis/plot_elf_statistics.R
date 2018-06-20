@@ -56,7 +56,8 @@ erom_var_readable <- function(varname) {
 }
 
 
-elf_monthly_batch_summary <- function (batch, mmin = 0.0, pmin = 0.01, Rmin = 0.0) {
+elf_monthly_batch_summary <- function (
+  batch, mmin = 0.0, pmin = 0.01, Rmin = 0.0) {
   # Summary Stats
   ss = data.frame(
     "Biometric" = character(), 
@@ -69,6 +70,7 @@ elf_monthly_batch_summary <- function (batch, mmin = 0.0, pmin = 0.01, Rmin = 0.
   for (row in 1:nrow(batch)) {
     bundle <- batch[row,]$bundle;
     ftype <- batch[row,]$ftype;
+    title <- batch[row,]$title;
     dataset_tag <- batch[row,]$dataset_tag;
     q_ftype <- batch[row,]$q_ftype;
     metric <- batch[row,]$metric;
@@ -105,7 +107,7 @@ elf_monthly_batch_summary <- function (batch, mmin = 0.0, pmin = 0.01, Rmin = 0.
       ymin = 0.0; # restrain plot
       crit_label =  paste('p<', pmax, 'R>', Rmin,sep='')
       labeltext = paste(q_ftype, ":", dataset_tag, '\n', ' (', crit_label, mtch, ' of ', tot,' )',sep='')
-      plot_monthly(data, labeltext, xmetric = 'out_rsq_adj', ymetric = metric, ymin=ymin);
+      plot_monthly(data, labeltext, xmetric = 'out_rsq_adj', ymetric = metric, ymin=ymin, title = title);
       mmax = ceiling(max(data$out_m))
       #plot_monthly(data, labeltext, xmetric = 'out_m', ymetric = metric, ymin=0, ymax=mmax);
       plot_monthly_count (data, subname = dataset_tag, xmetric = "out_rsq_adj", 
@@ -147,7 +149,7 @@ elf_monthly_batch_summary <- function (batch, mmin = 0.0, pmin = 0.01, Rmin = 0.
 
 plot_monthly <- function (
     data, subname = 'all', xmetric = "out_rsq_adj", 
-    ymetric = 'nt_total', ymin = 0.5, ymax = 1.0
+    ymetric = 'nt_total', ymin = 0.5, ymax = 1.0, title = "NT"
   ) {
   # dataset_tag: bpj-530, bpj-rcc
   data.da <- subset(data, in_xvar == 'nhdp_drainage_sqmi');
@@ -167,7 +169,7 @@ plot_monthly <- function (
   yvar = as.character(data[1,]$in_yvar)
   quantile = as.numeric(data[1,]$in_quantile)
   n = c('DA', 'Mean', 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December')
-  title <- paste(yvar, " Q=", 100.*(1.0 - quantile), "%", subname);
+  #title <- paste(yvar, " Q=", 100.*(1.0 - quantile), "%", subname);
   if (length(data.da$s_adminid) > 1) {
     boxplot(
       data.da[,xmetric], data.mean[,xmetric], data.jan[,xmetric], data.feb[,xmetric], data.mar[,xmetric], 
@@ -175,7 +177,8 @@ plot_monthly <- function (
       data.sep[,xmetric], data.oct[,xmetric], data.nov[,xmetric], data.dec[,xmetric],
       names = n, 
       main = title,
-      ylab = paste(ymetric, " = f(DA), Qmean,.., Qdec"),
+      ylab = expression( R^2 ~ of ~ NT ~ as ~ f(DA,Qmean,Qjan...)),
+      xlab = "DA, Qmean and Monthly EROM Flow",
       ylim = c(ymin, ymax)
     );
     

@@ -13,7 +13,7 @@ source(paste(base_directory,"Analysis/plot_elf_statistics.R", sep = "/"));
 base_url <- 'http://deq2.bse.vt.edu/d.dh'
 
 
-metric <- 'aqbio_nt_benins'; # aqbio_nt_total, aqbio_nt_cent, aqbio_nt_darter, aqbio_nt_benins
+metric <- 'aqbio_nt_cent'; # aqbio_nt_total, aqbio_nt_cent, aqbio_nt_darter, aqbio_nt_benins
 pmax = 0.01;
 mmin = 0.0;
 Rmin = 0.0;
@@ -22,10 +22,10 @@ save_directory = paste(file_directory,"/",sep='');
 batch <- data.frame(
     bundle = 'watershed', ftype = 'nhd_huc8', dataset_tag = 'bpj-530', q_ftype = 'fe_quantreg')
 
-#batch <- rbind(
-#  batch, data.frame(
-#    bundle = 'watershed', ftype = 'nhd_huc8', dataset_tag = 'HUC8_quantregwHuc6bp', q_ftype = 'fe_quantreg')
-#)
+batch <- rbind(
+  batch, data.frame(
+    bundle = 'watershed', ftype = 'nhd_huc8', dataset_tag = 'bpj-200', q_ftype = 'fe_elf')
+)
 
 for (row in 1:nrow(batch)) {
   bundle <- batch[row,]$bundle;
@@ -35,10 +35,10 @@ for (row in 1:nrow(batch)) {
   rawdata = fn_dh_elfstats (
       ftype = q_ftype,
       site = base_url,
-      analysis_timespan = analysis_timespan,
+      #analysis_timespan = analysis_timespan,
       yvar = metric,
-      sampres = sampres, # e.g. species, e.
-      stat_quantreg_qu = quantile, # upper quantile to use
+      #sampres = sampres, # e.g. species, e.
+      #stat_quantreg_qu = quantile, # upper quantile to use
       feature_ftype = ftype,
       #stat_quantreg_ghi = stat_quantreg_ghi, #
       #stat_quantreg_glo = stat_quantreg_glo, # use 1 for pwit, 0 for quantreg
@@ -54,7 +54,7 @@ for (row in 1:nrow(batch)) {
   
   # ALL
   labeltext = paste(q_ftype, ":", dataset_tag, '\n', '(ALL', mtch, ' of ', tot,' )',sep='')
-  plot_monthly(data, labeltext, xmetric = 'out_rsq_adj', ymetric = metric, ymin=ymin);
+  plot_monthly(data, labeltext, xmetric = 'out_rsq_adj', ymetric = metric, ymin=ymin, title = dataset_tag);
   mmax = ceiling(max(data$out_m))
   #plot_monthly(data, labeltext, xmetric = 'out_m', ymetric = metric, ymin=0, ymax=mmax);
   plot_monthly_count (data, subname = dataset_tag, xmetric = "out_rsq_adj", 
@@ -63,7 +63,7 @@ for (row in 1:nrow(batch)) {
   # R > 0
   data = subset(data, out_rsq_adj > Rmin)
   labeltext = paste(q_ftype, ":", dataset_tag, '\n', '(R>', Rmin, ' ', mtch, ' of ', tot,' )',sep='')
-  plot_monthly(data, labeltext, xmetric = 'out_rsq_adj', ymetric = metric, ymin=ymin);
+  plot_monthly(data, labeltext, xmetric = 'out_rsq_adj', ymetric = metric, ymin=ymin, title = dataset_tag);
   mmax = ceiling(max(data$out_m))
   #plot_monthly(data, labeltext, xmetric = 'out_m', ymetric = metric, ymin=0, ymax=mmax);
   plot_monthly_count (data, subname = dataset_tag, xmetric = "out_rsq_adj", 
@@ -72,7 +72,7 @@ for (row in 1:nrow(batch)) {
   # m > 0
   data = subset(data, out_m > mmin)
   labeltext = paste(q_ftype, ":", dataset_tag, '\n', ' ( R>', Rmin, ' ', 'm>', mmin, ' ', mtch, ' of ', tot,' )',sep='')
-  plot_monthly(data, labeltext, xmetric = 'out_rsq_adj', ymetric = metric, ymin=ymin);
+  plot_monthly(data, labeltext, xmetric = 'out_rsq_adj', ymetric = metric, ymin=ymin, title = dataset_tag);
   mmax = ceiling(max(data$out_m))
   #plot_monthly(data, labeltext, xmetric = 'out_m', ymetric = metric, ymin=0, ymax=mmax);
   plot_monthly_count (data, subname = dataset_tag, xmetric = "out_rsq_adj", 
@@ -81,7 +81,7 @@ for (row in 1:nrow(batch)) {
   # p < 0.01
   data = subset(data, out_p < pmax); # 
   labeltext = paste(q_ftype, ":", dataset_tag, '\n', ' ( p<', pmax, 'R>', Rmin, ' ', 'm>', mmin, ' ', mtch, ' of ', tot,' )',sep='')
-  plot_monthly(data, labeltext, xmetric = 'out_rsq_adj', ymetric = metric, ymin=ymin);
+  plot_monthly(data, labeltext, xmetric = 'out_rsq_adj', ymetric = metric, ymin=ymin, title = dataset_tag);
   mmax = ceiling(max(data$out_m))
   #plot_monthly(data, labeltext, xmetric = 'out_m', ymetric = metric, ymin=0, ymax=mmax);
   plot_monthly_count (data, subname = dataset_tag, xmetric = "out_rsq_adj", 
