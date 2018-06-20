@@ -14,9 +14,9 @@ source(paste(base_directory,"Analysis/plot_elf_statistics.R", sep = "/"));
 save_directory = paste(file_directory,"/",sep='');
 
 # vars
-yvar = 'aqbio_nt_total';#aqbio_nt_total, aqbio_nt_cent, aqbio_nt_darter, aqbio_nt_benins, aqbio_nt_minnow, aqbio_nt_cypr_native
+yvar = 'aqbio_nt_cypr_native';#aqbio_nt_total, aqbio_nt_cent, aqbio_nt_darter, aqbio_nt_benins, aqbio_nt_minnow, aqbio_nt_cypr_native
 xvar = 'erom_q0001e_mean';
-graphtitle = "Total # of Taxa, Fish"
+graphtitle = "# of Taxa Native Cyprinidae"
 quant = 0.8
 pmin <- 0.01
 Rmin <- 0.0
@@ -33,28 +33,22 @@ huc6_rawdata =
 );
 
 huc6_xvar_data = huc6_rawdata;
+huc6_xvar_data = subset(huc6_xvar_data, in_xvar == xvar)
 huc6_xvar_data = subset(huc6_xvar_data, out_m > mmin)
 huc6_xvar_data = subset(huc6_xvar_data, out_rsq_adj > Rmin)
 huc6_xvar_data = subset(huc6_xvar_data, out_p <= pmin)
-ss6 <- elf_quantile_table(data = huc6_xvar_data)
-huc6_xvar_data = subset(huc6_xvar_data, in_xvar == xvar)
-huc6_xvar_data$resolution = 'huc6'
-alldata = huc6_xvar_data
 
 huc8_rawdata = 
   fn_dh_elfstats ( ftype = 'fe_elf', 
     site = base_url, analysis_timespan = "full", yvar = yvar,
     sampres = "species", stat_quantreg_qu = quant, feature_ftype = 'nhd_huc8', stat_quantreg_ghi = 'all', 
-    stat_quantreg_glo = 'all', dataset_tag = 'bpj-huc6bp-rcc'
+    stat_quantreg_glo = 'all', dataset_tag = 'bpj-rcc'
   );
 huc8_xvar_data = huc8_rawdata;
+huc8_xvar_data = subset(huc8_xvar_data, in_xvar == xvar)
 huc8_xvar_data = subset(huc8_xvar_data, out_m > mmin)
 huc8_xvar_data = subset(huc8_xvar_data, out_rsq_adj > Rmin)
 huc8_xvar_data = subset(huc8_xvar_data, out_p <= pmin)
-ss8 <- elf_quantile_table(data = huc8_xvar_data)
-huc8_xvar_data = subset(huc8_xvar_data, in_xvar == xvar)
-huc8_xvar_data$resolution = 'huc8'
-alldata <- rbind(alldata, huc8_xvar_data)
 
 #huc8_anova_data = huc8_rawdata;
 #huc8_anova_data = subset(huc8_anova_data, out_m > mmin)
@@ -70,13 +64,10 @@ huc10_rawdata =
     stat_quantreg_glo = 'all', dataset_tag = 'bpj-530'
   );
 huc10_xvar_data = huc10_rawdata;
+huc10_xvar_data = subset(huc10_xvar_data, in_xvar == xvar)
 huc10_xvar_data = subset(huc10_xvar_data, out_m > mmin)
 huc10_xvar_data = subset(huc10_xvar_data, out_rsq_adj > Rmin)
 huc10_xvar_data = subset(huc10_xvar_data, out_p <= pmin)
-ss10 <- elf_quantile_table(data = huc10_xvar_data)
-huc10_xvar_data = subset(huc10_xvar_data, in_xvar == xvar)
-huc10_xvar_data$resolution = 'huc10'
-alldata <- rbind(alldata, huc10_xvar_data)
 
 #ecoiii_rawdata = 
 #  fn_dh_elfstats ( ftype = 'fe_quantreg',
@@ -159,19 +150,11 @@ huc10_xvar_data = huc10_rawdata;
 huc10_xvar_data = subset(huc10_xvar_data, out_m > mmin)
 huc10_xvar_data = subset(huc10_xvar_data, out_rsq_adj > Rmin)
 huc10_xvar_data = subset(huc10_xvar_data, out_p <= pmin)
-
-fit <- aov(out_rsq_adj ~ resolution, data=alldata)
-ssaov = summary(fit)
-
+ss10 <- elf_quantile_table(data = huc10_xvar_data)
 ```
 
 ```{r, echo=FALSE,warning=FALSE,message=FALSE,error=FALSE}
 #pander(ss, table.split.table=Inf);
 
-pander(ss6, table.split.table=Inf, caption='huc 6')
-pander(ss8, table.split.table=Inf, caption='huc 8')
-pander(ss10, table.split.table=Inf, caption='huc 10')
-pander(ssaov, table.split.table=Inf, caption='Comparison of R2 for Different Watershed Sizes')
-
-
+pander(ss10, table.split.table=Inf)
 ```

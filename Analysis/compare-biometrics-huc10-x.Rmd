@@ -23,36 +23,36 @@ pmax = 0.01;
 Rmin = 0.0;
 # NT Total
 batch <- data.frame(
-    bundle = 'watershed', ftype = 'nhd_huc10', dataset_tag = 'bpj-530', q_ftype = 'fe_elf', metric = 'aqbio_nt_total')
+    bundle = 'watershed', ftype = 'nhd_huc10', dataset_tag = 'bpj-530', q_ftype = 'fe_elf', metric = 'aqbio_nt_total', title = "HUC10 - Total # of Taxa")
 
 # Minnows
 batch <- rbind(
   batch, data.frame(
-    bundle = 'watershed', ftype = 'nhd_huc10', dataset_tag = 'bpj-530', q_ftype = 'fe_elf', metric = 'aqbio_nt_minnow')
+    bundle = 'watershed', ftype = 'nhd_huc10', dataset_tag = 'bpj-530', q_ftype = 'fe_elf', metric = 'aqbio_nt_minnow', title = "HUC10 - # of Taxa True Minnows")
 )
 
 # Centrarchids
 batch <- rbind(
   batch, data.frame(
-    bundle = 'watershed', ftype = 'nhd_huc10', dataset_tag = 'bpj-530', q_ftype = 'fe_elf', metric = 'aqbio_nt_cent')
+    bundle = 'watershed', ftype = 'nhd_huc10', dataset_tag = 'bpj-530', q_ftype = 'fe_elf', metric = 'aqbio_nt_cent', title = "HUC10 - # of Taxa Centrarchids")
 )
 
-# Using 75% value from ymax analysis of all HUC8s
+# Using 75% value from ymax analysis of all HUC10s
 batch <- rbind(
   batch, data.frame(
-    bundle = 'watershed', ftype = 'nhd_huc10', dataset_tag = 'bpj-530', q_ftype = 'fe_quantreg', metric = 'aqbio_nt_benins')
-)
-
-# darter
-batch <- rbind(
-  batch, data.frame(
-    bundle = 'watershed', ftype = 'nhd_huc10', dataset_tag = 'bpj-530', q_ftype = 'fe_quantreg', metric = 'aqbio_nt_darter')
+    bundle = 'watershed', ftype = 'nhd_huc10', dataset_tag = 'bpj-530', q_ftype = 'fe_quantreg', metric = 'aqbio_nt_benins', title = "HUC10 - # of Taxa Benthic Insectivores")
 )
 
 # darter
 batch <- rbind(
   batch, data.frame(
-    bundle = 'watershed', ftype = 'nhd_huc10', dataset_tag = 'bpj-530', q_ftype = 'fe_elf', metric = 'aqbio_nt_cypr_native')
+    bundle = 'watershed', ftype = 'nhd_huc10', dataset_tag = 'bpj-530', q_ftype = 'fe_quantreg', metric = 'aqbio_nt_darter', title = "HUC10 - # of Taxa Darters")
+)
+
+# darter
+batch <- rbind(
+  batch, data.frame(
+    bundle = 'watershed', ftype = 'nhd_huc10', dataset_tag = 'bpj-530', q_ftype = 'fe_elf', metric = 'aqbio_nt_cypr_native', title = "HUC10 - # of Taxa Native Cyprinidae")
 )
 
 ss = elf_monthly_batch_summary(batch)
