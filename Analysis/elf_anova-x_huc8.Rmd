@@ -1,0 +1,149 @@
+---
+title: "ELF Regional Comparisons"
+output: word_document
+---
+  
+```{r,#test, echo=FALSE,warning=FALSE,message=FALSE,error=FALSE,results='hide'}
+# install.packages('gdata')
+options(timeout=1024);
+library('gdata')
+source("/var/www/R/config.local.private");
+source(paste(base_directory,"Analysis/query_elf_statistics.R", sep = "/")); 
+save_directory = paste(file_directory,"/",sep='');
+
+# vars
+yvar = 'aqbio_nt_minnow';#aqbio_nt_total, aqbio_nt_cent, aqbio_nt_darter, aqbio_nt_benins, aqbio_nt_minnow
+quant = 0.8
+ftype = 'nhd_huc10';
+aftype = 'fe_elf';
+dataset_tag = 'bpj-530';
+sampres = "species";
+rawdata = 
+  fn_dh_elfstats ( ftype = aftype, 
+    site = base_url, analysis_timespan = "full", yvar = yvar,
+    sampres = sampres, stat_quantreg_qu = quant, feature_ftype = ftype, stat_quantreg_ghi = 'all', 
+    stat_quantreg_glo = 'all', dataset_tag = dataset_tag
+  );
+anova_data = rawdata;
+anova_data = subset(anova_data, out_m > 0)
+anova_data = subset(anova_data, out_rsq_adj > 0)
+anova_data = subset(anova_data, out_p <= 0.01)
+fit <- aov(out_rsq_adj ~ in_xvar, data=anova_data)
+summary(fit)
+
+  plot_monthly(anova_data, yvar, xmetric = 'out_rsq_adj', ymetric = yvar, ymin=0);
+  
+daqmean = subset(anova_data, in_xvar == 'nhdp_drainage_sqmi' | in_xvar == 'erom_q0001e_jan')
+fit <- aov(out_rsq_adj ~ in_xvar, data=daqmean)
+summary(fit) 
+  
+```
+Automated routines were used to detect Ecological Limit Functions (ELF) as a variety of spatial scales including Omernik Eco-Region iii, the NHD HUC 6, HUC 8, and HUC 10.  The characteristics of the ELF were estimated by the upper 20% quantile of the data set described by y = f(ln(x)), where y was a number of taxa metric, and x was drainage area, mean annual flow, or mean monthly flow as estmated by the EROM model.  Because the datasets demonstrated an increasing NT as watershed area increased up to a certain point (refered to here as the "RCC Breakpoint"), then leveled off or began to decrease, it was important to restrict analysis of data to the left side of this breakpoint.  Initially, the breakpoint selected  was by inspection of a scatterplot of the entire multi-state dataset, resulting in 530 square miles.  Upon reviewing HUC6 data, however, it became clear that there were different RCC breakpoints evident in the different river basins.
+
+
+```{r, echo=FALSE}
+noms <- c('Eco iii', 'HUC6', 'HUC8', 'HUC10')
+
+# Plots all, without regard for p-value
+#boxplot(
+#    ecoiii_xvar_data$out_rsq_adj,
+#    huc6_xvar_data$out_rsq_adj, 
+#    huc8_xvar_data$out_rsq_adj, 
+#    huc10_xvar_data$out_rsq_adj,
+#    names = noms, 
+#    main = 'Spatial Resolution Rsq (all p)'
+#  );
+boxplot(
+    ecoiii_xvar_data$out_rsq_adj, 
+    huc6_xvar_data$out_rsq_adj, 
+    huc8_xvar_data$out_rsq_adj, 
+    huc10_xvar_data$out_rsq_adj,
+    names = noms, 
+    main = 'Spatial Resolution Rsq p <= 0.01, m > 0'
+  );
+
+
+boxplot(
+    ecoiii_xvar_data$out_m, 
+    huc6_xvar_data$out_m, 
+    huc8_xvar_data$out_m, 
+    huc10_xvar_data$out_m,
+    names = noms, 
+    main = 'Spatial Resolution m, p <= 0.01, m > 0'
+  );
+
+boxplot(
+    ecoiii_xvar_data$out_n,
+    huc6_xvar_data$out_n, 
+    huc8_xvar_data$out_n, 
+    huc10_xvar_data$out_n,
+    names = noms, 
+    main = 'Spatial Resolution n'
+  );
+quantile( huc10_xvar_data$out_n)
+
+barplot(
+    c(
+      length(ecoiii_xvar_data$out_n), 
+      length(huc6_xvar_data$out_n), 
+      length(huc8_xvar_data$out_n), 
+      length(huc10_xvar_data$out_n)
+      ),
+    names = noms, 
+    main = 'Number of significant Relationships, p <= 0.01, m > 0',
+    ylim = c(0, 1+length(huc10_xvar_data$out_n))
+  );
+
+# Summary Stats
+ss = data.frame(
+  "Biometric" = character(), 
+  "X-Variable" =  numeric(), 
+  "Count" = character(), 
+  "Criteria" = character(), 
+  stringsAsFactors = FALSE) ;
+
+mmx = 'tbd'; # max of medians should go here to find month with highest median
+ss <- rbind(
+  ss, 
+  data.frame(
+    "Biometric" = yvar, 
+    "Med R(all/max/DA/Qmean)" = 
+      paste(
+        round(median(data$out_rsq_adj),2),  
+        mmx, 
+        round(median(subset(data, in_xvar == 'nhdp_drainage_sqmi')$out_rsq_adj),2),
+        round(median(subset(data, in_xvar == xvar)$out_rsq_adj),2),
+        sep="/"
+      ),
+    "Count (DA)/ghi" = paste(mtch,ghi,sep="/"), 
+    "Criteria" = crit_label, 
+    stringsAsFactors = FALSE)
+);
+ss = data.frame(
+  "x-Variable" = character(), 
+  "0%" =  numeric(), 
+  "25%" =  numeric(), 
+  "50%" =  numeric(), 
+  "75%" =  numeric(), 
+  "100%" =  numeric(), 
+  stringsAsFactors = FALSE
+) ;
+for(i in erom_vars) {
+  dset = subset(data, in_xvar == i)
+  qq = quantile(dset$out_rsq_adj)
+  ss <- rbind(
+    ss,
+    data.frame(
+      "x-Variable" = i,  
+      "0%" = as.numeric(qq["0%"]), 
+      "25%" = as.numeric(qq["25%"]), 
+      "50%" = as.numeric(qq["50%"]), 
+      "75%" = as.numeric(qq["75%"]), 
+      "100%" = as.numeric(qq["100%"])
+    )
+  )
+}
+names(ss) <- c("x-Variable", "0%", "25%", "50%", "75%", "100%")
+
+pander(ss)
+```

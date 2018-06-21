@@ -1,34 +1,44 @@
 library(quantreg);
 
-fe_data <- function (
-  bundle = 'ecoregion', 
-  ftype = 'ecoregion_iii',
-  metric = 'aqbio_nt_total',
-  selected = 'all',
-  quantile = 0.8,
-  DA.thresh = 500,
-  site = 'd.dh') {
-  # load data for select ecoregion
-  uri <- paste("http://deq1.bse.vt.edu", site, "multivariate/max", metric, bundle, ftype, selected, sep='/') 
-  print(paste('uri: ', uri, sep = '')) 
-  data <- read.csv(uri, header = TRUE, sep = ",")
-  #makes sure all metric values are numeric and not factorial (fixes error with ni, total)
-  data$metric_value <- as.numeric(data$metric_value)
-  return(data )
-}
+options(timeout=2048);
+library('gdata')
+source("/var/www/R/config.local.private");
+site <- "http://deq2.bse.vt.edu/d.dh"    #Specify the site of interest, either d.bet OR d.dh
+datasite <- "http://deq2.bse.vt.edu/d.dh"    #Specify the site of interest, either d.bet OR d.dh
 
+# Load Default inputs
+source(paste(fxn_locations,"elf_default_inputs.R", sep = ""));
+#Load Functions               
+source(paste(fxn_locations,"elf_retrieve_data.R", sep = ""));  #loads function used to retrieve F:E data from VAHydro
+source(paste(hydro_tools,"VAHydro-2.0/rest_functions.R", sep = "/")); 
+source(paste(fxn_locations,"elf_assemble_batch.R", sep = ""));
 
 bundle <- 'watershed'; # ecoregion, watershed, landunit
-ftype <- 'nhd_huc8'; # state, hwi_region, nhd_huc8, nhd_huc6, ecoregion_iii, ecoregion_iv, ecoiii_huc6
-metric <- 'aqbio_nt_native';
-selected <- 'nhd_huc8_06010205';
+ftype <- 'nhd_huc6'; # state, hwi_region, nhd_huc8, nhd_huc6, ecoregion_iii, ecoregion_iv, ecoiii_huc6
+metric <- 'aqbio_nt_minnow';
+#selected <- '0301010104';
+#selected <- '030101';
+#selected <- '020801';
+selected <- '060102';
+#selected <- 'nhd_huc8_06010205';
+#selected <- 'all';
+sampres = 'species';
 quantile <- 0.8;
-# breakpoint for DA/Q (~ 500 cfs?)
-DA.thresh <- 2852;
-site <- 'd.dh';
+inputs$xaxis_thresh = 530;
 
-data <- fe_data(bundle, ftype, metric, selected, quantile, DA.thresh, site);
-dme <- subset(data, da_sqkm >= .001 & da_sqkm < DA.thresh);
+# vahydro_fe_data(Watershed_Hydrocode,x_metric_code,
+#  y_metric_code,bundle,ws_ftype_code,sampres, data, datasite = '') 
+data <- vahydro_fe_multi_data(
+  bundle = bundle, 
+  ftype = ftype,
+  metric = metric,
+  selected = selected,
+  datasite = datasite
+);
+
+data["ratio"] <- (data$da_sqmi)/(data$annual)
+data["qnorm"] <- (data$annual)/log(data$da_sqmi)
+dme <- subset(data, da_sqmi >= .001 & da_sqmi < inputs$xaxis_thresh);
 
 #calculate the quantile regression
 up90 <- rq(metric_value ~ log(annual),data = dme, tau = quantile)
@@ -36,16 +46,26 @@ up90 <- rq(metric_value ~ log(annual),data = dme, tau = quantile)
 newy <- c(log(dme$annual)*coef(up90)[2]+coef(up90)[1])
 #create a subset of the data that only includes the stations with NT values higher than the y values just calculated
 upper.quant <- subset(dme, dme$metric_value > newy)
-fit2 <- lm(metric_value ~ log(da_sqkm) + log(annual), data = upper.quant)
+# DA only
+fit1 <- lm(metric_value ~ log(da_sqmi), data = upper.quant)
+summary(fit1);
+
+fit2 <- lm(metric_value ~ log(da_sqmi) + log(annual), data = upper.quant)
 summary(fit2);
 
+fit3 <- lm(metric_value ~ log(da_sqmi) + log(jun) + log(jul), data = upper.quant)
+summary(fit3);
+
+fit2norm <- lm(metric_value ~ log(da_sqmi) + qnorm, data = upper.quant)
+summary(fit2norm);
+
 library(MASS)
-fit <- lm(metric_value ~ log(da_sqkm) + log(jan) + log(feb) + 
+fit14 <- lm(metric_value ~ log(da_sqmi) + log(jan) + log(feb) + 
             log(mar) + log(apr) + log(may)
           + log(jun) + log(jul) + log(aug) 
           + log(sep) + log(oct) + log(nov) + log(dec)
           ,data=upper.quant
 )
-step <- stepAIC(fit, direction="both")
+step <- stepAIC(fit14, k=4, direction="both")
 step$anova # display results
 summary(step)
