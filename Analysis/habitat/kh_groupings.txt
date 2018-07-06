@@ -1,0 +1,383 @@
+site	metric	group
+Above Harvell Dam	as_juv	constant_high
+Above Harvell Dam	bd_high_grad	constant_high
+Above Harvell Dam	canoe_mid	constant_high
+Above Harvell Dam	canoe_nov	constant_high
+Above Harvell Dam	deep_fast	constant_high
+Above Harvell Dam	deep_slow	constant_high
+Above Harvell Dam	rbs_spawn	constant_high
+Above Harvell Dam	rh_spawn	constant_high
+Above Harvell Dam	shallow_fast	constant_high
+Above Harvell Dam	smb_adult	constant_high
+Above Harvell Dam	smb_juv	constant_high
+Above Harvell Dam	bd_low_grad	seasonal_summer
+Above Harvell Dam	smb_spawn	seasonal_summer
+Above Harvell Dam	as_spawn	seasonal_spring
+Above Harvell Dam	e_comp	seasonal_spring
+Above Harvell Dam	l_rad	seasonal_spring
+Above Harvell Dam	nh_adult	seasonal_spring
+Above Harvell Dam	nh_spawn	seasonal_spring
+Above Harvell Dam	shallow_slow	constant_low
+New River- Claytor to Pembroke	bmc_adult	constant_high
+New River- Claytor to Pembroke	cc_adult	constant_high
+New River- Claytor to Pembroke	cc_juv	constant_high
+New River- Claytor to Pembroke	cc_spawn	constant_high
+New River- Claytor to Pembroke	eph_mac	constant_high
+New River- Claytor to Pembroke	gd_adult	constant_high
+New River- Claytor to Pembroke	gd_spawn	constant_high
+New River- Claytor to Pembroke	lp_adult	constant_high
+New River- Claytor to Pembroke	lp_spawn	constant_high
+New River- Claytor to Pembroke	nh_adult	constant_high
+New River- Claytor to Pembroke	nh_spawn	constant_high
+New River- Claytor to Pembroke	plec_mac	constant_high
+New River- Claytor to Pembroke	shallow_fast	constant_high
+New River- Claytor to Pembroke	sm_int	constant_high
+New River- Claytor to Pembroke	sm_shal_slow	constant_high
+New River- Claytor to Pembroke	smb_adult	constant_high
+New River- Claytor to Pembroke	tric_mac	constant_high
+New River- Claytor to Pembroke	we_spawn	constant_high
+New River- Claytor to Pembroke	bmc_spawn	seasonal_summer
+New River- Claytor to Pembroke	cs_adult	seasonal_summer
+New River- Claytor to Pembroke	cs_spawn	seasonal_summer
+New River- Claytor to Pembroke	gd_juv	seasonal_summer
+New River- Claytor to Pembroke	ml_adult_summer	seasonal_summer
+New River- Claytor to Pembroke	ml_adult_winter	seasonal_summer
+New River- Claytor to Pembroke	nh_yoy	seasonal_summer
+New River- Claytor to Pembroke	pwb	seasonal_summer
+New River- Claytor to Pembroke	rbs_adult	seasonal_summer
+New River- Claytor to Pembroke	rbs_juv	seasonal_summer
+New River- Claytor to Pembroke	smb_juv	seasonal_summer
+New River- Claytor to Pembroke	cf	constant_low
+New River- Claytor to Pembroke	cs_fry	constant_low
+New River- Claytor to Pembroke	cs_juv	constant_low
+New River- Claytor to Pembroke	fhc_adult_summer	constant_low
+New River- Claytor to Pembroke	fhc_adult_winter	constant_low
+New River- Claytor to Pembroke	fhc_spawn	constant_low
+New River- Claytor to Pembroke	ml_spawn	constant_low
+New River- Claytor to Pembroke	rb_adult	constant_low
+New River- Claytor to Pembroke	rb_fry	constant_low
+New River- Claytor to Pembroke	rb_juv	constant_low
+New River- Claytor to Pembroke	rb_spawn	constant_low
+New River- Claytor to Pembroke	rbs_fry	constant_low
+New River- Claytor to Pembroke	smb_fry	constant_low
+New River- Claytor to Pembroke	smb_spawn	constant_low
+New River- Claytor to Pembroke	we_adult	constant_low
+New River- Claytor to Pembroke	we_fry	constant_low
+New River- Claytor to Pembroke	we_juv	constant_low
+Craig	bj_adult	constant_high
+Craig	bj_juv	constant_high
+Craig	chub_spp._spawn	constant_high
+Craig	csr_adult	constant_high
+Craig	ff_adult	constant_high
+Craig	nh_spawn	constant_high
+Craig	nh_yoy	constant_high
+Craig	rfs_adult	constant_high
+Craig	rfs_yoy	constant_high
+Craig	smb_adult	constant_high
+Craig	smb_juv	constant_high
+Craig	rb_adult	seasonal_summer
+Craig	rb_juv	seasonal_summer
+Craig	smb_spawn	seasonal_summer
+Craig	smb_yoy	seasonal_summer
+Craig	ff_juv	seasonal_spring
+Craig	nh_adult	seasonal_spring
+Craig	rb_spawn	constant_low
+Craig	rb_yoy	constant_low
+Craig	rbs_spawn	constant_low
+Dunlap	bj_juv	constant_high
+Dunlap	chub_spp._spawn	constant_high
+Dunlap	ff_juv	constant_high
+Dunlap	nh_yoy	constant_high
+Dunlap	rb_adult	constant_high
+Dunlap	rb_yoy	constant_high
+Dunlap	rfs_adult	constant_high
+Dunlap	rfs_yoy	constant_high
+Dunlap	smb_adult	constant_high
+Dunlap	smb_juv	constant_high
+Dunlap	smb_spawn	constant_high
+Dunlap	smb_yoy	constant_high
+Dunlap	rb_juv	seasonal_summer
+Dunlap	rb_spawn	seasonal_summer
+Dunlap	bj_adult	seasonal_spring
+Dunlap	csr_adult	seasonal_spring
+Dunlap	ff_adult	seasonal_spring
+Dunlap	nh_adult	seasonal_spring
+Dunlap	nh_spawn	seasonal_spring
+Dunlap	rbs_spawn	constant_low
+Front Royal	canoe	constant_high
+Front Royal	smb_sub_adult	constant_high
+Front Royal	c_ssp.	seasonal_summer
+Front Royal	mm	seasonal_summer
+Front Royal	rbs_adult	seasonal_summer
+Front Royal	rc	seasonal_summer
+Front Royal	smb_adult	seasonal_summer
+Front Royal	rbs_juv	constant_low
+Head Kerr Lake	as_fry	constant_high
+Head Kerr Lake	as_juv	constant_high
+Head Kerr Lake	boat	constant_high
+Head Kerr Lake	canoe_mid	constant_high
+Head Kerr Lake	canoe_nov	constant_high
+Head Kerr Lake	cc_juv_summ	constant_high
+Head Kerr Lake	deep_fast	constant_high
+Head Kerr Lake	deep_slow	constant_high
+Head Kerr Lake	nh_adult	constant_high
+Head Kerr Lake	rhg_adult	constant_high
+Head Kerr Lake	rhg_juv	constant_high
+Head Kerr Lake	rhsh_adult	constant_high
+Head Kerr Lake	rhsi_adult	constant_high
+Head Kerr Lake	spb_adult	constant_high
+Head Kerr Lake	spb_juv	constant_high
+Head Kerr Lake	spb_spawn	constant_high
+Head Kerr Lake	we_juv	constant_high
+Head Kerr Lake	cd_adult	seasonal_summer
+Head Kerr Lake	lmb_adult	seasonal_summer
+Head Kerr Lake	lmb_juv	seasonal_summer
+Head Kerr Lake	nh_spawn	seasonal_summer
+Head Kerr Lake	rhsh_juv	seasonal_summer
+Head Kerr Lake	rhsh_spawn	seasonal_summer
+Head Kerr Lake	spb_fry	seasonal_summer
+Head Kerr Lake	stb_adult	seasonal_spring
+Head Kerr Lake	stb_fry	seasonal_spring
+Head Kerr Lake	stb_juv	seasonal_spring
+Head Kerr Lake	stb_spawn	seasonal_spring
+Head Kerr Lake	we_adult	seasonal_spring
+Head Kerr Lake	bd_high_grad	constant_low
+Head Kerr Lake	bd_low_grad	constant_low
+Head Kerr Lake	cc_juv_fall	constant_low
+Head Kerr Lake	chub_adult	constant_low
+Head Kerr Lake	chub_spawn	constant_low
+Head Kerr Lake	lmb_fry	constant_low
+Head Kerr Lake	lmb_spawn	constant_low
+Head Kerr Lake	nh_yoy	constant_low
+Head Kerr Lake	rhg_yoy	constant_low
+Head Kerr Lake	rhsh_yoy	constant_low
+Head Kerr Lake	rhsi_yoy	constant_low
+Head Kerr Lake	shallow_fast	constant_low
+Head Kerr Lake	shallow_slow	constant_low
+Head Kerr Lake	we_fry	constant_low
+James	bj_adult	constant_high
+James	csr_adult	constant_high
+James	ff_adult	constant_high
+James	ff_juv	constant_high
+James	nh_adult	constant_high
+James	nh_spawn	constant_high
+James	rfs_adult	constant_high
+James	rfs_yoy	constant_high
+James	smb_juv	constant_high
+James	bj_juv	seasonal_summer
+James	chub_spp._spawn	seasonal_summer
+James	nh_yoy	seasonal_summer
+James	rb_adult	seasonal_summer
+James	rb_juv	seasonal_summer
+James	rb_spawn	seasonal_summer
+James	rb_yoy	seasonal_summer
+James	rbs_spawn	seasonal_summer
+James	smb_adult	seasonal_summer
+James	smb_spawn	seasonal_summer
+James	smb_yoy	seasonal_summer
+Laurel Hill	fast_gen	seasonal_summer
+Laurel Hill	pool_cov	seasonal_summer
+Laurel Hill	pool_run	seasonal_summer
+Laurel Hill	riffle	seasonal_summer
+Laurel Hill	alg_mid	constant_low
+Luray	canoe	constant_high
+Luray	c_ssp.	seasonal_summer
+Luray	mm	seasonal_summer
+Luray	rbs_adult	seasonal_summer
+Luray	rc	seasonal_summer
+Luray	smb_adult	seasonal_summer
+Luray	smb_sub_adult	seasonal_summer
+Luray	rbs_juv	constant_low
+Lynwood	canoe	constant_high
+Lynwood	rbs_adult	constant_high
+Lynwood	smb_adult	constant_high
+Lynwood	c_ssp.	seasonal_summer
+Lynwood	mm	seasonal_summer
+Lynwood	rc	seasonal_summer
+Lynwood	smb_sub_adult	seasonal_summer
+Lynwood	rbs_juv	constant_low
+Maury	bj_adult	constant_high
+Maury	chub_spp._spawn	constant_high
+Maury	csr_adult	constant_high
+Maury	ff_adult	constant_high
+Maury	ff_juv	constant_high
+Maury	nh_spawn	constant_high
+Maury	nh_yoy	constant_high
+Maury	rfs_adult	constant_high
+Maury	rfs_yoy	constant_high
+Maury	smb_adult	constant_high
+Maury	smb_juv	constant_high
+Maury	bj_juv	seasonal_summer
+Maury	rb_adult	seasonal_summer
+Maury	rb_juv	seasonal_summer
+Maury	rb_spawn	seasonal_summer
+Maury	rb_yoy	seasonal_summer
+Maury	smb_spawn	seasonal_summer
+Maury	smb_yoy	seasonal_summer
+Maury	nh_adult	seasonal_spring
+Maury	rbs_spawn	constant_low
+North Anna Coastal Plain	as_juv	constant_high
+North Anna Coastal Plain	deep_slow	constant_high
+North Anna Coastal Plain	benth_mac	seasonal_summer
+North Anna Coastal Plain	rbs_spawn	seasonal_summer
+North Anna Coastal Plain	shallow_fast	seasonal_summer
+North Anna Coastal Plain	as_spawn	seasonal_spring
+North Anna Coastal Plain	canoe_mid	seasonal_spring
+North Anna Coastal Plain	canoe_nov	seasonal_spring
+North Anna Coastal Plain	deep_fast	seasonal_spring
+North Anna Coastal Plain	e_comp	seasonal_spring
+North Anna Coastal Plain	l_rad	seasonal_spring
+North Anna Coastal Plain	nh_adult	seasonal_spring
+North Anna Coastal Plain	nh_spawn	seasonal_spring
+North Anna Coastal Plain	shallow_slow	constant_low
+North Anna Fall Zone	deep_slow	constant_high
+North Anna Fall Zone	rbs_spawn	constant_high
+North Anna Fall Zone	smb_adult	constant_high
+North Anna Fall Zone	smb_juv	constant_high
+North Anna Fall Zone	smb_spawn	constant_high
+North Anna Fall Zone	benth_mac	seasonal_summer
+North Anna Fall Zone	shallow_fast	seasonal_summer
+North Anna Fall Zone	canoe_mid	seasonal_spring
+North Anna Fall Zone	canoe_nov	seasonal_spring
+North Anna Fall Zone	deep_fast	seasonal_spring
+North Anna Fall Zone	e_comp	seasonal_spring
+North Anna Fall Zone	l_rad	seasonal_spring
+North Anna Fall Zone	nh_adult	seasonal_spring
+North Anna Fall Zone	nh_spawn	seasonal_spring
+North Anna Fall Zone	shallow_slow	constant_low
+North Anna Piedmont	canoe_nov	constant_high
+North Anna Piedmont	deep_fast	constant_high
+North Anna Piedmont	deep_slow	constant_high
+North Anna Piedmont	smb_adult	constant_high
+North Anna Piedmont	smb_juv	constant_high
+North Anna Piedmont	benth_mac	seasonal_summer
+North Anna Piedmont	rbs_spawn	seasonal_summer
+North Anna Piedmont	shallow_fast	seasonal_summer
+North Anna Piedmont	smb_spawn	seasonal_summer
+North Anna Piedmont	canoe_mid	seasonal_spring
+North Anna Piedmont	e_comp	seasonal_spring
+North Anna Piedmont	l_rad	seasonal_spring
+North Anna Piedmont	nh_adult	seasonal_spring
+North Anna Piedmont	nh_spawn	seasonal_spring
+North Anna Piedmont	shallow_slow	constant_low
+Pamunkey Coastal Plain	as_juv	constant_high
+Pamunkey Coastal Plain	canoe_nov	constant_high
+Pamunkey Coastal Plain	deep_slow	constant_high
+Pamunkey Coastal Plain	e_comp	constant_high
+Pamunkey Coastal Plain	l_rad	constant_high
+Pamunkey Coastal Plain	nh_adult	constant_high
+Pamunkey Coastal Plain	deep_fast	seasonal_summer
+Pamunkey Coastal Plain	as_spawn	seasonal_spring
+Pamunkey Coastal Plain	canoe_mid	seasonal_spring
+Pamunkey Coastal Plain	benth_mac	constant_low
+Pamunkey Coastal Plain	nh_spawn	constant_low
+Pamunkey Coastal Plain	rbs_spawn	constant_low
+Pamunkey Coastal Plain	shallow_fast	constant_low
+Pamunkey Coastal Plain	shallow_slow	constant_low
+New River- Pembroke to Glen Lyn	bmc_adult	constant_high
+New River- Pembroke to Glen Lyn	cc_adult	constant_high
+New River- Pembroke to Glen Lyn	cc_juv	constant_high
+New River- Pembroke to Glen Lyn	eph_mac	constant_high
+New River- Pembroke to Glen Lyn	gd_adult	constant_high
+New River- Pembroke to Glen Lyn	gd_spawn	constant_high
+New River- Pembroke to Glen Lyn	lp_adult	constant_high
+New River- Pembroke to Glen Lyn	lp_spawn	constant_high
+New River- Pembroke to Glen Lyn	nh_adult	constant_high
+New River- Pembroke to Glen Lyn	nh_spawn	constant_high
+New River- Pembroke to Glen Lyn	plec_mac	constant_high
+New River- Pembroke to Glen Lyn	sm_int	constant_high
+New River- Pembroke to Glen Lyn	sm_shal_slow	constant_high
+New River- Pembroke to Glen Lyn	tric_mac	constant_high
+New River- Pembroke to Glen Lyn	we_spawn	constant_high
+New River- Pembroke to Glen Lyn	bmc_spawn	seasonal_summer
+New River- Pembroke to Glen Lyn	cc_spawn	seasonal_summer
+New River- Pembroke to Glen Lyn	cs_adult	seasonal_summer
+New River- Pembroke to Glen Lyn	cs_spawn	seasonal_summer
+New River- Pembroke to Glen Lyn	gd_juv	seasonal_summer
+New River- Pembroke to Glen Lyn	ml_adult_summer	seasonal_summer
+New River- Pembroke to Glen Lyn	ml_adult_winter	seasonal_summer
+New River- Pembroke to Glen Lyn	nh_yoy	seasonal_summer
+New River- Pembroke to Glen Lyn	pwb	seasonal_summer
+New River- Pembroke to Glen Lyn	rbs_adult	seasonal_summer
+New River- Pembroke to Glen Lyn	rbs_juv	seasonal_summer
+New River- Pembroke to Glen Lyn	shallow_fast	seasonal_summer
+New River- Pembroke to Glen Lyn	smb_adult	seasonal_summer
+New River- Pembroke to Glen Lyn	smb_juv	seasonal_summer
+New River- Pembroke to Glen Lyn	cf	constant_low
+New River- Pembroke to Glen Lyn	cs_fry	constant_low
+New River- Pembroke to Glen Lyn	cs_juv	constant_low
+New River- Pembroke to Glen Lyn	fhc_adult_summer	constant_low
+New River- Pembroke to Glen Lyn	fhc_adult_winter	constant_low
+New River- Pembroke to Glen Lyn	fhc_spawn	constant_low
+New River- Pembroke to Glen Lyn	ml_spawn	constant_low
+New River- Pembroke to Glen Lyn	rb_adult	constant_low
+New River- Pembroke to Glen Lyn	rb_fry	constant_low
+New River- Pembroke to Glen Lyn	rb_juv	constant_low
+New River- Pembroke to Glen Lyn	rb_spawn	constant_low
+New River- Pembroke to Glen Lyn	rbs_fry	constant_low
+New River- Pembroke to Glen Lyn	smb_fry	constant_low
+New River- Pembroke to Glen Lyn	smb_spawn	constant_low
+New River- Pembroke to Glen Lyn	we_adult	constant_low
+New River- Pembroke to Glen Lyn	we_fry	constant_low
+New River- Pembroke to Glen Lyn	we_juv	constant_low
+Plains Mill	fast_gen	constant_high
+Plains Mill	pool_cov	constant_high
+Plains Mill	pool_run	constant_high
+Plains Mill	riffle	seasonal_summer
+Plains Mill	alg_mid	constant_low
+Posey Hollow	fast_gen	constant_high
+Posey Hollow	pool_run	constant_high
+Posey Hollow	pool_cov	seasonal_summer
+Posey Hollow	alg_mid	constant_low
+Rt 648	pool_cov	constant_high
+Rt 648	pool_run	constant_high
+Rt 648	fast_gen	seasonal_summer
+Rt 648	alg_mid	constant_low
+Spring Hollow	fast_gen	seasonal_summer
+Spring Hollow	pool_cov	seasonal_summer
+Spring Hollow	pool_run	seasonal_summer
+Spring Hollow	riffle	seasonal_summer
+Spring Hollow	alg_mid	constant_low
+Staunton	as_fry	constant_high
+Staunton	as_juv	constant_high
+Staunton	boat	constant_high
+Staunton	canoe_mid	constant_high
+Staunton	canoe_nov	constant_high
+Staunton	cc_juv_summ	constant_high
+Staunton	deep_fast	constant_high
+Staunton	deep_slow	constant_high
+Staunton	nh_adult	constant_high
+Staunton	rhg_adult	constant_high
+Staunton	rhg_juv	constant_high
+Staunton	rhsh_adult	constant_high
+Staunton	rhsi_adult	constant_high
+Staunton	spb_adult	constant_high
+Staunton	spb_juv	constant_high
+Staunton	spb_spawn	constant_high
+Staunton	we_juv	constant_high
+Staunton	cd_adult	seasonal_summer
+Staunton	lmb_adult	seasonal_summer
+Staunton	lmb_juv	seasonal_summer
+Staunton	nh_spawn	seasonal_summer
+Staunton	rhsh_juv	seasonal_summer
+Staunton	rhsh_spawn	seasonal_summer
+Staunton	spb_fry	seasonal_summer
+Staunton	stb_adult	seasonal_spring
+Staunton	stb_fry	seasonal_spring
+Staunton	stb_juv	seasonal_spring
+Staunton	stb_spawn	seasonal_spring
+Staunton	we_adult	seasonal_spring
+Staunton	bd_high_grad	constant_low
+Staunton	bd_low_grad	constant_low
+Staunton	cc_juv_fall	constant_low
+Staunton	chub_adult	constant_low
+Staunton	chub_spawn	constant_low
+Staunton	lmb_fry	constant_low
+Staunton	lmb_spawn	constant_low
+Staunton	nh_yoy	constant_low
+Staunton	rhg_yoy	constant_low
+Staunton	rhsh_yoy	constant_low
+Staunton	rhsi_yoy	constant_low
+Staunton	shallow_fast	constant_low
+Staunton	shallow_slow	constant_low
+Staunton	we_fry	constant_low

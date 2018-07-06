@@ -5,16 +5,16 @@ basepath='C:/Users/nrf46657/Desktop/VAHydro Development/GitHub/r-dh-ecohydro/';
 source(paste(basepath,'config.local.private',sep='/'));
 
 #RETRIEVE HABITAT DATA
-pctchg <- "10"
+pctchg <- "50"
 
-all_sites <- read.csv(paste(basepath,"Analysis/habitat/pctchg_datasets/all_flows/IFIM_SITES_",pctchg,"%Reduction.csv",sep=""))
-#all_sites <- read.csv(paste(basepath,"Analysis/habitat/pctchg_datasets/tenth_percentile_flow_and_below/IFIM_SITES_",pctchg,"%Reduction.csv",sep=""))
+#all_sites <- read.csv(paste(basepath,"Analysis/habitat/pctchg_datasets/all_flows/IFIM_SITES_",pctchg,"%Reduction.csv",sep=""))
+all_sites <- read.csv(paste(basepath,"Analysis/habitat/pctchg_datasets/tenth_percentile_flow_and_below/IFIM_SITES_",pctchg,"%Reduction.csv",sep=""))
 
 
 
 # Remove Potomac Sites when doing all_flows 
-all_sites <- all_sites[-which(all_sites$ifim_site_name=="T8&9"),] 
-all_sites <- all_sites[-which(all_sites$ifim_site_name=="T11&12"),] 
+#all_sites <- all_sites[-which(all_sites$ifim_site_name=="T8&9"),] 
+#all_sites <- all_sites[-which(all_sites$ifim_site_name=="T11&12"),] 
 
 fish.only <- "yes" #"yes" to plot for fish habitat metrics only 
 
@@ -165,6 +165,13 @@ plot_labels <- data.frame(ifim_site_name=ascending_MAF_all_sites$ifim_site_name,
 #fit <- lm(Aug_all_sites_medians$pctchg~log(Aug_all_sites_medians$ifim_da_sqmi))
 
 
+reg_stats <- data.frame(month=character(),
+                        pctchg=character(),
+                        m=character(), 
+                        b=character(), 
+                        y0=character(),
+                        stringsAsFactors=FALSE) 
+
 
 #month <- "MAF"
 
@@ -257,22 +264,50 @@ boxplot(month_data$pctchg ~ month_data$ifim_da_sqmi,
         log="x",
         #ylim=c(-30,60),
         ylim=c(-60,60),
-        main=paste("Percent Habitat Change with ",pctchg,"% Flow Reduction (",month,")",sep=""),
-        xlab="Drainage Area (sqmi)",
-        ylab="Percent Habitat Change",cex.lab=1.25)#,
+        #xlim=c(100,4000), #without potomac
+        xlim=c(100,12000), #with potomac
+        par(mar=c(8,3,1,1),
+            oma=c(3,5,0,0)),
+       # main=paste("Percent Habitat Change with ",pctchg,"% Flow Reduction (",month,")",sep=""),
+        #xlab="Drainage Area (sqmi)",
+        #ylab="Percent Habitat Change",
+        #cex.lab=1.25,
+        xaxt="n",
+        yaxt="n")#,
+
+        #without potomac
+        #axis(1, at=c(100,200,300,400,500,600,700,800,900,1000,2000,3000,4000,5000), 
+        #     labels=c(100,200,300,400,500,600,700,800,900,1000,2000,3000,4000,5000),
+        #     cex.axis=2, las=2)
+        
+        #with potomac
+        axis(1, at=c(100,200,300,400,500,600,700,800,900,1000,2000,3000,4000,5000,6000,7000,8000,9000,10000,20000), 
+             labels=c(100,200,300,400,500,600,700,800,900,1000,2000,3000,4000,5000,6000,7000,8000,9000,10000,20000),
+             cex.axis=2.5, las=2)
+
+        axis(2, cex.axis=2.5, las=1)
+    
+        mtext(text="              Percent Habitat Change\n",side=2,line=0,outer=TRUE,cex=2.5)
+        mtext(text="Drainage Area (sqmi)",side=1,line=0,outer=TRUE,cex=2.5)
+        
+        #par(oma=c(2,2,2,2))
+
+
+    
+       # axis(1,cex.axis=2)
         #xaxt="n")
 
-text(plot_labels$ifim_da_sqmi, 
-     plot_labels$pctchg, 
-     plot_labels$ifim_site_name, 
-     cex=1.0, #site label size (was 1.2 when doing log, 1.0 for linear)
-     pos=4, 
-     col="black",
-     srt=90)
+ # text(plot_labels$ifim_da_sqmi, 
+ #      plot_labels$pctchg, 
+ #      plot_labels$ifim_site_name, 
+ #      cex=1.0, #site label size (was 1.2 when doing log, 1.0 for linear)
+ #      pos=4, 
+ #      col="black",
+ #      srt=90)
 
 
 abline(a=0,b=0)
-points(month_data_medians$ifim_da_sqmi, month_data_medians$pctchg, col = "red",cex=5,pch="-") #pch=19 for circle point
+points(month_data_medians$ifim_da_sqmi, month_data_medians$pctchg, col = "black",cex=5,pch="-") #pch=19 for circle point
 #abline(lm(Aug_all_sites_medians$pctchg~log(Aug_all_sites_medians$ifim_da_sqmi)), 
 #       col = "blue",
 #       lwd=2)
@@ -283,14 +318,30 @@ eq <- paste("Regression Equation:\n","y = ",round(m,2)," ln(x) ",round(b,2),
 
 ## printing of the equation
 text(x = 210, y = 45, labels = eq, cex=2)
+#text(x = 210, y = 45, labels = "!!!", cex=4, font=4)
+
 
 #abline(fit)
 #lines(reg,type="o", lty=2, col="blue")
 #segments(166, 0, 3000, 8.788643)
-segments(x1, y1, x2, y2,col='red',lwd=1)
-         
+#segments(x1, y1, x2, y2,col='red',lwd=1)
+segments(x1, y1, x2, y2,col='black',lwd=5,lty=3)
+
 dev.off()
 
+#output regression stats as csv
+reg_stats_r <- data.frame(month=month,
+                          pctchg=pctchg,
+                          m=m, 
+                          b=b, 
+                          y0=as.numeric(round(exp((-b)/m),5))) 
+reg_stats <- rbind(reg_stats,reg_stats_r)
+
+      if (fish.only == "yes") {
+        write.csv(reg_stats,paste(save_directory,"\\","reg_stats_",stat,"_",pctchg,"pctchg_FISH.csv",sep=""))
+      } else {
+        write.csv(reg_stats,paste(save_directory,"\\","reg_stats_",stat,"_",pctchg,"pctchg.csv",sep=""))
+      }
 
 } #end for loop
 

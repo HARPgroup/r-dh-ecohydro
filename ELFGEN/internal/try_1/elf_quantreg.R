@@ -63,18 +63,6 @@ elf_quantreg <- function(
   flow_row <- which(metric_table$varkey == x_metric)
   flow_name <- metric_table[flow_row,]
   flow_title <- flow_name$varname                         #needed for human-readable plot titles
-  
-  EDAS_upper_legend <- paste("Data Subset (Upper ",((1 - quantile)*100),"%)",sep="");
-  EDAS_lower_legend <- paste("Data Subset (Lower ",(100-((1 - quantile)*100)),"%)",sep="");
-  Quantile_Legend <- paste(quantile," Quantile (Data Subset)",sep=""); 
-  
-  #Set yaxis threshold = to maximum biometric value in database 
-  yaxis_thresh <- paste(site,"/elfgen_maxy_export/",y_metric, sep="")
-  yaxis_thresh <- read.csv(yaxis_thresh , header = TRUE, sep = ",")
-  yaxis_thresh <- yaxis_thresh$y_value
-  print (paste("Setting ymax = ", yaxis_thresh));
-  
-
   #--------------------------------------------------------------------------------------------
   
   
@@ -149,6 +137,12 @@ print(paste("Upper quantile has ", nrow(upper.quant), "values"));
             rfcor <- round(cor.test(log(data$x_value),data$y_value)$estimate, digits = 6) #correlation coefficient of full dataset
             rfcount <- length(data$y_value) 
             
+            #Set yaxis threshold = to maximum biometric value in database 
+            yaxis_thresh <- paste(site,"/elfgen_maxy_export/",y_metric, sep="")
+            yaxis_thresh <- read.csv(yaxis_thresh , header = TRUE, sep = ",")
+            yaxis_thresh <- yaxis_thresh$y_value
+            print (paste("Setting ymax = ", yaxis_thresh));
+
             #retreive metric varids and varnames
 #            metric_definitions <- paste(site,"/?q=/fe_metric_export",sep="");
 #            metric_table <- read.table(metric_definitions,header = TRUE, sep = ",")
@@ -214,16 +208,11 @@ print("Storing quantile regression.");
                                 sep="");
             xaxis_title <- paste(flow_title,"\n","\n","m: ",plot_ruslope,"    b: ",plot_ruint,"    r^2: ",plot_rurs,"    adj r^2: ",plot_rursadj,"    p: ",plot_rup,"\n","    Upper ",((1 - quantile)*100),"% n: ",rucount,"    Data Subset n: ",subset_n,"    Full Dataset n: ",length(full_dataset$y_value),sep="");
             yaxis_title <- paste(biometric_title);
-            #EDAS_upper_legend <- paste("Data Subset (Upper ",((1 - quantile)*100),"%)",sep="");
+            EDAS_upper_legend <- paste("Data Subset (Upper ",((1 - quantile)*100),"%)",sep="");
             Reg_upper_legend <- paste("Regression (Upper ",((1 - quantile)*100),"%)",sep="");       
-            #Quantile_Legend <- paste(quantile," Quantile (Data Subset)",sep=""); 
-            #EDAS_lower_legend <- paste("Data Subset (Lower ",(100-((1 - quantile)*100)),"%)",sep="");
+            Quantile_Legend <- paste(quantile," Quantile (Data Subset)",sep=""); 
+            EDAS_lower_legend <- paste("Data Subset (Lower ",(100-((1 - quantile)*100)),"%)",sep="");
 
-            
-            
-            
-            
-            
 print (paste("Plotting ELF"));
             
             my.plot <- function() {
@@ -306,10 +295,8 @@ print (paste("Plotting ELF"));
                                           #                    plot_title, xaxis_title, yaxis_title)
                                           
                                           result <- basic.plot(geom, data, full_dataset, upper.quant,
-                                                               yaxis_thresh, quantile,
-                                                               plot_title, xaxis_title, yaxis_title,
-                                                               EDAS_upper_legend,EDAS_lower_legend,
-                                                               Quantile_Legend)
+                                                               53, quantile,
+                                                               plot_title, xaxis_title, yaxis_title)
                                         }
                   a <- my.plot()
                   
@@ -323,40 +310,6 @@ print (paste("Plotting ELF"));
                    
         } else {
           print(paste("... Skipping (fewer than 4 datapoints to the left of x-axis inflection point in ", search_code,")", sep=''));
-       
-          my.plot <- function() {
-            #result <- base.plot(geom, data, full_dataset, upper.quant,
-            #                    yaxis_thresh, quantile,
-            #                    plot_title, xaxis_title, yaxis_title,
-            #                    EDAS_upper_legend,EDAS_lower_legend,Reg_upper_legend,
-            #                    Quantile_Legend)
-            
-            plot_title <- paste(Feature.Name," (",sampres," grouping)\n",
-                                startdate," to ",
-                                enddate,"\n\nQuantile Regression: (breakpoint at ",ghi_var," = ", ghi,")",
-                                sep="");
-            xaxis_title <- paste(flow_title,"\n","\n","\n","    Full Dataset n: ",length(full_dataset$y_value),sep="");
-            yaxis_title <- paste(biometric_title);
-            
-            #result <- basic.plot(geom, data, full_dataset, upper.quant,
-            #                    53, quantile,
-            #                    plot_title, xaxis_title, yaxis_title)
-            
-            result <- basic.right.plot(geom, data, full_dataset,
-                                 yaxis_thresh, quantile,
-                                 plot_title, xaxis_title, yaxis_title,
-                                 EDAS_upper_legend,EDAS_lower_legend,
-                                 Quantile_Legend)
-          }
-          a <- my.plot()
-          
-          #Plot images are stored using watershed hydrocode when NOT performing REST 
-          adminid <- paste(dataset_tag,search_code,"fe_quantreg",x_metric,y_metric,quantile,station_agg,sampres,analysis_timespan,"0",ghi,ghi_var, sep='_');
-          
-          filename <- paste(adminid,"elf.png", sep="_")
-          ggsave(file=filename, path = save_directory, width=8, height=6)
-          
-          
         }   
   return(a)
 } #close function

@@ -36,7 +36,7 @@ source(paste(fxn_locations,"elf_pw_it_RS.R", sep = ""));
 source(paste(fxn_locations,"elf_twopoint.R", sep = ""));
 source(paste(fxn_locations,"elf_pct_chg.R", sep = ""));
 source(paste(fxn_locations,"elf_store_data.R", sep = ""));
-source(paste(base_directory,"Analysis/query_elf_statistics.R", sep = "/")); 
+source(paste(basepath,"Analysis/query_elf_statistics.R", sep = "/")); 
 #####
 # Now add custom local settings here
 inputs$x_metric = c(
@@ -58,12 +58,12 @@ inputs$x_metric = c(
 
 inputs$y_metric = 'aqbio_nt_total';
 inputs$sampres = 'species';
-inputs$ws_ftype = c('hwi_region');
-inputs$target_hydrocode = '';
+inputs$ws_ftype = c('nhd_huc10'); #nhd_huc10
+inputs$target_hydrocode = '0601010703'; #0601010207, 0513020404, 0601010703
 inputs$quantile = .80;
 inputs$send_to_rest = "NO";
 inputs$glo = 0;
-inputs$ghi = 100;
+inputs$ghi = 15000;
 inputs$method = "quantreg"; #quantreg, pwit, ymax, pwit_RS, twopoint
 inputs$dataset_tag = 'jk-test';
 inputs$ghi_var = 'qmean_annual'

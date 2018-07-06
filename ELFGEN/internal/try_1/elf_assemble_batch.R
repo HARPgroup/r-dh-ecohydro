@@ -109,12 +109,12 @@ elf_cleandata <- function (data, inputs, startdate = FALSE, enddate = FALSE) {
   
   
   #Skip if there is only 1 or 2 unique flow metric values for this watershed (either only a single EDAS station, or multiple with the same flow metric, which would result in a vertical bar of points in the plot)
-#  station_x_value <- data$x_value
-#  remove_da_duplicates <- unique(station_x_value, incomparables = FALSE)
-#  if(length(remove_da_duplicates) == 1 | length(remove_da_duplicates) == 2) {
-#    print("... Skipping (the points are all organized in 1 or 2 vertical lines in )");
-#    return(FALSE) 
-#  } #closes bar of points skip if-statement (rare)
+  station_x_value <- data$x_value
+  remove_da_duplicates <- unique(station_x_value, incomparables = FALSE)
+  if(length(remove_da_duplicates) == 1 | length(remove_da_duplicates) == 2) {
+    print("... Skipping (the points are all organized in 1 or 2 vertical lines in )");
+    return(FALSE) 
+  } #closes bar of points skip if-statement (rare)
   
   #Skip if there is only 1 or 2 unique biometric values for this watershed
   station_y_value <- data$y_value
@@ -481,252 +481,7 @@ base.plot <- function(geom, data, full_dataset, upper.quant,
 
 basic.plot <- function(geom, data, full_dataset, upper.quant,
                       yaxis_thresh, quantile,
-                      plot_title, xaxis_title, yaxis_title,
-                      EDAS_upper_legend,EDAS_lower_legend,
-                      Quantile_Legend
-) {
-  
-  
-  # SPECIFY BOUNDING BOX: *should really calculate bb from the VADF shape, but for now hard code
-  bb=readWKT("POLYGON((-85 35, -74 35,  -74 41, -85 41, -85 35))")
-  bbProjected <- SpatialPolygonsDataFrame(bb,data.frame("id"), match.ID = FALSE)
-  bbProjected@data$id <- rownames(bbProjected@data)
-  bbPoints <- fortify(bbProjected, region = "id")
-  bbDF <- merge(bbPoints, bbProjected@data, by = "id")
-  
-  #-------------------------------------------------------------------------------------------- 
-  # Geoprocess edas stations 
-  STATIONS_data <- full_dataset
-  split_1 <- read.table(text = as.character(STATIONS_data$geom), sep = "(", colClasses = "character")
-  split_2 <- read.table(text = split_1$V2, sep = ")", colClasses = "character")
-  split_3 <- read.table(text = split_2$V1, sep = " ", colClasses = "character")
-  STATIONSDF <- data.frame(x=as.numeric(split_3$V1),y=as.numeric(split_3$V2),X.id.="id",id="1")
-  
-  print(STATIONSDF)
-  
-  # 
-  # BLUSTATIONS_data <- data
-  # BLUsplit_1 <- read.table(text = as.character(BLUSTATIONS_data$geom), sep = "(", colClasses = "character")
-  # BLUsplit_2 <- read.table(text = BLUsplit_1$V2, sep = ")", colClasses = "character")
-  # BLUsplit_3 <- read.table(text = BLUsplit_2$V1, sep = " ", colClasses = "character")
-  # BLUSTATIONSDF <- data.frame(x=as.numeric(BLUsplit_3$V1),y=as.numeric(BLUsplit_3$V2),X.id.="id",id="1")
-  # 
-  # if (length(upper.quant[,1]) > 0 ) {
-  # GRNSTATIONS_data <- upper.quant
-  # GRNsplit_1 <- read.table(text = as.character(GRNSTATIONS_data$geom), sep = "(", colClasses = "character")
-  # GRNsplit_2 <- read.table(text = GRNsplit_1$V2, sep = ")", colClasses = "character")
-  # GRNsplit_3 <- read.table(text = GRNsplit_2$V1, sep = " ", colClasses = "character")
-  # GRNSTATIONSDF <- data.frame(x=as.numeric(GRNsplit_3$V1),y=as.numeric(GRNsplit_3$V2),X.id.="id",id="1")
-  # }
-  
-  # print(length(full_dataset[,1]))
-  # print(length(data[,1]))
-  # print(length(upper.quant[,1]))
-  # 
-  # print(upper.quant)
-  # 
-  # print(STATIONSDF)
-  # print(BLUSTATIONSDF)
-  # print(GRNSTATIONSDF)
-  # #--------------------------------------------------------------------------------------------
-  
-  # CLIP WATERSHED GEOMETRY TO BOUNDING BOX
-  watershed_geom <- readWKT(geom)
-  watershed_geom_clip <- gIntersection(bb, watershed_geom)
-  if (is.null(watershed_geom_clip)) {
-    watershed_geom_clip = watershed_geom
-  }
-  wsdataProjected <- SpatialPolygonsDataFrame(watershed_geom_clip,data.frame("id"), match.ID = FALSE)
-  #class(dataProjected)
-  wsdataProjected@data$id <- rownames(wsdataProjected@data)
-  watershedPoints <- fortify(wsdataProjected, region = "id")
-  watershedDF <- merge(watershedPoints, wsdataProjected@data, by = "id")
-  
-  #LOAD STATE GEOMETRY
-  STATES <- read.table(file=paste(fxn_locations,"STATES.tsv",sep=""), header=TRUE, sep="\t")
-  
-  VA <- STATES[which(STATES$state == "VA"),]
-  VA_geom <- readWKT(VA$geom)
-  VA_geom_clip <- gIntersection(bb, VA_geom)
-  VAProjected <- SpatialPolygonsDataFrame(VA_geom_clip,data.frame("id"), match.ID = TRUE)
-  VAProjected@data$id <- rownames(VAProjected@data)
-  VAPoints <- fortify( VAProjected, region = "id")
-  VADF <- merge(VAPoints,  VAProjected@data, by = "id")
-  
-  TN <- STATES[which(STATES$state == "TN"),]
-  TN_geom <- readWKT(TN$geom)
-  TN_geom_clip <- gIntersection(bb, TN_geom)
-  TNProjected <- SpatialPolygonsDataFrame(TN_geom_clip,data.frame("id"), match.ID = TRUE)
-  TNProjected@data$id <- rownames(TNProjected@data)
-  TNPoints <- fortify( TNProjected, region = "id")
-  TNDF <- merge(TNPoints,  TNProjected@data, by = "id")
-  
-  NC <- STATES[which(STATES$state == "NC"),]
-  NC_geom <- readWKT(NC$geom)
-  NC_geom_clip <- gIntersection(bb, NC_geom)
-  NCProjected <- SpatialPolygonsDataFrame(NC_geom_clip,data.frame("id"), match.ID = TRUE)
-  NCProjected@data$id <- rownames(NCProjected@data)
-  NCPoints <- fortify( NCProjected, region = "id")
-  NCDF <- merge(NCPoints,  NCProjected@data, by = "id")
-  
-  KY <- STATES[which(STATES$state == "KY"),]
-  KY_geom <- readWKT(KY$geom)
-  KY_geom_clip <- gIntersection(bb, KY_geom)
-  KYProjected <- SpatialPolygonsDataFrame(KY_geom_clip,data.frame("id"), match.ID = TRUE)
-  KYProjected@data$id <- rownames(KYProjected@data)
-  KYPoints <- fortify( KYProjected, region = "id")
-  KYDF <- merge(KYPoints,  KYProjected@data, by = "id")
-  
-  WV <- STATES[which(STATES$state == "WV"),]
-  WV_geom <- readWKT(WV$geom)
-  WV_geom_clip <- gIntersection(bb, WV_geom)
-  WVProjected <- SpatialPolygonsDataFrame(WV_geom_clip,data.frame("id"), match.ID = TRUE)
-  WVProjected@data$id <- rownames(WVProjected@data)
-  WVPoints <- fortify( WVProjected, region = "id")
-  WVDF <- merge(WVPoints,  WVProjected@data, by = "id")
-  
-  MD <- STATES[which(STATES$state == "MD"),]
-  MD_geom <- readWKT(MD$geom)
-  MD_geom_clip <- gIntersection(bb, MD_geom)
-  MDProjected <- SpatialPolygonsDataFrame(MD_geom_clip,data.frame("id"), match.ID = TRUE)
-  MDProjected@data$id <- rownames(MDProjected@data)
-  MDPoints <- fortify( MDProjected, region = "id")
-  MDDF <- merge(MDPoints,  MDProjected@data, by = "id")
-  
-  DE <- STATES[which(STATES$state == "DE"),]
-  DE_geom <- readWKT(DE$geom)
-  DE_geom_clip <- gIntersection(bb, DE_geom)
-  DEProjected <- SpatialPolygonsDataFrame(DE_geom_clip,data.frame("id"), match.ID = TRUE)
-  DEProjected@data$id <- rownames(DEProjected@data)
-  DEPoints <- fortify( DEProjected, region = "id")
-  DEDF <- merge(DEPoints,  DEProjected@data, by = "id")
-  
-  PA <- STATES[which(STATES$state == "PA"),]
-  PA_geom <- readWKT(PA$geom)
-  PA_geom_clip <- gIntersection(bb, PA_geom)
-  PAProjected <- SpatialPolygonsDataFrame(PA_geom_clip,data.frame("id"), match.ID = TRUE)
-  PAProjected@data$id <- rownames(PAProjected@data)
-  PAPoints <- fortify( PAProjected, region = "id")
-  PADF <- merge(PAPoints,  PAProjected@data, by = "id")
-  
-  NJ <- STATES[which(STATES$state == "NJ"),]
-  NJ_geom <- readWKT(NJ$geom)
-  NJ_geom_clip <- gIntersection(bb, NJ_geom)
-  NJProjected <- SpatialPolygonsDataFrame(NJ_geom_clip,data.frame("id"), match.ID = TRUE)
-  NJProjected@data$id <- rownames(NJProjected@data)
-  NJPoints <- fortify( NJProjected, region = "id")
-  NJDF <- merge(NJPoints,  NJProjected@data, by = "id")
-  
-  OH <- STATES[which(STATES$state == "OH"),]
-  OH_geom <- readWKT(OH$geom)
-  OH_geom_clip <- gIntersection(bb, OH_geom)
-  OHProjected <- SpatialPolygonsDataFrame(OH_geom_clip,data.frame("id"), match.ID = TRUE)
-  OHProjected@data$id <- rownames(OHProjected@data)
-  OHPoints <- fortify( OHProjected, region = "id")
-  OHDF <- merge(OHPoints,  OHProjected@data, by = "id")
-  
-  map <- ggplotGrob(ggplot(data = VADF, aes(x=long, y=lat, group = group))+
-                      geom_polygon(data = VADF, color="gray46", fill = "gray")+
-                      geom_polygon(data = TNDF, color="gray46", fill = NA, lwd=0.5)+
-                      geom_polygon(data = NCDF, color="gray46", fill = NA, lwd=0.5)+
-                      geom_polygon(data = KYDF, color="gray46", fill = NA, lwd=0.5)+
-                      geom_polygon(data = WVDF, color="gray46", fill = NA, lwd=0.5)+
-                      geom_polygon(data = MDDF, color="gray46", fill = NA, lwd=0.5)+
-                      geom_polygon(data = DEDF, color="gray46", fill = NA, lwd=0.5)+
-                      geom_polygon(data = PADF, color="gray46", fill = NA, lwd=0.5)+
-                      geom_polygon(data = NJDF, color="gray46", fill = NA, lwd=0.5)+
-                      geom_polygon(data = OHDF, color="gray46", fill = NA, lwd=0.5)+
-                      
-                      geom_polygon(data = watershedDF, color="khaki4", fill = "yellow",alpha = 0.25,lwd=0.5)+
-                      geom_point(aes(x = x, y = y, group = id), data = STATIONSDF, color="gray66", size = 0.025)+
-                      #geom_point(aes(x = x, y = y, group = id), data = BLUSTATIONSDF, color="blue", size = 0.025)+
-                      #geom_point(aes(x = x, y = y, group = id), data = GRNSTATIONSDF, color="forestgreen", size = 0.025)+
-                      
-                      
-                      geom_polygon(data = bbDF, color="black", fill = NA,lwd=0.5)+
-                      
-                      #ADD NORTH ARROW AND SCALE BAR
-                      north(bbDF, location = 'topleft', symbol = 12, scale=0.2)+
-                      #scalebar(bbDF, dist = 100, dd2km = TRUE, model = 'WGS84',st.bottom=FALSE,st.size=1.5,st.dist=0.04)+ #text too small to read 
-                      scalebar(bbDF, dist = 100, dd2km = TRUE, model = 'WGS84',st.bottom=TRUE,st.size=1.5,st.dist=0.04)+
-                      
-                      scale_x_continuous(limits = c(-85, -74))+
-                      scale_y_continuous(limits = c(35, 41))+
-                      
-                      theme(axis.title.x=element_blank(),
-                            axis.text.x=element_blank(),
-                            axis.ticks.x=element_blank(),
-                            axis.title.y=element_blank(),
-                            axis.text.y=element_blank(),
-                            axis.ticks.y=element_blank(),
-                            panel.grid.major = element_blank(), 
-                            panel.grid.minor = element_blank(),
-                            panel.background = element_blank(),
-                            panel.border = element_blank())
-  )
-  
-  result <- ggplot(data, aes(x=x_value,y=y_value)) + ylim(0,yaxis_thresh) + 
-    geom_point(data = full_dataset,aes(colour="aliceblue")) +
-    geom_point(data = data,aes(colour="blue")) + 
-    geom_point(data = upper.quant, aes(x=x_value,y=y_value,color = "black")) + 
-    geom_quantile(data = data, quantiles= quantile,show.legend = TRUE,aes(color="red")) +
-    geom_smooth(data = data, method="lm",formula=y ~ x,show.legend = TRUE, aes(colour="yellow"),se=FALSE) + 
-    
-    #add map to upper right of plot
-    annotation_custom(
-      grob = map,
-      xmin = 4.54,
-      xmax = 7.72,
-      ymin = yaxis_thresh-(0.1*yaxis_thresh),
-      ymax = yaxis_thresh+(0.3*yaxis_thresh)
-    )+
-    
-    ggtitle(plot_title) + 
-    theme(
-      plot.title = element_text(size = 12, face = "bold"),
-      axis.text = element_text(colour = "blue"),
-      panel.grid.minor.x = element_blank()
-    ) +
-    labs(x=xaxis_title,y=yaxis_title) + 
-    scale_x_log10(
-      limits = c(0.001,15000),
-      breaks = c(0.001,0.01,0.1,1.0,10,100,1000,10000),
-      labels =c("0.001","0.01","0.1","1.0","10","100","1,000","10,000")
-    ) + 
-    annotation_logticks(sides = "b")+
-    #theme(legend.key=element_rect(fill='white')) +
-    #Add legend
-    scale_color_manual(
-      "Legend",
-      values=c("gray66","forestgreen","blue","black","red"),
-      labels=c("Full Dataset                        ",
-               EDAS_upper_legend,EDAS_lower_legend,Quantile_Legend,"Regression (Data Subset)")
-    
-      #values=c("gray66","forestgreen","blue","orange","black","red"),
-      #labels=c("Full Dataset",EDAS_upper_legend,EDAS_lower_legend,Reg_upper_legend,Quantile_Legend,"Regression (Data Subset)")
-      
-      
-      ) + 
-    guides(
-      colour = guide_legend(
-        override.aes = list(
-          size=c(1,1,1,1,1),
-          linetype=c(0,0,0,1,1), 
-          shape=c(16,16,16,NA,NA)
-        ),
-        label.position = "right"
-      )
-    ); 
-  return(result)
-}
-
-
-
-basic.right.plot <- function(geom, data, full_dataset,
-                       yaxis_thresh, quantile,
-                       plot_title, xaxis_title, yaxis_title,
-                       EDAS_upper_legend,EDAS_lower_legend,
-                       Quantile_Legend
+                      plot_title, xaxis_title, yaxis_title
 ) {
   
   
@@ -751,22 +506,22 @@ basic.right.plot <- function(geom, data, full_dataset,
   BLUsplit_3 <- read.table(text = BLUsplit_2$V1, sep = " ", colClasses = "character")
   BLUSTATIONSDF <- data.frame(x=as.numeric(BLUsplit_3$V1),y=as.numeric(BLUsplit_3$V2),X.id.="id",id="1")
   
-  # GRNSTATIONS_data <- upper.quant
-  # GRNsplit_1 <- read.table(text = as.character(GRNSTATIONS_data$geom), sep = "(", colClasses = "character")
-  # GRNsplit_2 <- read.table(text = GRNsplit_1$V2, sep = ")", colClasses = "character")
-  # GRNsplit_3 <- read.table(text = GRNsplit_2$V1, sep = " ", colClasses = "character")
-  # GRNSTATIONSDF <- data.frame(x=as.numeric(GRNsplit_3$V1),y=as.numeric(GRNsplit_3$V2),X.id.="id",id="1")
-  # 
-  # print(length(full_dataset[,1]))
-  # print(length(data[,1]))
-  # print(length(upper.quant[,1]))
-  # 
-  # print(upper.quant)
-  # 
-  # print(STATIONSDF)
-  # print(BLUSTATIONSDF)
-  # print(GRNSTATIONSDF)
-  # #--------------------------------------------------------------------------------------------
+  GRNSTATIONS_data <- upper.quant
+  GRNsplit_1 <- read.table(text = as.character(GRNSTATIONS_data$geom), sep = "(", colClasses = "character")
+  GRNsplit_2 <- read.table(text = GRNsplit_1$V2, sep = ")", colClasses = "character")
+  GRNsplit_3 <- read.table(text = GRNsplit_2$V1, sep = " ", colClasses = "character")
+  GRNSTATIONSDF <- data.frame(x=as.numeric(GRNsplit_3$V1),y=as.numeric(GRNsplit_3$V2),X.id.="id",id="1")
+  
+  print(length(full_dataset[,1]))
+  print(length(data[,1]))
+  print(length(upper.quant[,1]))
+  
+  print(upper.quant)
+  
+  print(STATIONSDF)
+  print(BLUSTATIONSDF)
+  print(GRNSTATIONSDF)
+  #--------------------------------------------------------------------------------------------
   
   # CLIP WATERSHED GEOMETRY TO BOUNDING BOX
   watershed_geom <- readWKT(geom)
@@ -878,7 +633,7 @@ basic.right.plot <- function(geom, data, full_dataset,
                       geom_polygon(data = watershedDF, color="khaki4", fill = "yellow",alpha = 0.25,lwd=0.5)+
                       geom_point(aes(x = x, y = y, group = id), data = STATIONSDF, color="gray66", size = 0.025)+
                       geom_point(aes(x = x, y = y, group = id), data = BLUSTATIONSDF, color="blue", size = 0.025)+
-                      #geom_point(aes(x = x, y = y, group = id), data = GRNSTATIONSDF, color="forestgreen", size = 0.025)+
+                      geom_point(aes(x = x, y = y, group = id), data = GRNSTATIONSDF, color="forestgreen", size = 0.025)+
                       
                       
                       geom_polygon(data = bbDF, color="black", fill = NA,lwd=0.5)+
@@ -905,11 +660,7 @@ basic.right.plot <- function(geom, data, full_dataset,
   
   result <- ggplot(data, aes(x=x_value,y=y_value)) + ylim(0,yaxis_thresh) + 
     geom_point(data = full_dataset,aes(colour="aliceblue")) +
-    geom_point(data = data,aes(colour="blue")) + 
-    #geom_point(data = upper.quant, aes(x=x_value,y=y_value,color = "black")) + 
-    geom_quantile(data = data, quantiles= quantile,show.legend = TRUE,aes(color="red")) +
-    geom_smooth(data = data, method="lm",formula=y ~ x,show.legend = TRUE, aes(colour="yellow"),se=FALSE) + 
-    
+
     #add map to upper right of plot
     annotation_custom(
       grob = map,
@@ -932,25 +683,19 @@ basic.right.plot <- function(geom, data, full_dataset,
       labels =c("0.001","0.01","0.1","1.0","10","100","1,000","10,000")
     ) + 
     annotation_logticks(sides = "b")+
-    #theme(legend.key=element_rect(fill='white')) +
+    theme(legend.key=element_rect(fill='white')) +
     #Add legend
     scale_color_manual(
       "Legend",
-      values=c("gray66","blue","black","red"),
-      labels=c("Full Dataset                        ",
-               EDAS_lower_legend,Quantile_Legend,"Regression (Data Subset)")
-      
-      #values=c("gray66","forestgreen","blue","orange","black","red"),
-      #labels=c("Full Dataset",EDAS_upper_legend,EDAS_lower_legend,Reg_upper_legend,Quantile_Legend,"Regression (Data Subset)")
-      
-      
+      values=c("gray66"),
+      labels=c("Full Dataset                        ")
     ) + 
     guides(
       colour = guide_legend(
         override.aes = list(
-          size=c(1,1,1,1),
-          linetype=c(0,0,1,1), 
-          shape=c(16,16,NA,NA)
+          size=c(1),
+          linetype=c(0), 
+          shape=c(16)
         ),
         label.position = "right"
       )
