@@ -1,0 +1,24 @@
+method,dataset_tag,x_metric,y_metric,target_hydrocode,ghi,glo,glo qt,,ghiqt
+quantreg,JLRHuc8Press,erom_q0001e_mean,aqbio_nt_total,nhd_huc8_02080201,408,0,72,,389.3
+quantreg,JLRHuc8Press,erom_q0001e_mean,aqbio_nt_total,nhd_huc8_02080202,408,0,72,,389.3
+quantreg,JLRHuc8Press,erom_q0001e_mean,aqbio_nt_total,nhd_huc8_02080208,408,0,72,,389.3
+quantreg,JLRHuc8Press,erom_q0001e_mean,aqbio_nt_total,nhd_huc8_03010102,408,0,72,,384.7
+quantreg,JLRHuc8Press,erom_q0001e_mean,aqbio_nt_total,nhd_huc8_05050001,408,0,72,,348.3
+quantreg,JLRHuc8Press,erom_q0001e_mean,aqbio_nt_total,nhd_huc8_06010101,896,0,500,,775.9
+quantreg,JLRHuc8Press,erom_q0001e_mean,aqbio_nt_total,nhd_huc8_06010205,896,0,500,,577
+,,,,,,,,,
+ymax,JLRHuc8Press,erom_q0001e_mean,aqbio_nt_total,nhd_huc8_02080201,408,389.3,72,,389.3
+ymax,JLRHuc8Press,erom_q0001e_mean,aqbio_nt_total,nhd_huc8_02080202,408,389.3,72,,389.3
+ymax,JLRHuc8Press,erom_q0001e_mean,aqbio_nt_total,nhd_huc8_02080208,408,389.3,72,,389.3
+ymax,JLRHuc8Press,erom_q0001e_mean,aqbio_nt_total,nhd_huc8_03010102,408,384.7,72,,384.7
+ymax,JLRHuc8Press,erom_q0001e_mean,aqbio_nt_total,nhd_huc8_05050001,408,348.3,72,,348.3
+ymax,JLRHuc8Press,erom_q0001e_mean,aqbio_nt_total,nhd_huc8_06010101,896,775.9,500,,775.9
+ymax,JLRHuc8Press,erom_q0001e_mean,aqbio_nt_total,nhd_huc8_06010205,896,577,500,,577
+,,,,,,,,,
+pwit,JLRHuc8Press,erom_q0001e_mean,aqbio_nt_total,nhd_huc8_02080201,408,389.3,72,,389.3
+pwit,JLRHuc8Press,erom_q0001e_mean,aqbio_nt_total,nhd_huc8_02080202,408,389.3,72,,389.3
+pwit,JLRHuc8Press,erom_q0001e_mean,aqbio_nt_total,nhd_huc8_02080208,408,389.3,72,,389.3
+pwit,JLRHuc8Press,erom_q0001e_mean,aqbio_nt_total,nhd_huc8_03010102,408,384.7,72,,384.7
+pwit,JLRHuc8Press,erom_q0001e_mean,aqbio_nt_total,nhd_huc8_05050001,408,348.3,72,,348.3
+pwit,JLRHuc8Press,erom_q0001e_mean,aqbio_nt_total,nhd_huc8_06010101,896,775.9,500,,775.9
+pwit,JLRHuc8Press,erom_q0001e_mean,aqbio_nt_total,nhd_huc8_06010205,896,577,500,,577

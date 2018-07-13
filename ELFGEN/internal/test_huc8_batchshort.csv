@@ -1,0 +1,9 @@
+method,dataset_tag,x_metric,y_metric,target_hydrocode,ghi,glo,glo qt,,ghiqt,method
+quantreg,JLRHuc8TaxaLoss,erom_q0001e_mean,aqbio_nt_total,nhd_huc8_02070007,408,0,72,,408,quantreg
+quantreg,JLRHuc8TaxaLoss,erom_q0001e_mean,aqbio_nt_total,nhd_huc8_02080201,408,0,72,,389.3,quantreg
+quantreg,JLRHuc8TaxaLoss,erom_q0001e_mean,aqbio_nt_total,nhd_huc8_02080202,408,0,72,,389.3,quantreg
+quantreg,JLRHuc8TaxaLoss,erom_q0001e_mean,aqbio_nt_total,nhd_huc8_02080208,408,0,72,,389.3,quantreg
+quantreg,JLRHuc8TaxaLoss,erom_q0001e_mean,aqbio_nt_total,nhd_huc8_03010102,408,0,72,,384.7,quantreg
+quantreg,JLRHuc8TaxaLoss,erom_q0001e_mean,aqbio_nt_total,nhd_huc8_05050001,408,0,72,,348.3,quantreg
+quantreg,JLRHuc8TaxaLoss,erom_q0001e_mean,aqbio_nt_total,nhd_huc8_06010101,896,0,500,,775.9,quantreg
+quantreg,JLRHuc8TaxaLoss,erom_q0001e_mean,aqbio_nt_total,nhd_huc8_06010205,896,0,500,,577,quantreg
