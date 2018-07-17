@@ -40,7 +40,7 @@ source(paste(fxn_locations,"elf_pw_it_RS.R", sep = ""));
 source(paste(fxn_locations,"elf_twopoint.R", sep = ""));
 source(paste(fxn_locations,"elf_pct_chg.R", sep = ""));
 source(paste(fxn_locations,"elf_store_data.R", sep = ""));
-source(paste(base_directory,"Analysis/query_elf_statistics.R", sep = "/")); 
+source(paste(basepath,"Analysis/query_elf_statistics.R", sep = "/")); 
 #####
 # Now add custom local settings here
 inputs$x_metric = c(
@@ -89,7 +89,7 @@ inputs$token = token;
 #   ** or, Use this if you want to load the batch list from a file, with defaults from inputs()
 
 
-batchlist = read.csv(file=paste(fxn_locations,"HUC10_CustomRCC_BP.csv",sep="/"),header=TRUE)  #RCC_HUC8taxaloss.csv
+batchlist = read.csv(file=paste(fxn_locations,"HUC10_RegDiag.csv",sep="/"),header=TRUE)  #RCC_HUC8taxaloss.csv
 
 
 
