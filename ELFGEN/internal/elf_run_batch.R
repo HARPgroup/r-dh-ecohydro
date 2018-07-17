@@ -58,12 +58,12 @@ inputs$x_metric = c(
 
 inputs$y_metric = 'aqbio_nt_total';
 inputs$sampres = 'species';
-inputs$ws_ftype = c('nhd_huc10'); #nhd_huc10
-inputs$target_hydrocode = '0601010703'; #0601010207, 0513020404, 0601010703
+inputs$ws_ftype = c('nhd_huc8'); #nhd_huc10
+inputs$target_hydrocode = 'nhd_huc8_02080201'; #0601010207, 0513020404, 0601010703
 inputs$quantile = .80;
 inputs$send_to_rest = "NO";
-inputs$glo = 0;
-inputs$ghi = 15000;
+inputs$glo = 350;
+inputs$ghi = 500;
 inputs$method = "quantreg"; #quantreg, pwit, ymax, pwit_RS, twopoint
 inputs$dataset_tag = 'jk-test';
 inputs$ghi_var = 'qmean_annual'
