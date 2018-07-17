@@ -38,6 +38,9 @@ source(paste(fxn_locations,"elf_pct_chg.R", sep = ""));
 source(paste(fxn_locations,"elf_store_data.R", sep = ""));
 source(paste(base_directory,"Analysis/query_elf_statistics.R", sep = "/")); 
 #####
+
+use_icthy_data <- 'NO' #Toggle "YES" to ulitize icthy dataset, otherwise "NO" to use EDAS 
+
 # Now add custom local settings here
 inputs$x_metric = c(
 #  'nhdp_drainage_sqmi',
@@ -58,12 +61,12 @@ inputs$x_metric = c(
 
 inputs$y_metric = 'aqbio_nt_total';
 inputs$sampres = 'species';
-inputs$ws_ftype = c('hwi_region');
-inputs$target_hydrocode = '';
+inputs$ws_ftype = c('nhd_huc10');
+inputs$target_hydrocode = '0208020112';
 inputs$quantile = .80;
 inputs$send_to_rest = "NO";
 inputs$glo = 0;
-inputs$ghi = 100;
+inputs$ghi = 530;
 inputs$method = "quantreg"; #quantreg, pwit, ymax, pwit_RS, twopoint
 inputs$dataset_tag = 'jk-test';
 inputs$ghi_var = 'qmean_annual'
@@ -102,12 +105,22 @@ for (row in batch_start:batch_end) {
     }
   }
   print(paste("Record ", row, " out of ", batch_len, " = ", tin$target_hydrocode, " (targetting records ", batch_start, " to ", batch_end, ")",sep=''))
+  
+  
   # get the raw data
-  mydata <- vahydro_fe_data(
-    Watershed_Hydrocode = tin$target_hydrocode, x_metric_code = tin$x_metric, 
-    y_metric_code = tin$y_metric, bundle = tin$bundle,  
-    ws_ftype_code = tin$ws_ftype, sampres = tin$sampres, datasite = datasite
-  );
+  if (use_icthy_data == 'YES') {
+      mydata <- vahydro_fe_data_icthy(
+        Watershed_Hydrocode = tin$target_hydrocode, x_metric_code = tin$x_metric, 
+        y_metric_code = tin$y_metric, bundle = tin$bundle,  
+        ws_ftype_code = tin$ws_ftype, sampres = tin$sampres, datasite = datasite
+      );
+  }else{ 
+      mydata <- vahydro_fe_data(
+        Watershed_Hydrocode = tin$target_hydrocode, x_metric_code = tin$x_metric, 
+        y_metric_code = tin$y_metric, bundle = tin$bundle,  
+        ws_ftype_code = tin$ws_ftype, sampres = tin$sampres, datasite = datasite
+      );
+  }
   
   #note: add a 0 for the HUC6/HUC10's or else rest feature retrieval doesnt work 
   if (inputs$ws_ftype == 'nhd_huc6') {
