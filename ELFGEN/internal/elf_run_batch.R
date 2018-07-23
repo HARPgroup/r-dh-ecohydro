@@ -61,12 +61,19 @@ inputs$x_metric = c(
 
 inputs$y_metric = 'aqbio_nt_total';
 inputs$sampres = 'species';
-inputs$ws_ftype = c('nhd_huc10');
-inputs$target_hydrocode = '0208020112';
+inputs$ws_ftype = c('nhd_huc8');
+inputs$target_hydrocode = 'nhd_huc8_02080201';
+
+#'nhd_huc8_02080201' Uppe James
+#'0208020103' Dunlap Creek
+#'0208020112' Lower Craig Creek
+#'0207000603'
+#'0208010608'
+
 inputs$quantile = .80;
 inputs$send_to_rest = "NO";
 inputs$glo = 0;
-inputs$ghi = 530;
+inputs$ghi = 408;
 inputs$method = "quantreg"; #quantreg, pwit, ymax, pwit_RS, twopoint
 inputs$dataset_tag = 'jk-test';
 inputs$ghi_var = 'qmean_annual'
