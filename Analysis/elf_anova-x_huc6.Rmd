@@ -56,7 +56,8 @@ for(i in erom_vars) {
   qq = quantile(dset$out_rsq_adj)
   
   # could also do
-  ttq = t.test(dad$out_rsq_adj, dset$out_rsq_adj)
+  #ttq = t.test(dad$out_rsq_adj, dset$out_rsq_adj)
+  ttq = wilcox.test(dad$out_rsq_adj, dset$out_rsq_adj)
   
   daq = subset(anova_data, in_xvar == 'nhdp_drainage_sqmi' | in_xvar == 'erom_q0001e_mean')
 

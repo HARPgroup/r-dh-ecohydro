@@ -15,7 +15,6 @@ source(paste(base_directory,"Analysis/query_elf_statistics.R", sep = "/"));
 source(paste(base_directory,"Analysis/plot_elf_statistics.R", sep = "/")); 
 base_url <- 'http://deq2.bse.vt.edu/d.dh'
 
-
 # this is BS - save_directory should be fixed
 save_directory = paste(file_directory,"/",sep='');
 
@@ -56,8 +55,9 @@ batch <- rbind(
 )
 
 ss = elf_monthly_batch_summary(batch)
+crit_label =  paste('p<', pmax, ',R>', Rmin,sep='')
 
 ```{r, echo=FALSE,warning=FALSE,message=FALSE,error=FALSE}
-pander(ss, table.split.table=Inf);
+pander(ss, caption = crit_label, table.split.table=Inf);
 
 ```

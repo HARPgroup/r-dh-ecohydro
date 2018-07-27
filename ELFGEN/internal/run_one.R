@@ -35,18 +35,18 @@ token <- rest_token(site, token, rest_uname, rest_pw);
 # Load Default inputs
 source(paste(fxn_locations,"elf_default_inputs.R", sep = ""));
 #####
-inputs$x_metric = 'erom_q0001e_aug'; #Flow metric to be plotted on the x-axis
-inputs$y_metric = 'aqbio_nt_minnow';
-inputs$ws_ftype = c('nhd_huc8');
+inputs$x_metric = 'erom_q0001e_mean'; #Flow metric to be plotted on the x-axis
+inputs$y_metric = 'aqbio_nt_total';
+inputs$ws_ftype = c('nhd_huc10');
 inputs$bundle = 'watershed';
-inputs$target_hydrocode = '0207001006';
-inputs$quantile = .80;
+inputs$target_hydrocode = '0208020103';
+inputs$quantile = 0.50;
 inputs$send_to_rest = "NO";
 inputs$sampres = 'species';
 inputs$glo = 1;
-inputs$ghi = 100;
-inputs$method = "pwit"; #quantreg, pwit, ymax, twopoint, pwit_RS
-inputs$dataset_tag = 'ymax';
+inputs$ghi = 530;
+inputs$method = "quantreg"; #quantreg, pwit, ymax, twopoint, pwit_RS
+inputs$dataset_tag = 'bpj-530';
 inputs$token = token;
 
 
@@ -79,7 +79,7 @@ elf_quantreg(
  inputs, data, x_metric_code = inputs$x_metric, 
  y_metric_code = inputs$y_metric, 
  ws_ftype_code = NULL, 
- Feature.Name_code = 'Virginia', 
+ Feature.Name_code = inputs$target_hydrocode, 
  Hydroid_code = inputs$target_hydrocode, 
  search_code = NULL, token, 
  min(data$tstime), max(data$tstime), geom=feature$geom

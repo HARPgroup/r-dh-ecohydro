@@ -14,13 +14,17 @@ source(paste(hydro_tools,"VAHydro-2.0/rest_functions.R", sep = "/"));
 source(paste(fxn_locations,"elf_assemble_batch.R", sep = ""));
 
 bundle <- 'watershed'; # ecoregion, watershed, landunit
-ftype <- 'nhd_huc6'; # state, hwi_region, nhd_huc8, nhd_huc6, ecoregion_iii, ecoregion_iv, ecoiii_huc6
-metric <- 'aqbio_nt_minnow';
+#ftype <- 'nhd_huc6'; # state, hwi_region, nhd_huc8, nhd_huc6, ecoregion_iii, ecoregion_iv, ecoiii_huc6
+metric <- 'aqbio_nt_total';
+#ftype <- 'nhd_huc10';
 #selected <- '0301010104';
+#selected <- '0601020501';
+ftype <- 'nhd_huc8';
+selected <- 'nhd_huc8_06010205';
+#ftype <- 'nhd_huc6'; 
 #selected <- '030101';
 #selected <- '020801';
-selected <- '060102';
-#selected <- 'nhd_huc8_06010205';
+#selected <- '060102';
 #selected <- 'all';
 sampres = 'species';
 quantile <- 0.8;
@@ -50,10 +54,13 @@ upper.quant <- subset(dme, dme$metric_value > newy)
 fit1 <- lm(metric_value ~ log(da_sqmi), data = upper.quant)
 summary(fit1);
 
+fit1.1 <- lm(metric_value ~ log(annual), data = upper.quant)
+summary(fit1.1);
+
 fit2 <- lm(metric_value ~ log(da_sqmi) + log(annual), data = upper.quant)
 summary(fit2);
 
-fit3 <- lm(metric_value ~ log(da_sqmi) + log(jun) + log(jul), data = upper.quant)
+fit3 <- lm(metric_value ~ log(da_sqmi) + log(jul), data = upper.quant, na.rm = TRUE)
 summary(fit3);
 
 fit2norm <- lm(metric_value ~ log(da_sqmi) + qnorm, data = upper.quant)

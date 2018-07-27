@@ -14,6 +14,7 @@ elf_quantile_table <- function (data) {
     "50%" =  numeric(), 
     "75%" =  numeric(), 
     "100%" =  numeric(), 
+    "n" = integer(),
     stringsAsFactors = FALSE
   ) ;
   for(i in erom_vars) {
@@ -27,11 +28,12 @@ elf_quantile_table <- function (data) {
         "25%" = as.numeric(qq["25%"]), 
         "50%" = as.numeric(qq["50%"]), 
         "75%" = as.numeric(qq["75%"]), 
-        "100%" = as.numeric(qq["100%"])
+        "100%" = as.numeric(qq["100%"]), 
+        "n" = as.integer(length(dset$out_rsq_adj))
       )
     )
   }
-  names(ss) <- c("x-Variable", "0%", "25%", "50%", "75%", "100%")
+  names(ss) <- c("x-Variable", "0%", "25%", "50%", "75%", "100%", "n")
   return(ss)
 }
 
@@ -55,16 +57,117 @@ erom_var_readable <- function(varname) {
   return(lookers[varname])
 }
 
-
+elf_monthly_summary <- function (
+  data, mmin = 0.0, pmin = 0.01, Rmin = 0.0, pmethod = 'text') {
+  
+  # filter our data?
+  data = rawdata; # make a copy to start so we can compare raw to filtered if desired
+  tot <- nrow(subset(data, in_xvar == 'nhdp_drainage_sqmi'))
+  #data = subset(data, out_n >= 20)
+  data = subset(data, out_m > mmin)
+  data = subset(data, out_p < pmax); # 
+  data = subset(data, out_rsq_adj > Rmin)
+  #***********************
+  # BEGIN - Intersections
+  #***********************
+  # Choose One or NONE of the Two Intersections
+  # only show watersheds in all sets
+  #data = subset(data,containing_hydrocode %in% erom_monthly_intersect(data))
+  # OR only show watersheds in all sets
+  #data = subset(data,containing_hydrocode %in% erom_daq_intersect(data))
+  #***********************
+  # END - Intersections
+  #***********************
+  mtch <- nrow(subset(data, in_xvar == 'nhdp_drainage_sqmi'))
+  if (mtch > 0) {
+    #data = subset(data, isheadwater > 0)
+    # render it
+    ymin = 0.0; # restrain plot
+    crit_label =  paste('p<', pmax, ',R>', Rmin,sep='')
+    labeltext = paste(q_ftype, ":", dataset_tag, '\n', ' (', crit_label, mtch, ' of ', tot,' )',sep='')
+    plot_monthly(data, labeltext, xmetric = 'out_rsq_adj', ymetric = metric, ymin=ymin, title = title);
+    mmax = ceiling(max(data$out_m))
+    #plot_monthly(data, labeltext, xmetric = 'out_m', ymetric = metric, ymin=0, ymax=mmax);
+    plot_monthly_count (data, subname = dataset_tag, xmetric = "out_rsq_adj", 
+                        ymin = 0.0, ymax = 1.0)
+    
+    # Show variation in slope
+    ymin = 0.0; # restrain plot
+    labeltext = paste(q_ftype, ":", dataset_tag, '\n', ' ( p<', pmax, 'R>', Rmin, ' ', mtch, ' of ', tot,' )',sep='')
+    mmax = ceiling(max(data$out_m))
+    #  plot_monthly(data, labeltext, xmetric = 'out_m', ymetric = metric, ymin=ymin, ymax=mmax);
+    
+    #plot_monthly(data, labeltext, xmetric = 'out_m', ymetric = metric, ymin=0, ymax=mmax);
+    
+    # add to summary table
+    meds <- aggregate(out_rsq_adj ~ in_xvar, data = data, median)
+    mmx = meds[which.max(meds$out_rsq_adj),];
+    mmxvar = mmx$in_xvar;
+    ps = 'n/a';
+    ps25 = 'n/a';
+    if (mmxvar != 'nhdp_drainage_sqmi') {
+      daq = subset(
+        data, 
+        in_xvar == 'nhdp_drainage_sqmi' | in_xvar == mmxvar
+      )
+      fit <- aov(out_rsq_adj ~ in_xvar, data=daq)
+      sfit = summary(fit) 
+      usfit = unlist(sfit)
+      p = as.numeric(usfit["Pr(>F)1"])
+      ps = elf_format_p(p, meth = pmethod)
+    }
+    # ****************************************
+    # ** Analyze x with best 25th percentile
+    # ** disabled since the aggregate call fails now?
+    # ****************************************
+    # Error is:
+    # Error in get(as.character(FUN), mode = "function", envir = envir) : 
+    # object 'FUN' of mode 'function' was not found
+    #quants <- aggregate(out_rsq_adj ~ in_xvar, data = data, quantile)
+    #q25mx = quants[which.max(quants$out_rsq_adj[,"25%"]),]
+    #q25mxvar = q25mx$in_xvar;
+    #if (q25mxvar != 'nhdp_drainage_sqmi' & FALSE) {
+    #  daq = subset(
+    #    data, 
+    #    in_xvar == 'nhdp_drainage_sqmi' | in_xvar == q25mxvar
+    #  )
+    #  fit <- aov(out_rsq_adj ~ in_xvar, data=daq)
+    #  sfit = summary(fit) 
+    #  usfit = unlist(sfit)
+    #  p = as.numeric(usfit["Pr(>F)1"])
+    #  ps25 = elf_format_p(p, meth = pmethod)
+    #}
+    # ****************************************
+    # ** END -- Analyze x with best 25th percentile
+    # ****************************************
+    sline <- data.frame(
+      "Biometric" = metric, 
+      'Med R(all/DA/Qmean)' = 
+        paste(
+          round(median(data$out_rsq_adj),2), 
+          round(median(subset(data, in_xvar == 'nhdp_drainage_sqmi')$out_rsq_adj),2),
+          round(median(subset(data, in_xvar == 'erom_q0001e_mean')$out_rsq_adj),2),
+          sep="/"
+        ),
+      "Best" = paste(erom_var_readable(as.character(mmxvar)), round(mmx$out_rsq_adj,2),ps,sep=':'),
+      #   "L25" = paste(erom_var_readable(as.character(q25mxvar)), round(q25mx$out_rsq_adj[,"25%"],2),ps25,sep=':'),
+      "Count (DA)" = mtch, 
+      stringsAsFactors = FALSE
+    );
+  }
+  return (sline)
+}
+  
+  
 elf_monthly_batch_summary <- function (
-  batch, mmin = 0.0, pmin = 0.01, Rmin = 0.0) {
+  batch, mmin = 0.0, pmin = 0.01, Rmin = 0.0, pmethod = 'text') {
   # Summary Stats
   ss = data.frame(
     "Biometric" = character(), 
     'Med R(all/DA/Qmean)' =  numeric(),  
     "Best" = character(), 
+   # "L25" = character(), 
     "Count" = character(), 
-    "Criteria" = character(), 
     stringsAsFactors = FALSE) ;
   
   for (row in 1:nrow(batch)) {
@@ -105,7 +208,7 @@ elf_monthly_batch_summary <- function (
       #data = subset(data, isheadwater > 0)
       # render it
       ymin = 0.0; # restrain plot
-      crit_label =  paste('p<', pmax, 'R>', Rmin,sep='')
+      crit_label =  paste('p<', pmax, ',R>', Rmin,sep='')
       labeltext = paste(q_ftype, ":", dataset_tag, '\n', ' (', crit_label, mtch, ' of ', tot,' )',sep='')
       plot_monthly(data, labeltext, xmetric = 'out_rsq_adj', ymetric = metric, ymin=ymin, title = title);
       mmax = ceiling(max(data$out_m))
@@ -124,6 +227,44 @@ elf_monthly_batch_summary <- function (
       # add to summary table
       meds <- aggregate(out_rsq_adj ~ in_xvar, data = data, median)
       mmx = meds[which.max(meds$out_rsq_adj),];
+      mmxvar = mmx$in_xvar;
+      ps = 'n/a';
+      ps25 = 'n/a';
+      if (mmxvar != 'nhdp_drainage_sqmi') {
+        daq = subset(
+          data, 
+          in_xvar == 'nhdp_drainage_sqmi' | in_xvar == mmxvar
+        )
+        fit <- aov(out_rsq_adj ~ in_xvar, data=daq)
+        sfit = summary(fit) 
+        usfit = unlist(sfit)
+        p = as.numeric(usfit["Pr(>F)1"])
+        ps = elf_format_p(p, meth = pmethod)
+      }
+      # ****************************************
+      # ** Analyze x with best 25th percentile
+      # ** disabled since the aggregate call fails now?
+      # ****************************************
+      # Error is:
+      # Error in get(as.character(FUN), mode = "function", envir = envir) : 
+      # object 'FUN' of mode 'function' was not found
+      #quants <- aggregate(out_rsq_adj ~ in_xvar, data = data, quantile)
+      #q25mx = quants[which.max(quants$out_rsq_adj[,"25%"]),]
+      #q25mxvar = q25mx$in_xvar;
+      #if (q25mxvar != 'nhdp_drainage_sqmi' & FALSE) {
+      #  daq = subset(
+      #    data, 
+      #    in_xvar == 'nhdp_drainage_sqmi' | in_xvar == q25mxvar
+      #  )
+      #  fit <- aov(out_rsq_adj ~ in_xvar, data=daq)
+      #  sfit = summary(fit) 
+      #  usfit = unlist(sfit)
+      #  p = as.numeric(usfit["Pr(>F)1"])
+      #  ps25 = elf_format_p(p, meth = pmethod)
+      #}
+      # ****************************************
+      # ** END -- Analyze x with best 25th percentile
+      # ****************************************
       ss <- rbind(
         ss, 
         data.frame(
@@ -135,16 +276,44 @@ elf_monthly_batch_summary <- function (
               round(median(subset(data, in_xvar == 'erom_q0001e_mean')$out_rsq_adj),2),
               sep="/"
             ),
-          "Best" = paste(erom_var_readable(as.character(mmx$in_xvar)), round(mmx$out_rsq_adj,2),sep=':'),
+          "Best" = paste(erom_var_readable(as.character(mmxvar)), round(mmx$out_rsq_adj,2),ps,sep=':'),
+       #   "L25" = paste(erom_var_readable(as.character(q25mxvar)), round(q25mx$out_rsq_adj[,"25%"],2),ps25,sep=':'),
           "Count (DA)" = mtch, 
-          "Criteria" = crit_label, 
           stringsAsFactors = FALSE)
       );
     }
     
   }
-  names(ss) <- c("Biometric",'Med R(all/DA/Qmean)','Best',"Count","Criteria");
+  #names(ss) <- c("Biometric",'Med R(all/DA/Qmean)','Best', ">L25%","Count");
+  names(ss) <- c("Biometric",'Med R(all/DA/Qmean)','Best', "Count");
   return (ss)
+}
+
+elf_format_p <- function(p, meth = 'text', digits = 3) {
+  ps = 'ns'
+  if (p <= 0.15) {
+    ps = '.'
+  }
+  if (p <= 0.1) {
+    ps = '..'
+  }
+  if (p <= 0.05) {
+    ps = '*'
+  }
+  if (p <= 0.01) {
+    ps = '**'
+  }
+  if (p <= 0.001) {
+    ps = '***'
+  }
+  if (meth == 'numeric') {
+    ps = round(p, digits)
+    if ((ps == 0) & (p > ps)) {
+      # give a < 0.00 to digits result
+      ps = paste(str_pad("<0.", 3 + (digits - 1), side = "right", pad = "0"), "1", sep='')
+    }
+  }
+  return(ps)
 }
 
 plot_monthly <- function (
