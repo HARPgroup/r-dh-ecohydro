@@ -1,0 +1,10 @@
+method,dataset_tag,x_metric,y_metric,target_hydrocode,ghi,glo,ws_ftype
+quantreg,RegDiag_BPJ530,erom_q0001e_mean,aqbio_nt_total,208020604,,,nhd_huc10
+quantreg,RegDiag_BPJ530,erom_q0001e_mean,aqbio_nt_total,207001004,,,nhd_huc10
+quantreg,RegDiag_BPJ530,erom_q0001e_mean,aqbio_nt_total,601010203,,,nhd_huc10
+quantreg,RegDiag_BPJ530,erom_q0001e_mean,aqbio_nt_total,208020602,,,nhd_huc10
+quantreg,RegDiag_BPJ530,erom_q0001e_mean,aqbio_nt_total,301010103,,,nhd_huc10
+quantreg,RegDiag_BPJ530,erom_q0001e_mean,aqbio_nt_total,208020305,,,nhd_huc10
+quantreg,RegDiag_BPJ530,erom_q0001e_mean,aqbio_nt_total,208010301,,,nhd_huc10
+quantreg,RegDiag_BPJ530,erom_q0001e_mean,aqbio_nt_total,208010201,,,nhd_huc10
+quantreg,RegDiag_BPJ530,erom_q0001e_mean,aqbio_nt_total,207000409,,,nhd_huc10
