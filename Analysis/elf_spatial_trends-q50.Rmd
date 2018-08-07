@@ -17,7 +17,7 @@ save_directory = paste(file_directory,"/",sep='');
 yvar = 'aqbio_nt_total';#aqbio_nt_total, aqbio_nt_cent, aqbio_nt_darter, aqbio_nt_benins, aqbio_nt_minnow, aqbio_nt_cypr_native
 xvar = 'erom_q0001e_mean';
 graphtitle = "Total # of Taxa, Fish"
-quant = 0.8
+quant = 0.5
 pmin <- 0.01
 pmin10 <- 0.01
 Rmin <- 0.0
@@ -30,7 +30,7 @@ huc6_rawdata =
   fn_dh_elfstats ( ftype = 'fe_elf', 
   site = base_url, analysis_timespan = "full", yvar = yvar,
   sampres = "species", stat_quantreg_qu = quant, feature_ftype = 'nhd_huc6', stat_quantreg_ghi = 'all', 
-  stat_quantreg_glo = 'all', dataset_tag = 'bpj-huc6-rcc'
+  stat_quantreg_glo = 'all', dataset_tag = 'bpj-q50'
 );
 
 huc6_xvar_data = huc6_rawdata;
@@ -43,10 +43,10 @@ huc6_xvar_data$resolution = 'huc6'
 alldata = huc6_xvar_data
 
 huc8_rawdata = 
-  fn_dh_elfstats ( ftype = 'fe_quantreg', 
+  fn_dh_elfstats ( ftype = 'fe_elf', 
     site = base_url, analysis_timespan = "full", yvar = yvar,
     sampres = "species", stat_quantreg_qu = quant, feature_ftype = 'nhd_huc8', stat_quantreg_ghi = 'all', 
-    stat_quantreg_glo = 'all', dataset_tag = 'bpj-rcc'
+    stat_quantreg_glo = 'all', dataset_tag = 'bpj-q50'
   );
 huc8_xvar_data = huc8_rawdata;
 huc8_xvar_data = subset(huc8_xvar_data, out_m > mmin)
@@ -64,8 +64,8 @@ alldata <- rbind(alldata, huc8_xvar_data)
 #fit8 <- aov(out_rsq_adj ~ in_xvar, data=huc8_anova_data)
 #summary(fit8)
 
-huc10quant = 0.8; #use 0.8 for bpj-530, 0.5 for bpj-q50
-huc10_tag = 'bpj-530'
+huc10quant = 0.5; #use 0.8 for bpj-530, 0.5 for bpj-q50
+huc10_tag = 'bpj-q50'
 huc10_rawdata = 
   fn_dh_elfstats ( ftype = 'fe_elf',
     site = base_url, analysis_timespan = "full", yvar = yvar,
@@ -81,26 +81,12 @@ huc10_xvar_data = subset(huc10_xvar_data, in_xvar == xvar)
 huc10_xvar_data$resolution = 'huc10'
 alldata <- rbind(alldata, huc10_xvar_data)
 
-ecoiii_rawdata = 
-  fn_dh_elfstats ( ftype = 'fe_quantreg',
-    site = base_url, analysis_timespan = "full", yvar = yvar,
-    sampres = "species", stat_quantreg_qu = quant, feature_ftype = 'ecoregion_iii', stat_quantreg_ghi = 'all',
-    stat_quantreg_glo = 'all', dataset_tag = 'bpj-530'
-  );
-ecoiii_xvar_data = ecoiii_rawdata;
-ecoiii_xvar_data = subset(ecoiii_xvar_data, out_m > mmin)
-ecoiii_xvar_data = subset(ecoiii_xvar_data, out_rsq_adj > Rmin)
-ecoiii_xvar_data = subset(ecoiii_xvar_data, out_p <= pmin)
-ecoiii_xvar_data = subset(ecoiii_xvar_data, in_xvar == xvar)
-sseco <- elf_quantile_table(data = ecoiii_xvar_data)
-
 ```
 Automated routines were used to detect Ecological Limit Functions (ELF) as a variety of spatial scales including Omernik Eco-Region iii, the NHD HUC 6, HUC 8, and HUC 10.  The characteristics of the ELF were estimated by the upper 20% quantile of the data set described by y = f(ln(x)), where y was a number of taxa metric, and x was drainage area, mean annual flow, or mean monthly flow as estmated by the EROM model.  Because the datasets demonstrated an increasing NT as watershed area increased up to a certain point (refered to here as the "RCC Breakpoint"), then leveled off or began to decrease, it was important to restrict analysis of data to the left side of this breakpoint.  Initially, the breakpoint selected  was by inspection of a scatterplot of the entire multi-state dataset, resulting in 530 square miles.  Upon reviewing HUC6 data, however, it became clear that there were different RCC breakpoints evident in the different river basins.
 
 
 ```{r, echo=FALSE}
-noms <- c('Eco iii', 'HUC6', 'HUC8', 'HUC10')
-#noms <- c('HUC6', 'HUC8', 'HUC10')
+noms <- c('HUC6', 'HUC8', 'HUC10')
 
 # Plots all, without regard for p-value
 #boxplot(
@@ -112,7 +98,6 @@ noms <- c('Eco iii', 'HUC6', 'HUC8', 'HUC10')
 #    main = 'Spatial Resolution Rsq (all p)'
 #  );
 boxplot(
-    ecoiii_xvar_data$out_rsq_adj, 
     huc6_xvar_data$out_rsq_adj, 
     huc8_xvar_data$out_rsq_adj, 
     huc10_xvar_data$out_rsq_adj,
@@ -124,7 +109,6 @@ boxplot(
 
 
 boxplot(
-    ecoiii_xvar_data$out_m, 
     huc6_xvar_data$out_m, 
     huc8_xvar_data$out_m, 
     huc10_xvar_data$out_m,
@@ -135,7 +119,6 @@ boxplot(
   );
 
 boxplot(
-    ecoiii_xvar_data$out_n,
     huc6_xvar_data$out_n, 
     huc8_xvar_data$out_n, 
     huc10_xvar_data$out_n,
@@ -147,7 +130,6 @@ quantile( huc10_xvar_data$out_n)
 
 barplot(
     c(
-      length(ecoiii_xvar_data$out_n), 
       length(huc6_xvar_data$out_n), 
       length(huc8_xvar_data$out_n), 
       length(huc10_xvar_data$out_n)
@@ -177,13 +159,12 @@ maov6ten = summary(fitm6ten)
 ```{r, echo=FALSE,warning=FALSE,message=FALSE,error=FALSE}
 #pander(ss, table.split.table=Inf);
 
-pander(ss6, table.split.table=Inf, caption='huc 6')
-pander(ss8, table.split.table=Inf, caption='huc 8')
-pander(ss10, table.split.table=Inf, caption='huc 10')
+pander(ss6, table.split.table=Inf, caption='huc 6 R')
+pander(ss8, table.split.table=Inf, caption='huc 8 R')
+pander(ss10, table.split.table=Inf, caption='huc 10 R')
 pander(quantile(huc6_xvar_data$out_m), table.split.table=Inf, caption='huc 6 m')
 pander(quantile(huc8_xvar_data$out_m), table.split.table=Inf, caption='huc 8 m')
 pander(quantile(huc10_xvar_data$out_m), table.split.table=Inf, caption='huc 10 m')
-pander(sseco, table.split.table=Inf, caption='Ecoregion iii')
 pander(ssaov, table.split.table=Inf, caption='Comparison of R2 for Different Watershed Sizes')
 pander(maov, table.split.table=Inf, caption='Comparison of m for Different Watershed Sizes')
 
