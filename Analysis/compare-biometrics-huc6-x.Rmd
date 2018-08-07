@@ -42,31 +42,31 @@ batch <- data.frame(
 # darter
 batch <- rbind(
   batch, data.frame(
-    bundle = 'watershed', ftype = 'nhd_huc6', dataset_tag = 'bpj-huc6-rcc', q_ftype = 'fe_elf', metric = 'aqbio_nt_darter', title = "HUC8 - # of Taxa Darters")
+    bundle = 'watershed', ftype = 'nhd_huc6', dataset_tag = 'bpj-huc6-rcc', q_ftype = 'fe_elf', metric = 'aqbio_nt_darter', title = "HUC6 - # of Taxa Darters")
 )
 
 # bpj-rcc
 batch <- rbind(
   batch, data.frame(
-    bundle = 'watershed', ftype = 'nhd_huc6', dataset_tag = 'bpj-huc6-rcc', q_ftype = 'fe_elf', metric = 'aqbio_nt_minnow', title = "HUC8 - # of Taxa True Minnows")
+    bundle = 'watershed', ftype = 'nhd_huc6', dataset_tag = 'bpj-huc6-rcc', q_ftype = 'fe_elf', metric = 'aqbio_nt_minnow', title = "HUC6 - # of Taxa True Minnows")
 )
 
 # Using 75% value from ymax analysis of all HUC8s
 batch <- rbind(
   batch, data.frame(
-    bundle = 'watershed', ftype = 'nhd_huc6', dataset_tag = 'bpj-huc6-rcc', q_ftype = 'fe_elf', metric = 'aqbio_nt_cent', title = "HUC8 - # of Taxa Centrarchids")
+    bundle = 'watershed', ftype = 'nhd_huc6', dataset_tag = 'bpj-huc6-rcc', q_ftype = 'fe_elf', metric = 'aqbio_nt_cent', title = "HUC6 - # of Taxa Centrarchids")
 )
 
 # Using 75% value from ymax analysis of all HUC8s
 batch <- rbind(
   batch, data.frame(
-    bundle = 'watershed', ftype = 'nhd_huc6', dataset_tag = 'bpj-huc6-rcc', q_ftype = 'fe_elf', metric = 'aqbio_nt_benins', title = "HUC8 - # of Taxa Benthic Insectivores")
+    bundle = 'watershed', ftype = 'nhd_huc6', dataset_tag = 'bpj-huc6-rcc', q_ftype = 'fe_elf', metric = 'aqbio_nt_benins', title = "HUC6 - # of Taxa Benthic Insectivores")
 )
 
 # Using 75% value from ymax analysis of all HUC8s
 batch <- rbind(
   batch, data.frame(
-    bundle = 'watershed', ftype = 'nhd_huc6', dataset_tag = 'bpj-huc6-rcc', q_ftype = 'fe_elf', metric = 'aqbio_nt_cypr_native', title = "HUC8 - # of Taxa Native Cyprinidae")
+    bundle = 'watershed', ftype = 'nhd_huc6', dataset_tag = 'bpj-huc6-rcc', q_ftype = 'fe_elf', metric = 'aqbio_nt_cypr_native', title = "HUC6 - # of Taxa Native Cyprinidae")
 )
 
 # plots box-whisker and bar charts of R2 for each month/flow/da, returns summary

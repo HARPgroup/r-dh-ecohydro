@@ -35,19 +35,25 @@ save_directory = paste(file_directory,"/",sep='');
 
 # recreation of BPJ-rcc with all Drainage area?
 batch <- data.frame(
-    bundle = 'watershed', ftype = 'nhd_huc8', dataset_tag = 'bpj-530', q_ftype = 'fe_quantreg', metric = 'aqbio_nt_total')
+    bundle = 'watershed', ftype = 'nhd_huc8', dataset_tag = 'bpj-530', q_ftype = 'fe_quantreg', metric = 'aqbio_nt_total', title = "Low Supervision")
 
 
 # Using 75% value from ymax analysis of all HUC8s
 batch <- rbind(
   batch, data.frame(
-    bundle = 'watershed', ftype = 'nhd_huc8', dataset_tag = 'bpj-rcc', q_ftype = 'fe_quantreg', metric = 'aqbio_nt_total')
+    bundle = 'watershed', ftype = 'nhd_huc8', dataset_tag = 'bpj-rcc', q_ftype = 'fe_quantreg', metric = 'aqbio_nt_total', title = "Medium Supervision")
 )
 
 # Using 75% value from ymax analysis of all HUC8s
 batch <- rbind(
   batch, data.frame(
-    bundle = 'watershed', ftype = 'nhd_huc8', dataset_tag = 'bpj-huc6bp-rcc', q_ftype = 'fe_elf', metric = 'aqbio_nt_total')
+    bundle = 'watershed', ftype = 'nhd_huc8', dataset_tag = 'bpj-huc6bp-rcc', q_ftype = 'fe_elf', metric = 'aqbio_nt_total', title = "High Supervision")
+)
+
+# No breakpoint (more or less, uses 10,000 as ghi)
+batch <- rbind(
+  batch, data.frame(
+    bundle = 'watershed', ftype = 'nhd_huc8', dataset_tag = 'bpj-10k', q_ftype = 'fe_elf', metric = 'aqbio_nt_total', title = "No Supervision")
 )
 
 # plots box-whisker and bar charts of R2 for each month/flow/da, returns summary
