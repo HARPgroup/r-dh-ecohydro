@@ -5,7 +5,7 @@ basepath='C:/Users/nrf46657/Desktop/VAHydro Development/GitHub/r-dh-ecohydro/';
 source(paste(basepath,'config.local.private',sep='/'));
 
 #RETRIEVE HABITAT DATA
-pctchg <- "10"
+pctchg <- "50"
 
 all_sites <- read.csv(paste(basepath,"Analysis/habitat/pctchg_datasets/all_flows/IFIM_SITES_",pctchg,"%Reduction.csv",sep=""))
 #all_sites <- read.csv(paste(basepath,"Analysis/habitat/pctchg_datasets/tenth_percentile_flow_and_below/IFIM_SITES_",pctchg,"%Reduction.csv",sep=""))
@@ -260,12 +260,10 @@ if (month == "Oct"){plot_name  <- paste("10-",plot_name,sep="")}
 if (month == "Nov"){plot_name  <- paste("11-",plot_name,sep="")}
 if (month == "Dec"){plot_name  <- paste("12-",plot_name,sep="")}
 
-} #end for loop
-
-
-# tiff(filename=paste(save_directory,"\\",plot_name,"_",pctchg,".tiff",sep=""),
-#     width = 1500, 
-#     height = 750)
+ 
+tiff(filename=paste(save_directory,"\\",plot_name,"_",pctchg,".tiff",sep=""),
+    width = 1500, 
+    height = 750)
 
 # boxplot(month_data$pctchg ~ month_data$ifim_da_sqmi, 
 #         at = sort(unique(month_data$ifim_da_sqmi)), 
@@ -312,182 +310,18 @@ if (month == "Dec"){plot_name  <- paste("12-",plot_name,sep="")}
 # site_subset <- rbind(site_subset, all_sites[which(all_sites$ifim_site_name=="North Anna Piedmont"),])      
 # site_subset <- rbind(site_subset, all_sites[which(all_sites$ifim_site_name=="North Anna Fall Zone"),])  
 #(m(log((1)/(1-z))))/(m(log(x))+b)
+pctchg <- 50
 
+Dunlap                <- ((1.22*(log((1)/(1-(as.numeric(pctchg)/100)))))/(1.22*(log(193.252))+16.2))*100
+Craig                 <- ((1.22*(log((1)/(1-(as.numeric(pctchg)/100)))))/(1.22*(log(410.75))+16.2))*100
 
-
-################################################################################################################
-# RETRIEVE ELF SUBMITTALS WITH REST
-################################################################################################################
-site <- "http://deq2.bse.vt.edu/d.dh"    #Specify the site of interest, either d.bet OR d.dh
-hydro_tools <- 'C:\\Users\\nrf46657\\Desktop\\VAHydro Development\\GitHub\\hydro-tools\\' #location of hydro-tools repo
-#----------------------------------------------
-
-#Generate REST token for authentication              
-rest_uname = FALSE
-rest_pw = FALSE
-source(paste(hydro_tools,"auth.private", sep = "\\")); #load rest username and password, contained in auth.private file
-source(paste(hydro_tools,"VAHydro-2.0","rest_functions.R", sep = "\\")) #load REST functions
-token <- rest_token(site, token, rest_uname, rest_pw)
-
-
-
-
-
-base_url <- "http://deq2.bse.vt.edu/d.dh/"
-
-#Set location of "fn_dh_elfstats" function. Choose one below
-path <- "/Users/nrf46657/Desktop/VAHydro Development/GitHub/r-dh-ecohydro/Analysis/"
-#Set location of save path Choose one below
-save_directory <- "C:/Users/nrf46657/Desktop/VAHydro Development/GitHub/plots/"                    
-source(paste(path,"query_elf_statistics.R", sep = ""))
-
-# Dunlap.huc10.stats <- fn_dh_elfstats(feature_ftype = 'nhd_huc10', 
-#                             yvar = 'aqbio_nt_total', 
-#                             xvar = 'erom_q0001e_mean',
-#                             sampres = 'species',
-#                             dataset_tag = 'bpj-530',
-#                             featureid = Dunlap.huc10.hydroid)
-# 
-# 
-# Dunlap.huc10.stats <- fn_dh_elfstats(feature_ftype = 'nhd_huc10',yvar = 'aqbio_nt_total',xvar = 'erom_q0001e_mean',sampres = 'species',dataset_tag = 'bpj-530',featureid = Dunlap.huc10.hydroid)
-# 
-# 
-# 
-
-################################################################################################################
-# RETREIEVE IFIM SITE DH FEATURE AND ITS MAF AND DA PROPERTIES
-################################################################################################################
-Dunlap.site.inputs <- list(bundle = 'monitoringpoint',ftype = 'ifim_transect',hydrocode = 'ifim_uja_00',stringsAsFactors=FALSE) 
-Dunlap.site.dataframe <- getFeature(Dunlap.site.inputs, site, feature)
-Dunlap.site.hydroid <- as.character(Dunlap.site.dataframe$hydroid)
-#
-Dunlap.maf.inputs <-list(featureid = Dunlap.site.hydroid,varkey = 'erom_q0001e_mean',entity_type = 'dh_feature')
-Dunlap.maf.dataframe <- getProperty(Dunlap.maf.inputs, site, prop)
-Dunlap.erom_q0001e_mean <- as.numeric(as.character(Dunlap.maf.dataframe$propvalue))
-#
-Dunlap.da.inputs <-list(featureid = Dunlap.site.hydroid,varkey = 'nhdp_drainage_sqmi',entity_type = 'dh_feature')
-Dunlap.da.dataframe <- getProperty(Dunlap.da.inputs, site, prop)
-Dunlap.nhdp_drainage_sqmi <- as.numeric(as.character(Dunlap.da.dataframe$propvalue))
-#---------------------------------------------------------------------------------------------------------------
-PlainsMill.site.inputs <- list(bundle = 'monitoringpoint',ftype = 'ifim_transect',hydrocode = 'ifim_nfs_00',stringsAsFactors=FALSE) 
-PlainsMill.site.dataframe <- getFeature(PlainsMill.site.inputs, site, feature)
-PlainsMill.site.hydroid <- as.character(PlainsMill.site.dataframe$hydroid)
-#
-PlainsMill.maf.inputs <-list(featureid = PlainsMill.site.hydroid,varkey = 'erom_q0001e_mean',entity_type = 'dh_feature')
-PlainsMill.maf.dataframe <- getProperty(PlainsMill.maf.inputs, site, prop)
-PlainsMill.erom_q0001e_mean <- as.numeric(as.character(PlainsMill.maf.dataframe$propvalue))
-#
-PlainsMill.da.inputs <-list(featureid = PlainsMill.site.hydroid,varkey = 'nhdp_drainage_sqmi',entity_type = 'dh_feature')
-PlainsMill.da.dataframe <- getProperty(PlainsMill.da.inputs, site, prop)
-PlainsMill.nhdp_drainage_sqmi <- as.numeric(as.character(PlainsMill.da.dataframe$propvalue))
-#---------------------------------------------------------------------------------------------------------------
-NorthAnnaPiedmont.site.inputs <- list(bundle = 'monitoringpoint',ftype = 'ifim_transect',hydrocode = 'ifim_yor_00',stringsAsFactors=FALSE) 
-NorthAnnaPiedmont.site.dataframe <- getFeature(NorthAnnaPiedmont.site.inputs, site, feature)
-NorthAnnaPiedmont.site.hydroid <- as.character(NorthAnnaPiedmont.site.dataframe$hydroid)
-#
-NorthAnnaPiedmont.maf.inputs <-list(featureid = NorthAnnaPiedmont.site.hydroid,varkey = 'erom_q0001e_mean',entity_type = 'dh_feature')
-NorthAnnaPiedmont.maf.dataframe <- getProperty(NorthAnnaPiedmont.maf.inputs, site, prop)
-NorthAnnaPiedmont.erom_q0001e_mean <- as.numeric(as.character(NorthAnnaPiedmont.maf.dataframe$propvalue))
-#
-NorthAnnaPiedmont.da.inputs <-list(featureid = NorthAnnaPiedmont.site.hydroid,varkey = 'nhdp_drainage_sqmi',entity_type = 'dh_feature')
-NorthAnnaPiedmont.da.dataframe <- getProperty(NorthAnnaPiedmont.da.inputs, site, prop)
-NorthAnnaPiedmont.nhdp_drainage_sqmi <- as.numeric(as.character(NorthAnnaPiedmont.da.dataframe$propvalue))
-#---------------------------------------------------------------------------------------------------------------
-NorthAnnaFallZone.site.inputs <- list(bundle = 'monitoringpoint',ftype = 'ifim_transect',hydrocode = 'ifim_yor_01',stringsAsFactors=FALSE) 
-NorthAnnaFallZone.site.dataframe <- getFeature(NorthAnnaFallZone.site.inputs, site, feature)
-NorthAnnaFallZone.site.hydroid <- as.character(NorthAnnaFallZone.site.dataframe$hydroid)
-#
-NorthAnnaFallZone.maf.inputs <-list(featureid = NorthAnnaFallZone.site.hydroid,varkey = 'erom_q0001e_mean',entity_type = 'dh_feature')
-NorthAnnaFallZone.maf.dataframe <- getProperty(NorthAnnaFallZone.maf.inputs, site, prop)
-NorthAnnaFallZone.erom_q0001e_mean <- as.numeric(as.character(NorthAnnaFallZone.maf.dataframe$propvalue))
-#
-NorthAnnaFallZone.da.inputs <-list(featureid = NorthAnnaFallZone.site.hydroid,varkey = 'nhdp_drainage_sqmi',entity_type = 'dh_feature')
-NorthAnnaFallZone.da.dataframe <- getProperty(NorthAnnaFallZone.da.inputs, site, prop)
-NorthAnnaFallZone.nhdp_drainage_sqmi <- as.numeric(as.character(NorthAnnaFallZone.da.dataframe$propvalue))
-#---------------------------------------------------------------------------------------------------------------
-Craig.site.inputs <- list(bundle = 'monitoringpoint',ftype = 'ifim_transect',hydrocode = 'ifim_uja_01',stringsAsFactors=FALSE) 
-Craig.site.dataframe <- getFeature(Craig.site.inputs, site, feature)
-Craig.site.hydroid <- as.character(Craig.site.dataframe$hydroid)
-#
-Craig.maf.inputs <-list(featureid = Craig.site.hydroid,varkey = 'erom_q0001e_mean',entity_type = 'dh_feature')
-Craig.maf.dataframe <- getProperty(Craig.maf.inputs, site, prop)
-Craig.erom_q0001e_mean <- as.numeric(as.character(Craig.maf.dataframe$propvalue))
-#
-Craig.da.inputs <-list(featureid = Craig.site.hydroid,varkey = 'nhdp_drainage_sqmi',entity_type = 'dh_feature')
-Craig.da.dataframe <- getProperty(Craig.da.inputs, site, prop)
-Craig.nhdp_drainage_sqmi <- as.numeric(as.character(Craig.da.dataframe$propvalue))
-#---------------------------------------------------------------------------------------------------------------
-
-
-################################################################################################################
-# RETREIEVE ELF STAT SUBMITTALS
-################################################################################################################
-#xvar <- 'erom_q0001e_mean'
-xvar <- 'erom_q0001e_july'
-
-Dunlap.huc10.inputs <- list(bundle = 'watershed',ftype = 'nhd_huc10',hydrocode = '0208020103',stringsAsFactors=FALSE) 
-Dunlap.huc10.dataframe <- getFeature(Dunlap.huc10.inputs, site, feature)
-Dunlap.huc10.hydroid <- as.character(Dunlap.huc10.dataframe$hydroid)
-Dunlap.huc10.stats <- fn_dh_elfstats(feature_ftype = 'nhd_huc10',yvar = 'aqbio_nt_total',xvar = xvar,sampres = 'species',stat_quantreg_qu = "0.50",dataset_tag = 'bpj-q50',featureid = Dunlap.huc10.hydroid)
-
-PlainsMill.huc10.inputs <- list(bundle = 'watershed',ftype = 'nhd_huc10',hydrocode = '0207000603',stringsAsFactors=FALSE) 
-PlainsMill.huc10.dataframe <- getFeature(PlainsMill.huc10.inputs, site, feature)
-PlainsMill.huc10.hydroid <- as.character(PlainsMill.huc10.dataframe$hydroid)
-PlainsMill.huc10.stats <- fn_dh_elfstats(feature_ftype = 'nhd_huc10',yvar = 'aqbio_nt_total',xvar = xvar,sampres = 'species',stat_quantreg_qu = "0.50",dataset_tag = 'bpj-q50',featureid = PlainsMill.huc10.hydroid)
-
-NorthAnna.huc10.inputs <- list(bundle = 'watershed',ftype = 'nhd_huc10',hydrocode = '0208010608',stringsAsFactors=FALSE) 
-NorthAnna.huc10.dataframe <- getFeature(NorthAnna.huc10.inputs, site, feature)
-NorthAnna.huc10.hydroid <- as.character(NorthAnna.huc10.dataframe$hydroid)
-NorthAnna.huc10.stats <- fn_dh_elfstats(feature_ftype = 'nhd_huc10',yvar = 'aqbio_nt_total',xvar = xvar,sampres = 'species',stat_quantreg_qu = "0.50",dataset_tag = 'bpj-q50',featureid = NorthAnna.huc10.hydroid)
-
-Craig.huc10.inputs <- list(bundle = 'watershed',ftype = 'nhd_huc10',hydrocode = '0208020112',stringsAsFactors=FALSE) 
-Craig.huc10.dataframe <- getFeature(Craig.huc10.inputs, site, feature)
-Craig.huc10.hydroid <- as.character(Craig.huc10.dataframe$hydroid)
-Craig.huc10.stats <- fn_dh_elfstats(feature_ftype = 'nhd_huc10',yvar = 'aqbio_nt_total',xvar = xvar,sampres = 'species',stat_quantreg_qu = "0.50",dataset_tag = 'bpj-q50',featureid = Craig.huc10.hydroid)
-
-################################################################################################################
-# CALCULATE PERCENT CHANGE IN RICHNESS USING m, b, AND SITE MAF 
-################################################################################################################
-pctchg <-10
-
-
-Dunlap.huc10.m <- Dunlap.huc10.stats$out_m
-Dunlap.huc10.b <- Dunlap.huc10.stats$out_b
-Dunlap <- ((Dunlap.huc10.m*(log((1)/(1-(as.numeric(pctchg)/100)))))/(Dunlap.huc10.m*(log(Dunlap.erom_q0001e_mean))+Dunlap.huc10.b))*100
-
-PlainsMill.huc10.m <- PlainsMill.huc10.stats$out_m
-PlainsMill.huc10.b <- PlainsMill.huc10.stats$out_b
-PlainsMill <- ((PlainsMill.huc10.m*(log((1)/(1-(as.numeric(pctchg)/100)))))/(PlainsMill.huc10.m*(log(PlainsMill.erom_q0001e_mean))+PlainsMill.huc10.b))*100
-
-NorthAnna.huc10.m <- NorthAnna.huc10.stats$out_m
-NorthAnna.huc10.b <- NorthAnna.huc10.stats$out_b
-NorthAnnaPiedmont <- ((NorthAnna.huc10.m*(log((1)/(1-(as.numeric(pctchg)/100)))))/(NorthAnna.huc10.m*(log(NorthAnnaPiedmont.erom_q0001e_mean))+NorthAnna.huc10.b))*100
-NorthAnnaFallZone <- ((NorthAnna.huc10.m*(log((1)/(1-(as.numeric(pctchg)/100)))))/(NorthAnna.huc10.m*(log(NorthAnnaFallZone.erom_q0001e_mean))+NorthAnna.huc10.b))*100
-
-Craig.huc10.m <- Craig.huc10.stats$out_m
-Craig.huc10.b <- Craig.huc10.stats$out_b
-Craig <- ((Craig.huc10.m*(log((1)/(1-(as.numeric(pctchg)/100)))))/(Craig.huc10.m*(log(Craig.erom_q0001e_mean))+Craig.huc10.b))*100
-################################################################################################################
-################################################################################################################
-# pctchg <-10
-# 
-# Dunlap                <- ((1.22*(log((1)/(1-(as.numeric(pctchg)/100)))))/(1.22*(log(193.252))+16.2))*100
-# Craig                 <- ((1.22*(log((1)/(1-(as.numeric(pctchg)/100)))))/(1.22*(log(410.75))+16.2))*100
-# 
-# Plains_Mill           <- ((1.22*(log((1)/(1-(as.numeric(pctchg)/100)))))/(1.22*(log(314.966))+16.2))*100
-# North_Anna_Piedmont   <- ((1.22*(log((1)/(1-(as.numeric(pctchg)/100)))))/(1.22*(log(374.153))+16.2))*100
-# North_Anna_Fall_Zone  <- ((1.22*(log((1)/(1-(as.numeric(pctchg)/100)))))/(1.22*(log(400.778))+16.2))*100
+Plains_Mill           <- ((1.22*(log((1)/(1-(as.numeric(pctchg)/100)))))/(1.22*(log(314.966))+16.2))*100
+North_Anna_Piedmont   <- ((1.22*(log((1)/(1-(as.numeric(pctchg)/100)))))/(1.22*(log(374.153))+16.2))*100
+North_Anna_Fall_Zone  <- ((1.22*(log((1)/(1-(as.numeric(pctchg)/100)))))/(1.22*(log(400.778))+16.2))*100
 
 
 #----------------------------------------------------- 
 #----------------------------------------------------- 
-
-
-tiff(filename=paste(save_directory,"\\",plot_name,"_",pctchg,".tiff",sep=""),
-     width = 1500, 
-     height = 750)
-
-
 plot(month_data_medians,
      ylim=c(-80,80))
      #ylim=c(-5,5))
@@ -502,5 +336,5 @@ points(month_data_medians$ifim_da_sqmi, month_data_medians$pctchg, col = "red",c
 dev.off()
 
 
-#} #end for loop
+} #end for loop
 

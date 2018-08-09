@@ -5,7 +5,7 @@ basepath='C:/Users/nrf46657/Desktop/VAHydro Development/GitHub/r-dh-ecohydro/';
 source(paste(basepath,'config.local.private',sep='/'));
 
 #RETRIEVE HABITAT DATA
-pctchg <- "10"
+pctchg <- "50"
 
 all_sites <- read.csv(paste(basepath,"Analysis/habitat/pctchg_datasets/all_flows/IFIM_SITES_",pctchg,"%Reduction.csv",sep=""))
 #all_sites <- read.csv(paste(basepath,"Analysis/habitat/pctchg_datasets/tenth_percentile_flow_and_below/IFIM_SITES_",pctchg,"%Reduction.csv",sep=""))
@@ -260,12 +260,10 @@ if (month == "Oct"){plot_name  <- paste("10-",plot_name,sep="")}
 if (month == "Nov"){plot_name  <- paste("11-",plot_name,sep="")}
 if (month == "Dec"){plot_name  <- paste("12-",plot_name,sep="")}
 
-} #end for loop
-
-
-# tiff(filename=paste(save_directory,"\\",plot_name,"_",pctchg,".tiff",sep=""),
-#     width = 1500, 
-#     height = 750)
+ 
+tiff(filename=paste(save_directory,"\\",plot_name,"_",pctchg,".tiff",sep=""),
+    width = 1500, 
+    height = 750)
 
 # boxplot(month_data$pctchg ~ month_data$ifim_da_sqmi, 
 #         at = sort(unique(month_data$ifim_da_sqmi)), 
@@ -330,29 +328,45 @@ source(paste(hydro_tools,"VAHydro-2.0","rest_functions.R", sep = "\\")) #load RE
 token <- rest_token(site, token, rest_uname, rest_pw)
 
 
+submittal_inputs <- list(
+  bundle = 'authority',
+  ftype = 'federal_enviro_agency',
+  admincode = 'epa',
+  stringsAsFactors = FALSE
+) 
+submittal.dataframe <- getAdminregFeature(submittal_inputs, site, adminreg_feature)
+submittal.adminid <- as.character(submittal.dataframe$adminid)
+
+
+Dunlap.huc10.inputs <- list(bundle = 'watershed',ftype = 'nhd_huc10',hydrocode = '0208020103',stringsAsFactors=FALSE) 
+Dunlap.huc10.dataframe <- getFeature(Dunlap.huc10.inputs, site, feature)
+Dunlap.huc10.hydroid <- as.character(Dunlap.huc10.dataframe$hydroid)
+Dunlap.huc10.stats <- fn_dh_elfstats(feature_ftype = 'nhd_huc10',yvar = 'aqbio_nt_total',xvar = 'erom_q0001e_mean',sampres = 'species',dataset_tag = 'bpj-530',featureid = Dunlap.huc10.hydroid)
+
+
 
 
 
 base_url <- "http://deq2.bse.vt.edu/d.dh/"
-
+site <- base_url
 #Set location of "fn_dh_elfstats" function. Choose one below
 path <- "/Users/nrf46657/Desktop/VAHydro Development/GitHub/r-dh-ecohydro/Analysis/"
 #Set location of save path Choose one below
 save_directory <- "C:/Users/nrf46657/Desktop/VAHydro Development/GitHub/plots/"                    
 source(paste(path,"query_elf_statistics.R", sep = ""))
 
-# Dunlap.huc10.stats <- fn_dh_elfstats(feature_ftype = 'nhd_huc10', 
-#                             yvar = 'aqbio_nt_total', 
-#                             xvar = 'erom_q0001e_mean',
-#                             sampres = 'species',
-#                             dataset_tag = 'bpj-530',
-#                             featureid = Dunlap.huc10.hydroid)
-# 
-# 
-# Dunlap.huc10.stats <- fn_dh_elfstats(feature_ftype = 'nhd_huc10',yvar = 'aqbio_nt_total',xvar = 'erom_q0001e_mean',sampres = 'species',dataset_tag = 'bpj-530',featureid = Dunlap.huc10.hydroid)
-# 
-# 
-# 
+Dunlap.huc10.stats <- fn_dh_elfstats(feature_ftype = 'nhd_huc10', 
+                            yvar = 'aqbio_nt_total', 
+                            xvar = 'erom_q0001e_mean',
+                            sampres = 'species',
+                            dataset_tag = 'bpj-530',
+                            featureid = Dunlap.huc10.hydroid)
+
+
+Dunlap.huc10.stats <- fn_dh_elfstats(feature_ftype = 'nhd_huc10',yvar = 'aqbio_nt_total',xvar = 'erom_q0001e_mean',sampres = 'species',dataset_tag = 'bpj-530',featureid = Dunlap.huc10.hydroid)
+
+
+
 
 ################################################################################################################
 # RETREIEVE IFIM SITE DH FEATURE AND ITS MAF AND DA PROPERTIES
@@ -459,10 +473,13 @@ PlainsMill.huc10.m <- PlainsMill.huc10.stats$out_m
 PlainsMill.huc10.b <- PlainsMill.huc10.stats$out_b
 PlainsMill <- ((PlainsMill.huc10.m*(log((1)/(1-(as.numeric(pctchg)/100)))))/(PlainsMill.huc10.m*(log(PlainsMill.erom_q0001e_mean))+PlainsMill.huc10.b))*100
 
-NorthAnna.huc10.m <- NorthAnna.huc10.stats$out_m
-NorthAnna.huc10.b <- NorthAnna.huc10.stats$out_b
-NorthAnnaPiedmont <- ((NorthAnna.huc10.m*(log((1)/(1-(as.numeric(pctchg)/100)))))/(NorthAnna.huc10.m*(log(NorthAnnaPiedmont.erom_q0001e_mean))+NorthAnna.huc10.b))*100
-NorthAnnaFallZone <- ((NorthAnna.huc10.m*(log((1)/(1-(as.numeric(pctchg)/100)))))/(NorthAnna.huc10.m*(log(NorthAnnaFallZone.erom_q0001e_mean))+NorthAnna.huc10.b))*100
+NorthAnnaPiedmont.huc10.m <- NorthAnnaPiedmont.huc10.stats$out_m
+NorthAnnaPiedmont.huc10.b <- NorthAnnaPiedmont.huc10.stats$out_b
+NorthAnnaPiedmont <- ((NorthAnnaPiedmont.huc10.m*(log((1)/(1-(as.numeric(pctchg)/100)))))/(NorthAnnaPiedmont.huc10.m*(log(NorthAnnaPiedmont.erom_q0001e_mean))+NorthAnnaPiedmont.huc10.b))*100
+
+NorthAnnaFallZone.huc10.m <- NorthAnnaFallZone.huc10.stats$out_m
+NorthAnnaFallZone.huc10.b <- NorthAnnaFallZone.huc10.stats$out_b
+NorthAnnaFallZone <- ((NorthAnnaFallZone.huc10.m*(log((1)/(1-(as.numeric(pctchg)/100)))))/(NorthAnnaFallZone.huc10.m*(log(NorthAnnaFallZone.erom_q0001e_mean))+NorthAnnaFallZone.huc10.b))*100
 
 Craig.huc10.m <- Craig.huc10.stats$out_m
 Craig.huc10.b <- Craig.huc10.stats$out_b
@@ -481,13 +498,6 @@ Craig <- ((Craig.huc10.m*(log((1)/(1-(as.numeric(pctchg)/100)))))/(Craig.huc10.m
 
 #----------------------------------------------------- 
 #----------------------------------------------------- 
-
-
-tiff(filename=paste(save_directory,"\\",plot_name,"_",pctchg,".tiff",sep=""),
-     width = 1500, 
-     height = 750)
-
-
 plot(month_data_medians,
      ylim=c(-80,80))
      #ylim=c(-5,5))
@@ -502,5 +512,5 @@ points(month_data_medians$ifim_da_sqmi, month_data_medians$pctchg, col = "red",c
 dev.off()
 
 
-#} #end for loop
+} #end for loop
 
