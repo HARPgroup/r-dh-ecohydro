@@ -22,7 +22,7 @@ token <- rest_token(site, token, rest_uname, rest_pw)
 
 
 export.df <- data.frame(pctchg=as.Date(character()),
-                        flow=character(), 
+                        xvar=character(), 
                         ifim_site=character(), 
                         hab_chg=character(),
                         custom_taxachg=character(),
@@ -351,7 +351,7 @@ Craig.huc8.stats <- fn_dh_elfstats(feature_ftype = 'nhd_huc8',yvar = 'aqbio_nt_t
 
 
 ################################################################################################################
-# CALCULATE CUSTOM PERCENT CHANGE IN RICHNESS USING m, b, AND SITE MAF 
+# CALCULATE PERCENT CHANGE IN RICHNESS USING m, b, AND SITE MAF 
 ################################################################################################################
 #pctchg <-10
 
@@ -504,7 +504,7 @@ export <- cbind(export,huc8_taxachg = -c(Dunlap.huc8,PlainsMill.huc8,NorthAnnaPi
 export <- cbind(export,huc8_tag = huc8_tag)
 export <- cbind(export,huc8 = c(Dunlap.huc8.code,PlainsMill.huc8.code,NorthAnna.huc8.code,NorthAnna.huc8.code,Craig.huc8.code))
 
-export <- data.frame(pctchg,month,ifim_site, export[-1])
+export <- data.frame(pctchg,xvar,ifim_site, export[-1])
 
 export.df <- rbind(export.df,export)
 

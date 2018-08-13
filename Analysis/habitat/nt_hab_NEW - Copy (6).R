@@ -22,17 +22,15 @@ token <- rest_token(site, token, rest_uname, rest_pw)
 
 
 export.df <- data.frame(pctchg=as.Date(character()),
-                        flow=character(), 
+                        xvar=character(), 
                         ifim_site=character(), 
                         hab_chg=character(),
-                        custom_taxachg=character(),
-                        custom_tag=character(),
-                        custom_huc_unit=character(),
-                        custom_huc=character(),
+                        taxa_chg=character(),
+                        taxa_tag=character(),
+                        huc_unit=character(),
                         huc8_taxachg=character(),
-                        huc8_tag=character(),
-                        huc8=character(),
                         stringsAsFactors=FALSE) 
+
 
 #LOOP THRU PERCENT FLOW REDUCTION
 #flow_reductions <- c("10","20")
@@ -275,83 +273,57 @@ for (r in 1:length(months)) {
 #xvar <- 'erom_q0001e_july'
 xvar <- flow_metric[r] 
 
-# SPECIFY HUCS TO USE FOR EACH IFIM SITE 
-# HUC 8:   
-  Dunlap.huc8.code <- '02080201'
-  PlainsMill.huc8.code <- '02070006'
-  NorthAnna.huc8.code <- '02080106'
-  Craig.huc8.code <- '02080201'
-    
-  #huc8_tag <- 'bpj-huc6-rcc' #NONE EXIST?
-  huc8_tag <- 'bpj-huc6bp-rcc'
-  #huc8_tag <- 'HUC8_quantregwHuc6bp'
-  
-# HUC 10: 
-  Dunlap.huc10.code <- '0208020103'  
-  PlainsMill.huc10.code <- '0207000603' 
-  NorthAnna.huc10.code <- '0208010608'
-  Craig.huc10.code <- '0208020112'
-  
-    
-Dunlap.huc10.inputs <- list(bundle = 'watershed',ftype = 'nhd_huc10',hydrocode = Dunlap.huc10.code,stringsAsFactors=FALSE) 
+Dunlap.huc10.inputs <- list(bundle = 'watershed',ftype = 'nhd_huc10',hydrocode = '0208020103',stringsAsFactors=FALSE) 
 Dunlap.huc10.dataframe <- getFeature(Dunlap.huc10.inputs, site, feature)
 Dunlap.huc10.hydroid <- as.character(Dunlap.huc10.dataframe$hydroid)
-  print(paste("Watershed Found: ",Dunlap.huc10.dataframe$name,sep=""))
 Dunlap.huc10.stats.bpj_530 <- fn_dh_elfstats(feature_ftype = 'nhd_huc10',yvar = 'aqbio_nt_total',xvar = xvar,sampres = 'species',stat_quantreg_qu = "0.80",dataset_tag = 'bpj-530',featureid = Dunlap.huc10.hydroid)
 Dunlap.huc10.stats.bpj_q50 <- fn_dh_elfstats(feature_ftype = 'nhd_huc10',yvar = 'aqbio_nt_total',xvar = xvar,sampres = 'species',stat_quantreg_qu = "0.50",dataset_tag = 'bpj-q50',featureid = Dunlap.huc10.hydroid)
 Dunlap.huc10.stats.bpj_530_icthy <- fn_dh_elfstats(feature_ftype = 'nhd_huc10',yvar = 'aqbio_nt_total',xvar = xvar,sampres = 'species',stat_quantreg_qu = "0.80",dataset_tag = 'bpj-530-icthy',featureid = Dunlap.huc10.hydroid)
 Dunlap.huc10.stats.bpj_q50_icthy <- fn_dh_elfstats(feature_ftype = 'nhd_huc10',yvar = 'aqbio_nt_total',xvar = xvar,sampres = 'species',stat_quantreg_qu = "0.50",dataset_tag = 'bpj-q50-icthy',featureid = Dunlap.huc10.hydroid)
-Dunlap.huc8.inputs <- list(bundle = 'watershed',ftype = 'nhd_huc8',hydrocode = paste('nhd_huc8_',Dunlap.huc8.code,sep=""),stringsAsFactors=FALSE) 
+Dunlap.huc8.inputs <- list(bundle = 'watershed',ftype = 'nhd_huc8',hydrocode = 'nhd_huc8_02080201',stringsAsFactors=FALSE) 
 Dunlap.huc8.dataframe <- getFeature(Dunlap.huc8.inputs, site, feature)
 Dunlap.huc8.hydroid <- as.character(Dunlap.huc8.dataframe$hydroid)
-  print(paste("Watershed Found: ",Dunlap.huc8.dataframe$name,sep=""))
-Dunlap.huc8.stats <- fn_dh_elfstats(feature_ftype = 'nhd_huc8',yvar = 'aqbio_nt_total',xvar = xvar,sampres = 'species',stat_quantreg_qu = "0.80",dataset_tag = huc8_tag,featureid = Dunlap.huc8.hydroid)
+Dunlap.huc8.stats.bpj_rcc <- fn_dh_elfstats(feature_ftype = 'nhd_huc8',yvar = 'aqbio_nt_total',xvar = xvar,sampres = 'species',stat_quantreg_qu = "0.80",dataset_tag = 'bpj-huc6bp-rcc',featureid = Dunlap.huc8.hydroid)
 
-PlainsMill.huc10.inputs <- list(bundle = 'watershed',ftype = 'nhd_huc10',hydrocode = PlainsMill.huc10.code,stringsAsFactors=FALSE) 
+PlainsMill.huc10.inputs <- list(bundle = 'watershed',ftype = 'nhd_huc10',hydrocode = '0207000603',stringsAsFactors=FALSE) 
 PlainsMill.huc10.dataframe <- getFeature(PlainsMill.huc10.inputs, site, feature)
 PlainsMill.huc10.hydroid <- as.character(PlainsMill.huc10.dataframe$hydroid)
-  print(paste("Watershed Found: ",PlainsMill.huc10.dataframe$name,sep=""))
 PlainsMill.huc10.stats.bpj_530 <- fn_dh_elfstats(feature_ftype = 'nhd_huc10',yvar = 'aqbio_nt_total',xvar = xvar,sampres = 'species',stat_quantreg_qu = "0.80",dataset_tag = 'bpj-530',featureid = PlainsMill.huc10.hydroid)
 PlainsMill.huc10.stats.bpj_q50 <- fn_dh_elfstats(feature_ftype = 'nhd_huc10',yvar = 'aqbio_nt_total',xvar = xvar,sampres = 'species',stat_quantreg_qu = "0.50",dataset_tag = 'bpj-q50',featureid = PlainsMill.huc10.hydroid)
 PlainsMill.huc10.stats.bpj_530_icthy <- fn_dh_elfstats(feature_ftype = 'nhd_huc10',yvar = 'aqbio_nt_total',xvar = xvar,sampres = 'species',stat_quantreg_qu = "0.80",dataset_tag = 'bpj-530-icthy',featureid = PlainsMill.huc10.hydroid)
 PlainsMill.huc10.stats.bpj_q50_icthy <- fn_dh_elfstats(feature_ftype = 'nhd_huc10',yvar = 'aqbio_nt_total',xvar = xvar,sampres = 'species',stat_quantreg_qu = "0.50",dataset_tag = 'bpj-q50-icthy',featureid = PlainsMill.huc10.hydroid)
-PlainsMill.huc8.inputs <- list(bundle = 'watershed',ftype = 'nhd_huc8',hydrocode = paste('nhd_huc8_',PlainsMill.huc8.code,sep=""),stringsAsFactors=FALSE) 
+PlainsMill.huc8.inputs <- list(bundle = 'watershed',ftype = 'nhd_huc8',hydrocode = 'nhd_huc8_02070006',stringsAsFactors=FALSE) 
 PlainsMill.huc8.dataframe <- getFeature(PlainsMill.huc8.inputs, site, feature)
 PlainsMill.huc8.hydroid <- as.character(PlainsMill.huc8.dataframe$hydroid)
-  print(paste("Watershed Found: ",PlainsMill.huc8.dataframe$name,sep=""))
-PlainsMill.huc8.stats <- fn_dh_elfstats(feature_ftype = 'nhd_huc8',yvar = 'aqbio_nt_total',xvar = xvar,sampres = 'species',stat_quantreg_qu = "0.80",dataset_tag = huc8_tag,featureid = PlainsMill.huc8.hydroid)
+PlainsMill.huc8.stats.bpj_rcc <- fn_dh_elfstats(feature_ftype = 'nhd_huc8',yvar = 'aqbio_nt_total',xvar = xvar,sampres = 'species',stat_quantreg_qu = "0.80",dataset_tag = 'bpj-huc6bp-rcc',featureid = PlainsMill.huc8.hydroid)
 
-NorthAnna.huc10.inputs <- list(bundle = 'watershed',ftype = 'nhd_huc10',hydrocode = NorthAnna.huc10.code,stringsAsFactors=FALSE) 
+NorthAnna.huc10.inputs <- list(bundle = 'watershed',ftype = 'nhd_huc10',hydrocode = '0208010608',stringsAsFactors=FALSE) 
 NorthAnna.huc10.dataframe <- getFeature(NorthAnna.huc10.inputs, site, feature)
 NorthAnna.huc10.hydroid <- as.character(NorthAnna.huc10.dataframe$hydroid)
-  print(paste("Watershed Found: ",NorthAnna.huc10.dataframe$name,sep=""))
 NorthAnna.huc10.stats.bpj_530 <- fn_dh_elfstats(feature_ftype = 'nhd_huc10',yvar = 'aqbio_nt_total',xvar = xvar,sampres = 'species',stat_quantreg_qu = "0.80",dataset_tag = 'bpj-530',featureid = NorthAnna.huc10.hydroid)
 NorthAnna.huc10.stats.bpj_q50 <- fn_dh_elfstats(feature_ftype = 'nhd_huc10',yvar = 'aqbio_nt_total',xvar = xvar,sampres = 'species',stat_quantreg_qu = "0.50",dataset_tag = 'bpj-q50',featureid = NorthAnna.huc10.hydroid)
 NorthAnna.huc10.stats.bpj_530_icthy <- fn_dh_elfstats(feature_ftype = 'nhd_huc10',yvar = 'aqbio_nt_total',xvar = xvar,sampres = 'species',stat_quantreg_qu = "0.80",dataset_tag = 'bpj-530-icthy',featureid = NorthAnna.huc10.hydroid)
 NorthAnna.huc10.stats.bpj_q50_icthy <- fn_dh_elfstats(feature_ftype = 'nhd_huc10',yvar = 'aqbio_nt_total',xvar = xvar,sampres = 'species',stat_quantreg_qu = "0.50",dataset_tag = 'bpj-q50-icthy',featureid = NorthAnna.huc10.hydroid)
-NorthAnna.huc8.inputs <- list(bundle = 'watershed',ftype = 'nhd_huc8',hydrocode = paste('nhd_huc8_',NorthAnna.huc8.code,sep=""),stringsAsFactors=FALSE) 
+NorthAnna.huc8.inputs <- list(bundle = 'watershed',ftype = 'nhd_huc8',hydrocode = 'nhd_huc8_02080106',stringsAsFactors=FALSE) 
 NorthAnna.huc8.dataframe <- getFeature(NorthAnna.huc8.inputs, site, feature)
 NorthAnna.huc8.hydroid <- as.character(NorthAnna.huc8.dataframe$hydroid)
-  print(paste("Watershed Found: ",NorthAnna.huc8.dataframe$name,sep=""))
-NorthAnna.huc8.stats <- fn_dh_elfstats(feature_ftype = 'nhd_huc8',yvar = 'aqbio_nt_total',xvar = xvar,sampres = 'species',stat_quantreg_qu = "0.80",dataset_tag = huc8_tag,featureid = NorthAnna.huc8.hydroid)
+NorthAnna.huc8.stats.bpj_rcc <- fn_dh_elfstats(feature_ftype = 'nhd_huc8',yvar = 'aqbio_nt_total',xvar = xvar,sampres = 'species',stat_quantreg_qu = "0.80",dataset_tag = 'bpj-huc6bp-rcc',featureid = NorthAnna.huc8.hydroid)
 
-Craig.huc10.inputs <- list(bundle = 'watershed',ftype = 'nhd_huc10',hydrocode = Craig.huc10.code,stringsAsFactors=FALSE) 
+Craig.huc10.inputs <- list(bundle = 'watershed',ftype = 'nhd_huc10',hydrocode = '0208020112',stringsAsFactors=FALSE) 
 Craig.huc10.dataframe <- getFeature(Craig.huc10.inputs, site, feature)
 Craig.huc10.hydroid <- as.character(Craig.huc10.dataframe$hydroid)
-  print(paste("Watershed Found: ",Craig.huc10.dataframe$name,sep=""))
 Craig.huc10.stats.bpj_530  <- fn_dh_elfstats(feature_ftype = 'nhd_huc10',yvar = 'aqbio_nt_total',xvar = xvar,sampres = 'species',stat_quantreg_qu = "0.80",dataset_tag = 'bpj-530',featureid = Craig.huc10.hydroid)
 Craig.huc10.stats.bpj_q50 <- fn_dh_elfstats(feature_ftype = 'nhd_huc10',yvar = 'aqbio_nt_total',xvar = xvar,sampres = 'species',stat_quantreg_qu = "0.50",dataset_tag = 'bpj-q50',featureid = Craig.huc10.hydroid)
 Craig.huc10.stats.bpj_530_icthy <- fn_dh_elfstats(feature_ftype = 'nhd_huc10',yvar = 'aqbio_nt_total',xvar = xvar,sampres = 'species',stat_quantreg_qu = "0.80",dataset_tag = 'bpj-530-icthy',featureid = Craig.huc10.hydroid)
 Craig.huc10.stats.bpj_q50_icthy <- fn_dh_elfstats(feature_ftype = 'nhd_huc10',yvar = 'aqbio_nt_total',xvar = xvar,sampres = 'species',stat_quantreg_qu = "0.50",dataset_tag = 'bpj-q50-icthy',featureid = Craig.huc10.hydroid)
-Craig.huc8.inputs <- list(bundle = 'watershed',ftype = 'nhd_huc8',hydrocode = paste('nhd_huc8_',Craig.huc8.code,sep=""),stringsAsFactors=FALSE) 
+Craig.huc8.inputs <- list(bundle = 'watershed',ftype = 'nhd_huc8',hydrocode = 'nhd_huc8_02080201',stringsAsFactors=FALSE) 
 Craig.huc8.dataframe <- getFeature(Craig.huc8.inputs, site, feature)
 Craig.huc8.hydroid <- as.character(Craig.huc8.dataframe$hydroid)
-  print(paste("Watershed Found: ",Craig.huc8.dataframe$name,sep=""))
-Craig.huc8.stats <- fn_dh_elfstats(feature_ftype = 'nhd_huc8',yvar = 'aqbio_nt_total',xvar = xvar,sampres = 'species',stat_quantreg_qu = "0.80",dataset_tag = huc8_tag,featureid = Craig.huc8.hydroid)
+Craig.huc8.stats.bpj_rcc <- fn_dh_elfstats(feature_ftype = 'nhd_huc8',yvar = 'aqbio_nt_total',xvar = xvar,sampres = 'species',stat_quantreg_qu = "0.80",dataset_tag = 'bpj-huc6bp-rcc',featureid = Craig.huc8.hydroid)
 
 
 ################################################################################################################
-# CALCULATE CUSTOM PERCENT CHANGE IN RICHNESS USING m, b, AND SITE MAF 
+# CALCULATE PERCENT CHANGE IN RICHNESS USING m, b, AND SITE MAF 
 ################################################################################################################
 #pctchg <-10
 
@@ -360,8 +332,8 @@ Dunlap.huc10.m <- Dunlap.huc10.stats.bpj_q50$out_m
 Dunlap.huc10.b <- Dunlap.huc10.stats.bpj_q50$out_b
 Dunlap <- ((Dunlap.huc10.m*(log((1)/(1-(as.numeric(pctchg)/100)))))/(Dunlap.huc10.m*(log(Dunlap.erom_q0001e_mean))+Dunlap.huc10.b))*100
 
-PlainsMill.huc10.m <- PlainsMill.huc8.stats$out_m
-PlainsMill.huc10.b <- PlainsMill.huc8.stats$out_b
+PlainsMill.huc10.m <- PlainsMill.huc8.stats.bpj_rcc$out_m
+PlainsMill.huc10.b <- PlainsMill.huc8.stats.bpj_rcc$out_b
 PlainsMill <- ((PlainsMill.huc10.m*(log((1)/(1-(as.numeric(pctchg)/100)))))/(PlainsMill.huc10.m*(log(PlainsMill.erom_q0001e_mean))+PlainsMill.huc10.b))*100
 
 NorthAnna.huc10.m <- NorthAnna.huc10.stats.bpj_530_icthy$out_m
@@ -379,17 +351,17 @@ Craig <- ((Craig.huc10.m*(log((1)/(1-(as.numeric(pctchg)/100)))))/(Craig.huc10.m
 ################################################################################################################
 #pctchg <- 10
 
-UpperJames.huc8.m <- Dunlap.huc8.stats$out_m
-UpperJames.huc8.b <- Dunlap.huc8.stats$out_b
+UpperJames.huc8.m <- Dunlap.huc8.stats.bpj_rcc$out_m
+UpperJames.huc8.b <- Dunlap.huc8.stats.bpj_rcc$out_b
 Dunlap.huc8 <- ((UpperJames.huc8.m*(log((1)/(1-(as.numeric(pctchg)/100)))))/(UpperJames.huc8.m*(log(Dunlap.erom_q0001e_mean))+UpperJames.huc8.b))*100
 Craig.huc8 <- ((UpperJames.huc8.m*(log((1)/(1-(as.numeric(pctchg)/100)))))/(UpperJames.huc8.m*(log(Craig.erom_q0001e_mean))+UpperJames.huc8.b))*100
 
-PlainsMill.huc8.m <- PlainsMill.huc8.stats$out_m
-PlainsMill.huc8.b <- PlainsMill.huc8.stats$out_b
+PlainsMill.huc8.m <- PlainsMill.huc8.stats.bpj_rcc$out_m
+PlainsMill.huc8.b <- PlainsMill.huc8.stats.bpj_rcc$out_b
 PlainsMill.huc8 <- ((PlainsMill.huc8.m*(log((1)/(1-(as.numeric(pctchg)/100)))))/(PlainsMill.huc8.m*(log(PlainsMill.erom_q0001e_mean))+PlainsMill.huc8.b))*100
 
-NorthAnna.huc8.m <- NorthAnna.huc8.stats$out_m
-NorthAnna.huc8.b <- NorthAnna.huc8.stats$out_b
+NorthAnna.huc8.m <- NorthAnna.huc8.stats.bpj_rcc$out_m
+NorthAnna.huc8.b <- NorthAnna.huc8.stats.bpj_rcc$out_b
 NorthAnnaPiedmont.huc8 <- ((NorthAnna.huc8.m*(log((1)/(1-(as.numeric(pctchg)/100)))))/(NorthAnna.huc8.m*(log(NorthAnnaPiedmont.erom_q0001e_mean))+NorthAnna.huc8.b))*100
 NorthAnnaFallZone.huc8 <- ((NorthAnna.huc8.m*(log((1)/(1-(as.numeric(pctchg)/100)))))/(NorthAnna.huc8.m*(log(NorthAnnaFallZone.erom_q0001e_mean))+NorthAnna.huc8.b))*100
 
@@ -399,14 +371,14 @@ NorthAnnaFallZone.huc8 <- ((NorthAnna.huc8.m*(log((1)/(1-(as.numeric(pctchg)/100
 ################################################################################################################
 
 
- custom_taxachg <- c(Dunlap,Craig,PlainsMill,NorthAnnaPiedmont,NorthAnnaFallZone)
+ taxa_chg <- c(Dunlap,Craig,PlainsMill,NorthAnnaPiedmont,NorthAnnaFallZone)
 
 #taxa_chg <- c(Dunlap,Craig,North_Anna_Piedmont,North_Anna_Fall_Zone)
 
-custom_taxachg <- -custom_taxachg #make negative because they're losses 
+taxa_chg <- -taxa_chg #make negative because they're losses 
 #bpj_q50_chg <- -taxa_chg #make negative because they're losses 
 
-month_data_medians <- cbind(month_data_medians,custom_taxachg)
+month_data_medians <- cbind(month_data_medians,taxa_chg)
 #month_data_medians <- cbind(month_data_medians,bpj_q50_chg)
 
 
@@ -443,7 +415,7 @@ png(filename=paste(save_directory,"\\",plot_name,"_",pctchg,".png",sep=""),
 
 
 
-plot(month_data_medians$custom_taxachg, month_data_medians$pctchg,
+plot(month_data_medians$taxa_chg, month_data_medians$pctchg,
      
     
      
@@ -460,17 +432,17 @@ plot(month_data_medians$custom_taxachg, month_data_medians$pctchg,
 abline(a=0,b=0)
 abline(v=0)
 
-abline(lm(month_data_medians$pctchg ~ month_data_medians$custom_taxachg),col="black",lty=2)
-r_adj <- summary(lm(month_data_medians$pctchg ~ month_data_medians$custom_taxachg))$r.squared
-p_val <- summary(lm(month_data_medians$pctchg ~ month_data_medians$custom_taxachg))$coefficients[2,4]  
+abline(lm(month_data_medians$pctchg ~ month_data_medians$taxa_chg),col="black",lty=2)
+r_adj <- summary(lm(month_data_medians$pctchg ~ month_data_medians$taxa_chg))$r.squared
+p_val <- summary(lm(month_data_medians$pctchg ~ month_data_medians$taxa_chg))$coefficients[2,4]  
 
 
 #points(month_data_medians$ifim_da_sqmi, month_data_medians$pctchg, col = "red",cex=5,pch="-") #pch=19 for circle point
-points(Dunlap.df$custom_taxachg, Dunlap.df$pctchg, col = "blue",cex=3,pch=16) #pch=19 for circle point
-points(Plains_Mill.df$custom_taxachg, Plains_Mill.df$pctchg, col = "red",cex=3,pch=16) #pch=19 for circle point
-points(North_Anna_Piedmont.df$custom_taxachg, North_Anna_Piedmont.df$pctchg, col = "orange",cex=3,pch=16) #pch=19 for circle point
-points(North_Anna_Fall_Zone.df$custom_taxachg, North_Anna_Fall_Zone.df$pctchg, col = "purple",cex=3,pch=16) #pch=19 for circle point
-points(Craig.df$custom_taxachg, Craig.df$pctchg, col = "green",cex=3,pch=16) #pch=19 for circle point
+points(Dunlap.df$taxa_chg, Dunlap.df$pctchg, col = "blue",cex=3,pch=16) #pch=19 for circle point
+points(Plains_Mill.df$taxa_chg, Plains_Mill.df$pctchg, col = "red",cex=3,pch=16) #pch=19 for circle point
+points(North_Anna_Piedmont.df$taxa_chg, North_Anna_Piedmont.df$pctchg, col = "orange",cex=3,pch=16) #pch=19 for circle point
+points(North_Anna_Fall_Zone.df$taxa_chg, North_Anna_Fall_Zone.df$pctchg, col = "purple",cex=3,pch=16) #pch=19 for circle point
+points(Craig.df$taxa_chg, Craig.df$pctchg, col = "green",cex=3,pch=16) #pch=19 for circle point
 
 
 
@@ -497,14 +469,10 @@ dev.off()
 ifim_site <- c("Dunlap","Plains Mill","North Anna Piedmont","North Anna Fall Zone","Craig")
 export <- (rbind(Dunlap.df,Plains_Mill.df,North_Anna_Piedmont.df,North_Anna_Fall_Zone.df,Craig.df))
 colnames(export)[colnames(export)=="pctchg"] <- "hab_chg"
-export <- cbind(export,custom_tag = c("bpj_q50",huc8_tag,"bpj_530_icthy","bpj_530_icthy","bpj_530_icthy"))
-export <- cbind(export,custom_huc_unit = c("huc10","huc8","huc10","huc10","huc10"))
-export <- cbind(export,custom_huc = c(Dunlap.huc10.code,PlainsMill.huc8.code,NorthAnna.huc10.code,NorthAnna.huc10.code,Craig.huc10.code))
+export <- cbind(export,taxa_tag = c("bpj_q50","bpj_rcc","bpj_530_icthy","bpj_530_icthy","bpj_530_icthy"))
+export <- cbind(export,huc_unit = c("huc10","huc8","huc10","huc10","huc10"))
 export <- cbind(export,huc8_taxachg = -c(Dunlap.huc8,PlainsMill.huc8,NorthAnnaPiedmont.huc8,NorthAnnaFallZone.huc8,Craig.huc8))
-export <- cbind(export,huc8_tag = huc8_tag)
-export <- cbind(export,huc8 = c(Dunlap.huc8.code,PlainsMill.huc8.code,NorthAnna.huc8.code,NorthAnna.huc8.code,Craig.huc8.code))
-
-export <- data.frame(pctchg,month,ifim_site, export[-1])
+export <- data.frame(pctchg,xvar,ifim_site, export[-1])
 
 export.df <- rbind(export.df,export)
 
