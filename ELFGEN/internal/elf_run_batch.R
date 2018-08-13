@@ -39,21 +39,21 @@ source(paste(fxn_locations,"elf_store_data.R", sep = ""));
 source(paste(base_directory,"Analysis/query_elf_statistics.R", sep = "/")); 
 #####
 
-use_icthy_data <- 'NO' #Toggle "YES" to ulitize icthy dataset, otherwise "NO" to use EDAS 
+use_icthy_data <- 'YES' #Toggle "YES" to ulitize icthy dataset, otherwise "NO" to use EDAS 
 
 # Now add custom local settings here
 inputs$x_metric = c(
 #  'nhdp_drainage_sqmi',
-  'erom_q0001e_mean'
+  'erom_q0001e_mean',
 #  'erom_q0001e_jan',
 #  'erom_q0001e_feb',
 #  'erom_q0001e_mar', 
 #  'erom_q0001e_apr', 
 #  'erom_q0001e_may',
 #  'erom_q0001e_june',
-#  'erom_q0001e_july',
-#  'erom_q0001e_aug',
-#  'erom_q0001e_sept',
+  'erom_q0001e_july',
+  'erom_q0001e_aug',
+  'erom_q0001e_sept'#,
 #  'erom_q0001e_oct',
 #  'erom_q0001e_nov',
 #  'erom_q0001e_dec'
@@ -62,7 +62,7 @@ inputs$x_metric = c(
 inputs$y_metric = 'aqbio_nt_total';
 inputs$sampres = 'species';
 inputs$ws_ftype = c('nhd_huc10');
-inputs$target_hydrocode = '0208020112';
+inputs$target_hydrocode = '0208020103';
 
 #'nhd_huc8_02080201' Uppe James
 #'0208020103' Dunlap Creek
@@ -71,11 +71,11 @@ inputs$target_hydrocode = '0208020112';
 #'0208010608'
 
 inputs$quantile = .50;
-inputs$send_to_rest = "NO";
+inputs$send_to_rest = "YES";
 inputs$glo = 0;
 inputs$ghi = 530;
 inputs$method = "quantreg"; #quantreg, pwit, ymax, pwit_RS, twopoint
-inputs$dataset_tag = 'jk-test';
+inputs$dataset_tag = 'bpj-q50-icthy';
 inputs$ghi_var = 'qmean_annual'
 inputs$token = token;
 
