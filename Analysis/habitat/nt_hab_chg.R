@@ -283,7 +283,8 @@ xvar <- flow_metric[r]
   Craig.huc8.code <- '02080201'
     
   #huc8_tag <- 'bpj-huc6-rcc' #NONE EXIST?
-  huc8_tag <- 'bpj-huc6bp-rcc'
+  #huc8_tag <- 'bpj-huc6bp-rcc'
+  huc8_tag <- 'bpj-530'
   #huc8_tag <- 'HUC8_quantregwHuc6bp'
   
 # HUC 10: 
