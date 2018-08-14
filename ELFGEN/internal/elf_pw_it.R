@@ -118,11 +118,16 @@ elf_pw_it <- function(inputs, data, x_metric_code, y_metric_code, ws_ftype_code,
       plus_minus <- round(((pred_table$pred_upr - pred_table$pred_lwr)/2), 1) #plus or minus this value
       plus_minus_table = data.frame(plus_minus)
       
+      press <- press(regupper) 
+      press_table = data.frame(press)
+      names(press_table)[1] <- "PRESS"
       
-      Conf_Pred_table <- cbind(upper.quant_tab, conf_table, pred_table, plus_minus_table) #
+      Conf_Pred_table <- cbind(upper.quant_tab, conf_table, pred_table, plus_minus_table, press_table) #
+
       out_name <- paste(search_code,"fe_quantreg_pwit",x_metric,y_metric,quantile,station_agg,sampres,analysis_timespan,glo,ghi, sep='_');
       print(paste("Exporting Prediction interval table "));
       write.csv(Conf_Pred_table, file = paste(save_directory,"/",out_name,"_Conf_Pred_information",".csv", sep=""), row.names = F, quote = FALSE)
+
       ####################JLR###############
       #If statement needed in case slope is "NA"
       if (nrow(ru$coefficients) > 1) {
@@ -244,6 +249,7 @@ elf_pw_it <- function(inputs, data, x_metric_code, y_metric_code, ws_ftype_code,
         #  scale_color_manual("Legend",values=c("gray66","forestgreen","blue","orange","black","red","orange3","orange3","turquoise1","turquoise1"),
         #                              labels=c("Full Dataset",EDAS_upper_legend,EDAS_lower_legend,Reg_upper_legend,Quantile_Legend,"Regression (Data Subset)","conf_upr","conf_lwr","pred_upr","pred_lwr")) + 
         #  guides(colour = guide_legend(override.aes = list(size=c(1,1,1,1,1,1,2,2,1,1),linetype=c(0,0,0,1,1,1,0,0,0,0),shape=c(16,16,16,NA,NA,NA,43,43,2,2)),label.position = "right"));    
+
       }
 
       a <- my.plot()

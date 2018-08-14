@@ -6,7 +6,9 @@ site <- "http://deq1.bse.vt.edu/d.dh"    #Specify the site of interest, either d
 #----------------------------------------------
 
 #----FOR RUNNING LOCALLY:
-basepath='C:/Users/nrf46657/Desktop/VAHydro Development/GitHub/r-dh-ecohydro/';
+#oldbasepath='D:\\Jkrstolic\\R\\deqEcoflows\\GitHub\\r-dh-ecohydro\\ELFGEN\\internal\\';
+
+basepath='D:\\Jkrstolic\\R\\deqEcoflows\\GitHub\\r-dh-ecohydro\\';
 source(paste(basepath,'config.local.private',sep='/'));
 
 source(paste(hydro_tools,"VAHydro-2.0/rest_functions.R", sep = "/")); 
@@ -25,8 +27,7 @@ token <- rest_token(site, token, rest_uname, rest_pw);
 #'North_Anna'         sites = 397286,397287,397288,397289
 #'Roanoke'            sites = 397297,397298
 
-ifim_featureid <- 397290
-
+ifim_featureid <- 397298
 #-------------------------------------------------------------------------------
 # RETRIEVE SITE DATA
 ifim_dataframe <- vahydro_prop_matrix(ifim_featureid,'ifim_habitat_table')

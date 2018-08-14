@@ -77,7 +77,11 @@ for (k in offset_y_metric:length(y_metric)) {
       data <- vahydro_fe_data(
         Watershed_Hydrocode[i],
         x_metric_code,y_metric_code,
-        bundle,ws_ftype_code,sampres, data, datasite
+
+        bundle,ws_ftype_code,sampres,data #datasite   old line without datasite
+
+        #bundle,ws_ftype_code,sampres, data, datasite
+
       );
       
       #makes sure all metric values are numeric and not factorial (fixes error with ni, total)
@@ -152,6 +156,8 @@ for (k in offset_y_metric:length(y_metric)) {
       source(paste(fxn_locations,"elf_pw_it_RS.R", sep = ""));       #loads ef_pw_it_RS function
       source(paste(fxn_locations,"elf_pct_chg.R", sep =""));         #loads percent change barplot function
       source(paste(fxn_locations,"elf_store_data.R", sep = ""));     #loads function used to store ELF stats to VAHydro
+
+      #source(paste(fxn_locations,"elf_DA_Flow.R", sep = ""));            #loads function used to plot DA and Flow
       source(paste(fxn_locations,"elf_pw_it_RS_IFIM.R", sep = ""));  #loads elf_pw_it_RS_IFIM function for overlaying WUA curves on ELFs
       source(paste(fxn_locations,"elf_pct_chg_hab.R", sep ="")); 
       
@@ -161,7 +167,9 @@ for (k in offset_y_metric:length(y_metric)) {
                             plt <- elf_ymax (inputs, data, x_metric_code, y_metric_code, ws_ftype_code, Feature.Name_code, Hydroid_code, search_code, token, startdate, enddate)}
       if(method == "pwit") {print(paste("PLOTTING - method quantreg breakpoint using piecewise function...",sep="")) 
                             plt <- elf_pw_it (inputs, data, x_metric_code, y_metric_code, ws_ftype_code, Feature.Name_code, Hydroid_code, search_code, token, startdate, enddate)}
+
       if(method == "twopoint") {print(paste("PLOTTING - method two-point function...",sep=""))
+
                             plt <- elf_twopoint (inputs, data, x_metric_code, y_metric_code, ws_ftype_code, Feature.Name_code, Hydroid_code, search_code, token, startdate, enddate)}
 
       if(method == "pwit_RS") {print(paste("PLOTTING - method quantreg breakpoint using piecewise function (Including regression to the right of breakpoint)...",sep=""))
@@ -169,6 +177,7 @@ for (k in offset_y_metric:length(y_metric)) {
       
       if(method == "pw_it_RS_IFIM") {print(paste("PLOTTING - method quantreg breakpoint using piecewise function (Including regression to the right of breakpoint)...",sep=""))
                                 plt <- elf_pw_it_RS_IFIM (inputs, data, x_metric_code, y_metric_code, ws_ftype_code, Feature.Name_code, Hydroid_code, search_code, token, startdate, enddate)}
+
       if(method == "pw_it_RS_IFIM") {return(plt)}
       #print(plt)
       
@@ -176,6 +185,6 @@ for (k in offset_y_metric:length(y_metric)) {
 
         } #closes watershed for loop  
       } #closes x_metric for loop
-    } #closes y_metric for loop
+    } #closes y_metric for loop 
   } #closes ws_ftype for loop
 } #close function

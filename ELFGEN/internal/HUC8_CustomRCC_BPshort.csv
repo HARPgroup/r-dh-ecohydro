@@ -1,0 +1,14 @@
+method,dataset_tag,x_metric,y_metric,target_hydrocode,ghi,glo,ws_ftype
+quantreg,taxaLoss_PI_PressHuc8,erom_q0001e_mean,aqbio_nt_total,nhd_huc8_02080107,348.4,72,nhd_huc8
+quantreg,taxaLoss_PI_PressHuc8,erom_q0001e_mean,aqbio_nt_total,nhd_huc8_02080108,348.4,72,nhd_huc8
+quantreg,taxaLoss_PI_PressHuc8,erom_q0001e_mean,aqbio_nt_total,nhd_huc8_02080111,348.4,72,nhd_huc8
+quantreg,taxaLoss_PI_PressHuc8,erom_q0001e_mean,aqbio_nt_total,nhd_huc8_03010205,408,72,nhd_huc8
+quantreg,taxaLoss_PI_PressHuc8,erom_q0001e_mean,aqbio_nt_total,nhd_huc8_05070201,348.3,72,nhd_huc8
+quantreg,taxaLoss_PI_PressHuc8,erom_q0001e_mean,aqbio_nt_total,nhd_huc8_05130106,896,72,nhd_huc8
+quantreg,taxaLoss_PI_PressHuc8,erom_q0001e_mean,aqbio_nt_total,nhd_huc8_05130107,896,72,nhd_huc8
+quantreg,taxaLoss_PI_PressHuc8,erom_q0001e_mean,aqbio_nt_total,nhd_huc8_05130108,896,72,nhd_huc8
+quantreg,taxaLoss_PI_PressHuc8,erom_q0001e_mean,aqbio_nt_total,nhd_huc8_06010107,775.9,72,nhd_huc8
+quantreg,taxaLoss_PI_PressHuc8,erom_q0001e_mean,aqbio_nt_total,nhd_huc8_06010201,577,72,nhd_huc8
+quantreg,taxaLoss_PI_PressHuc8,erom_q0001e_mean,aqbio_nt_total,nhd_huc8_06020004,896,72,nhd_huc8
+quantreg,taxaLoss_PI_PressHuc8,erom_q0001e_mean,aqbio_nt_total,nhd_huc8_06040002,577,72,nhd_huc8
+quantreg,taxaLoss_PI_PressHuc8,erom_q0001e_mean,aqbio_nt_total,nhd_huc8_06040003,577,72,nhd_huc8

@@ -6,13 +6,16 @@ site <- "http://deq2.bse.vt.edu/d.dh"    #Specify the site of interest, either d
 datasite <- "http://deq2.bse.vt.edu/d.dh" # where to get the raw data to analyze
 #----------------------------------------------
 
+basepath='D:\\Jkrstolic\\R\\deqEcoflows\\GitHub\\r-dh-ecohydro\\';
+#basepath='C:\\Users\\nrf46657\\Desktop\\VAHydro Development\\GitHub\\r-dh-ecohydro\\';
+
+
 #----Change Basepath here to point to your global config file:
-#basepath='/usr/local/home/git/r-dh-ecohydro';
-basepath='C:\\Users\\nrf46657\\Desktop\\VAHydro Development\\GitHub\\r-dh-ecohydro\\';
+
 # set your local directory paths in config.local.private located in filepath above
 # this file will NOT be sent to git, so it should persist
 # so, edit config.local.private once and you should be good to go
-#source('/var/www/R/config.local.private');
+
 source(paste(basepath,'config.local.private',sep='/'));
 
 #Load Functions               
@@ -26,20 +29,27 @@ token <- rest_token(site, token, rest_uname, rest_pw);
 
 source(paste(fxn_locations,"elf_assemble_batch.R", sep = ""));
 source(paste(fxn_locations,"huc8_groupings.txt", sep = "")); 
+
+
 # Load Default inputs
 source(paste(fxn_locations,"elf_default_inputs.R", sep = ""));
 #####
 # Now add custom local settings here
 inputs$x_metric = 'erom_q0001e_mean'; #Flow metric to be plotted on the x-axis
 inputs$y_metric = 'aqbio_nt_total';
-inputs$ws_ftype = c('nhd_huc6');
-inputs$target_hydrocode = '';
+
+inputs$ws_ftype = c('nhd_huc8');
+inputs$target_hydrocode = 'nhd_huc8_02080204';
+
 inputs$quantile = .80;
 inputs$send_to_rest = "NO";
-inputs$glo = 1;
+
+inputs$glo = 72;
 inputs$method = "quantreg"; #quantreg, pwit, ymax, twopoint, pwit_RS
 inputs$ghi = 530;
-inputs$dataset_tag = 'JK-TEST11';
+inputs$dataset_tag = 'reg_diag_bpj530';
+
+
 inputs$token = token;
 
 #------------------------------------------------------------------------------------------------

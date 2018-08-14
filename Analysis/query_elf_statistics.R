@@ -29,7 +29,7 @@ fn_dh_elfstats <- function(
     stat_quantreg_ghi = "all",
     feature_ftype = "all",
     xvar = "all",
-    dataset_tag = "all",
+    dataset_tag = "taxaLoss_PI_PressHuc8",
     featureid = "all") {
 
 #------------------------------------------------------------------

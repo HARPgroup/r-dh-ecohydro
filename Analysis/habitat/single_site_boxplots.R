@@ -6,8 +6,12 @@ site <- "http://deq1.bse.vt.edu/d.dh"    #Specify the site of interest, either d
 #----------------------------------------------
 
 #----FOR RUNNING LOCALLY:
+
+
 #basepath='/var/www/R';
-basepath='C:/Users/nrf46657/Desktop/VAHydro Development/GitHub/r-dh-ecohydro/';
+basepath='D:/Jkrstolic/R/deqEcoflows/GitHub/r-dh-ecohydro';
+
+
 source(paste(basepath,'config.local.private',sep='/'));
 
 #Load Functions               
@@ -23,7 +27,7 @@ token <- rest_token(site, token, rest_uname, rest_pw);
 # PROJECT               SITE HYDROIDS
 #
 # NF_Shenandoah         397290,397291,397292,397293,397294
-# SF_Shenandoah         397299,397300,397301
+# SF_Shenandoah         397299,397300,397301 
 # Upper_James           397302,397303,397304,397305
 # New_River_Claytor     397284,397285
 # Appomattox            397282,397283

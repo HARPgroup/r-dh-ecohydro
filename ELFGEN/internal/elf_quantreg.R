@@ -6,6 +6,7 @@ library(grid);
 library(httr);
 library(data.table);
 library(scales);
+library(smwrStats);
 
 elf_quantreg <- function(
   inputs, data, x_metric_code, y_metric_code, ws_ftype_code, 
@@ -93,11 +94,29 @@ print(paste("Upper quantile has ", nrow(upper.quant), "values"));
 #            plus_minus <- round(((pred_table$pred_upr - pred_table$pred_lwr)/2), 1) #plus or minus this value
 #            plus_minus_table = data.frame(plus_minus)
             
-            
-#            Conf_Pred_table <- cbind(upper.quant_tab, conf_table, pred_table, plus_minus_table) #
-#            out_name <- paste(search_code,"fe_quantreg",x_metric,y_metric,quantile,station_agg,sampres,analysis_timespan, sep='_');
-#            print(paste("Exporting Prediction interval table "));
-#            write.csv(Conf_Pred_table, file = paste(save_directory,"/",out_name,"_Conf_Pred_information",".csv", sep=""), row.names = F, quote = FALSE)
+            # press <- press(regupper) 
+            # press_table = data.frame(press)
+            # names(press_table)[1] <- "PRESS"
+            # 
+            # Conf_Pred_table <- cbind(upper.quant_tab, conf_table, pred_table, plus_minus_table, press_table) #
+            # 
+            # out_name <- paste(search_code,"fe_quantreg",x_metric,y_metric,quantile,station_agg,sampres,analysis_timespan, sep='_');
+            # print(paste("Exporting Prediction interval table "));
+            # write.csv(Conf_Pred_table, file = paste(save_directory,"/",out_name,"_Conf_Pred_information",".csv", sep=""), row.names = F, quote = FALSE)
+            # 
+
+          ##################################
+            #REG UPPER Diagnostics code
+            library(relimp, pos=28)
+            outlierTest(regupper)
+            qqPlot(regupper, simulate=TRUE, id.method="y", id.n=2)
+
+            oldpar <- par(oma=c(0,0,3,0), mfrow=c(2,2))
+            diagPlot <- plot(regupper)
+            par(oldpar)
+
+            ShapResult<- shapiro.test(residuals (regupper))
+            print(ShapResult)
             ####################JLR###############
             
             
@@ -239,7 +258,10 @@ print (paste("Plotting ELF"));
                             pct_chg = pct_chg,
                             startdate = startdate,
                             sampres =  sampres,
-                            enddate = enddate)
+                            enddate = enddate,
+                            x_metric = x_metric,  #aded by jen
+                            y_metric = y_metric,  #added by Jen
+                            search_code = search_code) #added by Jen
           elf_pct_chg (pct_inputs)
           
           filename <- paste(adminid,"pctchg.png", sep="_")

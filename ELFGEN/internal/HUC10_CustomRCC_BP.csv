@@ -1,0 +1,3 @@
+method,dataset_tag,x_metric,y_metric,target_hydrocode,ghi,glo,ws_ftype
+quantreg,Taxaloss_BPJ530,erom_q0001e_mean,aqbio_nt_total,513010106,530,72,nhd_huc10
+quantreg,Taxaloss_BPJ530,erom_q0001e_mean,aqbio_nt_total,604000509,530,72,nhd_huc10
