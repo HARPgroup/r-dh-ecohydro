@@ -1,3 +1,10 @@
+---
+title: "Watershed Flow:Ecology Summary"
+output: word_document
+---
+
+```{r, echo=FALSE,warning=FALSE,message=FALSE,error=FALSE,results='hide'}
+
 rm(list = ls())  #clear variables
 options(timeout=2400); # set timeout to twice default level to avoid abort due to high traffic
 
@@ -76,64 +83,65 @@ feature <- getFeature(
 
 
 #perform quantile regression calculation and plot 
-elf_quantreg(
+qrp <- elf_quantreg(
  inputs, data, x_metric_code = inputs$x_metric, 
  y_metric_code = inputs$y_metric, 
  ws_ftype_code = NULL, 
- Feature.Name_code = inputs$target_hydrocode, 
+ Feature.Name_code = feature$name, 
  Hydroid_code = inputs$target_hydrocode, 
  search_code = NULL, token, 
  min(data$tstime), max(data$tstime), geom=feature$geom
 )
 
 #perform quantile regression calculation and plot 
-elf_ymax(
-  inputs, data, x_metric_code = inputs$x_metric, 
-  y_metric_code = inputs$y_metric, 
-  ws_ftype_code = NULL, 
-  Feature.Name_code = 'Virginia', 
-  Hydroid_code = inputs$target_hydrocode, 
-  search_code = NULL, token, 
-  min(data$tstime), max(data$tstime), geom=feature$geom
-)
+#elf_ymax(
+#  inputs, data, x_metric_code = inputs$x_metric, 
+#  y_metric_code = inputs$y_metric, 
+#  ws_ftype_code = NULL, 
+#  Feature.Name_code = 'Virginia', 
+#  Hydroid_code = inputs$target_hydrocode, 
+#  search_code = NULL, token, 
+#  min(data$tstime), max(data$tstime), geom=feature$geom
+#)
+```
 
-plot(log(data$x_value), data$y_value)
-reg <- lm(y_value~log(x_value),data)
-abline(lm(y_value~log(x_value),data))
-lines(log(data$x_value[order(data$x_value)]), loess(y_value~log(x_value),data)$fitted[order(data$x_value)],col="blue",lwd=3)
-lines(table$x[order(table$x)],(loess(as.character(pct_chg_10) ~ x,data=table))$fitted[order(table$x)],col="blue",lwd=3)
+```{r, echo=FALSE,warning=FALSE,message=FALSE,error=FALSE,fig.width=8,fig.height=8}
+qrp
 
-summary(reg)
+#plot(log(data$x_value), data$y_value)
+#reg <- lm(y_value~log(x_value),data)
+#abline(lm(y_value~log(x_value),data))
+#lines(log(data$x_value[order(data$x_value)]), #loess(y_value~log(x_value),data)$fitted[order(data$x_value)],col="blue",lwd=3)
+#lines(table$x[order(table$x)],(loess(as.character(pct_chg_10) ~ #x,data=table))$fitted[order(table$x)],col="blue",lwd=3)
+#summary(reg)
 
-ndata <- subset(data, x_value < 100.0)
-plot(ndata$x_value, ndata$y_value)
-reg <- lm(y_value~x_value,ndata)
-abline(lm(y_value~x_value,ndata))
-summary(reg)
+#ndata <- subset(data, x_value < 100.0)
+#plot(ndata$x_value, ndata$y_value)
+#reg <- lm(y_value~x_value,ndata)
+#abline(lm(y_value~x_value,ndata))
+#summary(reg)
 
-#for setting ghi = max x_value
-inputs$ghi <- max(mydata$x_value);
 
 
 ##### Plot PWIT ####
+#for setting ghi = max x_value
+#inputs$ghi <- max(mydata$x_value);
 # modify elf_pwit to do analysis and return results
-inputs$glo = 100;
-inputs$ghi = 200;
-elf_pw_it (
-  inputs, data, inputs$x_metric, 
-  inputs$y_metric, ws_ftype_code = NULL, 
-  'usa_state_virginia', 'usa_state_virginia', 
-  'usa_state_virginia', token, 
-  min(data$tstime), max(data$tstime), geom=feature$geom
-)
+#inputs$glo = 100;
+#inputs$ghi = 200;
+#elf_pw_it (
+#  inputs, data, inputs$x_metric, 
+#  inputs$y_metric, ws_ftype_code = NULL, 
+#  feature$name, feature$name, 
+#  feature$name, token, 
+#  min(data$tstime), max(data$tstime), geom=feature$geom
+#)
 # add new function
 # plot_elf_pwit()
 # add new function store_elf_pwit() (if SEND_TO_REST = TRUE)
 
 # Regression Diagnostics here
 upper.quant = elf_upper(data, inputs$quantile)
-# filter out stations
-#upper.quant = subset(upper.quant, hydrocode != 'DGIF041253')
 upper.quant$lnx = log(upper.quant$x_value)
 regupper = lm(y_value ~ lnx,data = upper.quant)
 summary(regupper)
@@ -147,3 +155,37 @@ shapiro.test(residuals (regupper))
 inflm.ELF <- influence.measures(regupper)
 which(apply(inflm.ELF$is.inf, 1, any))   #identifies the points that are influence points
 summary(inflm.ELF) # only these
+
+```
+==Filter Out Selected Leverage Points==
+```{r, echo=FALSE,warning=FALSE,message=FALSE,error=FALSE,fig.width=8,fig.height=8}
+# filter out stations
+#perform quantile regression calculation and plot 
+data = subset(data, hydrocode != 'DGIF041253')
+qrp <- elf_quantreg(
+ inputs, data, x_metric_code = inputs$x_metric, 
+ y_metric_code = inputs$y_metric, 
+ ws_ftype_code = NULL, 
+ Feature.Name_code = feature$name, 
+ Hydroid_code = inputs$target_hydrocode, 
+ search_code = NULL, token, 
+ min(data$tstime), max(data$tstime), geom=feature$geom
+)
+qrp
+upper.quant = subset(upper.quant, hydrocode != 'DGIF041253')
+upper.quant$lnx = log(upper.quant$x_value)
+regupper = lm(y_value ~ lnx,data = upper.quant)
+summary(regupper)
+oldpar <- par(oma=c(0,0,3,0), mfrow=c(2,2))
+plot(regupper)
+par(oldpar)
+
+shapiro.test(residuals (regupper))
+
+#influence stats
+inflm.ELF <- influence.measures(regupper)
+which(apply(inflm.ELF$is.inf, 1, any))   #identifies the points that are influence points
+summary(inflm.ELF) # only these
+
+#pander(wshed_summary_tbl, split.table=Inf);
+```

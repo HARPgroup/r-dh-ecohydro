@@ -39,6 +39,7 @@ batch <- rbind(
   batch, data.frame(
     bundle = 'watershed', ftype = 'nhd_huc8', dataset_tag = 'bpj-530', q_ftype = 'fe_quantreg'))
 batch <- rbind(
+  # bpj-530 is 
   batch, data.frame(
     bundle = 'watershed', ftype = 'nhd_huc10', dataset_tag = 'bpj-530', q_ftype = 'fe_elf'))
 

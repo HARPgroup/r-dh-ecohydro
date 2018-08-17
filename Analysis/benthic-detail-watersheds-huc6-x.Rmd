@@ -1,26 +1,28 @@
 ---
-title: "ELF Regional Comparisons"
+  title: "ELF Monthly Comparisons"
 output: word_document
 ---
+  #Simulated range and variability of percent loss of taxa for different biometrics
   
-```{r,#test, echo=FALSE,warning=FALSE,message=FALSE,error=FALSE,results='hide'}
+  
+```{r, echo=FALSE}
 # install.packages('gdata')
-options(timeout=1024);
+options(timeout=2000);
 library('gdata')
-library('pander')
+library(pander);
 source("/var/www/R/config.local.private");
 source(paste(base_directory,"Analysis/query_elf_statistics.R", sep = "/")); 
 source(paste(base_directory,"Analysis/plot_elf_statistics.R", sep = "/")); 
-save_directory = paste(file_directory,"/",sep='');
+base_url <- 'http://deq2.bse.vt.edu/d.dh'
 
 # vars
-yvar = 'aqbio_nt_cypr_native';#aqbio_nt_total, aqbio_nt_cent, aqbio_nt_darter, aqbio_nt_benins, aqbio_nt_minnow
-plot_title = 'NT Cypranidae Native';
+yvar = 'aqbio_benthic_nt_total';#aqbio_nt_total, aqbio_nt_cent, aqbio_nt_darter, aqbio_nt_benins, aqbio_nt_minnow
+plot_title = 'NT Total Benthic';
 quant = 0.8
-ftype = 'nhd_huc10';
+ftype = 'nhd_huc6';
 aftype = 'fe_elf';
-dataset_tag = 'bpj-530';
-sampres = "species";
+dataset_tag = 'benthic-bpj-200';
+sampres = "maj_fam_gen_spec";
 rawdata = 
   fn_dh_elfstats ( ftype = aftype, 
     site = base_url, analysis_timespan = "full", yvar = yvar,
@@ -31,15 +33,13 @@ anova_data = rawdata;
 anova_data = subset(anova_data, out_m > 0)
 anova_data = subset(anova_data, out_rsq_adj > 0)
 anova_data = subset(anova_data, out_p <= 0.01)
-fit <- aov(out_rsq_adj ~ in_xvar, data=anova_data)
 
-plot_monthly(anova_data, yvar, xmetric = 'out_rsq_adj', ymetric = yvar, ymin=0, title = plot_title);
+fit <- aov(out_rsq_adj ~ containing_hydrocode, data=anova_data)
 
+pander(ss)
 ```
-Automated routines were used to detect Ecological Limit Functions (ELF) as a variety of spatial scales including Omernik Eco-Region iii, the NHD HUC 6, HUC 8, and HUC 10.  The characteristics of the ELF were estimated by the upper 20% quantile of the data set described by y = f(ln(x)), where y was a number of taxa metric, and x was drainage area, mean annual flow, or mean monthly flow as estmated by the EROM model.  Because the datasets demonstrated an increasing NT as watershed area increased up to a certain point (refered to here as the "RCC Breakpoint"), then leveled off or began to decrease, it was important to restrict analysis of data to the left side of this breakpoint.  Initially, the breakpoint selected  was by inspection of a scatterplot of the entire multi-state dataset, resulting in 530 square miles.  Upon reviewing HUC6 data, however, it became clear that there were different RCC breakpoints evident in the different river basins.
+```{r, echo=FALSE,warning=FALSE,message=FALSE,error=FALSE}
 
-
-```{r, echo=FALSE}
 ss = data.frame(
   "x-Variable" = character(), 
   "0%" =  numeric(), 
@@ -56,7 +56,8 @@ for(i in erom_vars) {
   qq = quantile(dset$out_rsq_adj)
   
   # could also do
-  ttq = t.test(dad$out_rsq_adj, dset$out_rsq_adj)
+  #ttq = t.test(dad$out_rsq_adj, dset$out_rsq_adj)
+  ttq = wilcox.test(dad$out_rsq_adj, dset$out_rsq_adj)
   
   daq = subset(anova_data, in_xvar == 'nhdp_drainage_sqmi' | in_xvar == 'erom_q0001e_mean')
 
