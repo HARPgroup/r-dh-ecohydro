@@ -38,7 +38,6 @@ export.df <- data.frame(pctchg=as.Date(character()),
 #flow_reductions <- c("10","20")
 #pctchg <- "10"
 flow.reduction <- c("10","20","30","40","50")
-#flow.reduction <- c("10")
 
 #j <- 2
 for (j in 1:length(flow.reduction)) {
@@ -96,8 +95,7 @@ site_subset <- data.frame(ifim_site_name = character(),
  site_subset <- rbind(site_subset, all_sites[which(all_sites$ifim_site_name=="Plains Mill"),])    
  site_subset <- rbind(site_subset, all_sites[which(all_sites$ifim_site_name=="North Anna Piedmont"),])      
  site_subset <- rbind(site_subset, all_sites[which(all_sites$ifim_site_name=="North Anna Fall Zone"),])      
- site_subset <- rbind(site_subset, all_sites[which(all_sites$ifim_site_name=="North Anna Coastal Plain"),])      
- 
+
 
  all_sites <- site_subset
 #-----------------------------------------------------------------------------------------------------
@@ -219,40 +217,13 @@ Craig.da.inputs <-list(featureid = Craig.site.hydroid,varkey = 'nhdp_drainage_sq
 Craig.da.dataframe <- getProperty(Craig.da.inputs, site, prop)
 Craig.nhdp_drainage_sqmi <- as.numeric(as.character(Craig.da.dataframe$propvalue))
 #---------------------------------------------------------------------------------------------------------------
-NorthAnnaCoastalPlain.site.inputs <- list(bundle = 'monitoringpoint',ftype = 'ifim_transect',hydrocode = 'ifim_yor_02',stringsAsFactors=FALSE) 
-NorthAnnaCoastalPlain.site.dataframe <- getFeature(NorthAnnaCoastalPlain.site.inputs, token, site, feature)
-NorthAnnaCoastalPlain.site.hydroid <- as.character(NorthAnnaCoastalPlain.site.dataframe$hydroid)
-#
-NorthAnnaCoastalPlain.maf.inputs <-list(featureid = NorthAnnaCoastalPlain.site.hydroid,varkey = 'erom_q0001e_mean',entity_type = 'dh_feature')
-NorthAnnaCoastalPlain.maf.dataframe <- getProperty(NorthAnnaCoastalPlain.maf.inputs, site, prop)
-NorthAnnaCoastalPlain.erom_q0001e_mean <- as.numeric(as.character(NorthAnnaCoastalPlain.maf.dataframe$propvalue))
-#
-NorthAnnaCoastalPlain.da.inputs <-list(featureid = NorthAnnaCoastalPlain.site.hydroid,varkey = 'nhdp_drainage_sqmi',entity_type = 'dh_feature')
-NorthAnnaCoastalPlain.da.dataframe <- getProperty(NorthAnnaCoastalPlain.da.inputs, site, prop)
-NorthAnnaCoastalPlain.nhdp_drainage_sqmi <- as.numeric(as.character(NorthAnnaCoastalPlain.da.dataframe$propvalue))
-#---------------------------------------------------------------------------------------------------------------
 
 
 
 
-#months <- c("MAF","Jul","Aug","Sep")
-#flow_metric <- c("erom_q0001e_mean","erom_q0001e_july","erom_q0001e_aug","erom_q0001e_sept")
-
-months <- c("MAF","Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec")
-flow_metric <- c("erom_q0001e_mean",
-                 "erom_q0001e_jan",
-                 "erom_q0001e_feb",
-                 "erom_q0001e_mar",
-                 "erom_q0001e_apr",
-                 "erom_q0001e_may",
-                 "erom_q0001e_june",
-                 "erom_q0001e_july",
-                 "erom_q0001e_aug",
-                 "erom_q0001e_sept",
-                 "erom_q0001e_oct",
-                 "erom_q0001e_nov",
-                 "erom_q0001e_dec")
-
+#months <- c("MAF","Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec")
+months <- c("MAF","Jul","Aug","Sep")
+flow_metric <- c("erom_q0001e_mean","erom_q0001e_july","erom_q0001e_aug","erom_q0001e_sept")
 
 #r<-1
 for (r in 1:length(months)) {
@@ -320,7 +291,7 @@ xvar <- flow_metric[r]
   PlainsMill.huc10.code <- '0207000603' 
   NorthAnna.huc10.code <- '0208010608'
   Craig.huc10.code <- '0208020112'
-
+  
     
 Dunlap.huc10.inputs <- list(bundle = 'watershed',ftype = 'nhd_huc10',hydrocode = Dunlap.huc10.code,stringsAsFactors=FALSE) 
 Dunlap.huc10.dataframe <- getFeature(Dunlap.huc10.inputs, token, site, feature)
@@ -397,8 +368,6 @@ NorthAnna.huc10.m <- NorthAnna.huc10.stats.bpj_530_icthy$out_m
 NorthAnna.huc10.b <- NorthAnna.huc10.stats.bpj_530_icthy$out_b
 NorthAnnaPiedmont <- ((NorthAnna.huc10.m*(log((1)/(1-(as.numeric(pctchg)/100)))))/(NorthAnna.huc10.m*(log(NorthAnnaPiedmont.erom_q0001e_mean))+NorthAnna.huc10.b))*100
 NorthAnnaFallZone <- ((NorthAnna.huc10.m*(log((1)/(1-(as.numeric(pctchg)/100)))))/(NorthAnna.huc10.m*(log(NorthAnnaFallZone.erom_q0001e_mean))+NorthAnna.huc10.b))*100
-NorthAnnaCoastalPlain <- ((NorthAnna.huc10.m*(log((1)/(1-(as.numeric(pctchg)/100)))))/(NorthAnna.huc10.m*(log(NorthAnnaCoastalPlain.erom_q0001e_mean))+NorthAnna.huc10.b))*100
-
 
 Craig.huc10.m <- Craig.huc10.stats.bpj_530_icthy$out_m
 Craig.huc10.b <- Craig.huc10.stats.bpj_530_icthy$out_b
@@ -423,7 +392,6 @@ NorthAnna.huc8.m <- NorthAnna.huc8.stats$out_m
 NorthAnna.huc8.b <- NorthAnna.huc8.stats$out_b
 NorthAnnaPiedmont.huc8 <- ((NorthAnna.huc8.m*(log((1)/(1-(as.numeric(pctchg)/100)))))/(NorthAnna.huc8.m*(log(NorthAnnaPiedmont.erom_q0001e_mean))+NorthAnna.huc8.b))*100
 NorthAnnaFallZone.huc8 <- ((NorthAnna.huc8.m*(log((1)/(1-(as.numeric(pctchg)/100)))))/(NorthAnna.huc8.m*(log(NorthAnnaFallZone.erom_q0001e_mean))+NorthAnna.huc8.b))*100
-NorthAnnaCoastalPlain.huc8 <- ((NorthAnna.huc8.m*(log((1)/(1-(as.numeric(pctchg)/100)))))/(NorthAnna.huc8.m*(log(NorthAnnaCoastalPlain.erom_q0001e_mean))+NorthAnna.huc8.b))*100
 
 ################################################################################################################
 ################################################################################################################
@@ -431,7 +399,7 @@ NorthAnnaCoastalPlain.huc8 <- ((NorthAnna.huc8.m*(log((1)/(1-(as.numeric(pctchg)
 ################################################################################################################
 
 
- custom_taxachg <- c(Dunlap,Craig,PlainsMill,NorthAnnaPiedmont,NorthAnnaFallZone,NorthAnnaCoastalPlain)
+ custom_taxachg <- c(Dunlap,Craig,PlainsMill,NorthAnnaPiedmont,NorthAnnaFallZone)
 
 #taxa_chg <- c(Dunlap,Craig,North_Anna_Piedmont,North_Anna_Fall_Zone)
 
@@ -447,7 +415,6 @@ Craig.df <- month_data_medians[2,]
 Plains_Mill.df <- month_data_medians[3,]
 North_Anna_Piedmont.df <- month_data_medians[4,]
 North_Anna_Fall_Zone.df <- month_data_medians[5,]
-North_Anna_Coastal_Plain.df <- month_data_medians[6,]
 
 
 #----------------------------------------------------- 
@@ -456,16 +423,13 @@ North_Anna_Coastal_Plain.df <- month_data_medians[6,]
 Dunlap.lab <- paste("Dunlap (",round(Dunlap.erom_q0001e_mean, digits = 0)," MAF)",sep="")
 PlainsMill.lab <- paste("PlainsMill (",round(PlainsMill.erom_q0001e_mean, digits = 0)," MAF)",sep="")
 NorthAnnaPiedmont.lab <- paste("NorthAnnaPiedmont (",round(NorthAnnaPiedmont.erom_q0001e_mean, digits = 0)," MAF)",sep="")
-NorthAnnaCoastalPlain.lab <- paste("NorthAnnaCoastalPlain (",round(NorthAnnaCoastalPlain.erom_q0001e_mean, digits = 0)," MAF)",sep="")
 NorthAnnaFallZone.lab <- paste("NorthAnnaFallZone (",round(NorthAnnaFallZone.erom_q0001e_mean, digits = 0)," MAF)",sep="")
 Craig.lab <- paste("Craig (",round(Craig.erom_q0001e_mean, digits = 0)," MAF)",sep="")
 
 plot_labels <- data.frame(ifim_site_name=c(Dunlap.lab,
                                            PlainsMill.lab,
                                            NorthAnnaPiedmont.lab,
-                                           NorthAnnaCoastalPlain.lab,
                                            NorthAnnaFallZone.lab,
-                                           #NorthAnnaCoastalPlain.lab,
                                            Craig.lab),
                           pctchg=-5)
 #----------------------------------------------------- 
@@ -488,10 +452,10 @@ plot(month_data_medians$custom_taxachg, month_data_medians$pctchg,
      ylab="Percent Change Habitat",cex.lab=1.5,
      cex.axis=2,
      #ylim=c(-80,80))
-     #ylim=c(-20,20),
-     #xlim=c(-20,20))
-     ylim=c(-6,6),
-     xlim=c(-6,6))
+     ylim=c(-20,20),
+     xlim=c(-20,20))
+     #ylim=c(-6,6),
+     #xlim=c(-6,6))
 
 abline(a=0,b=0)
 abline(v=0)
@@ -505,7 +469,6 @@ p_val <- summary(lm(month_data_medians$pctchg ~ month_data_medians$custom_taxach
 points(Dunlap.df$custom_taxachg, Dunlap.df$pctchg, col = "blue",cex=3,pch=16) #pch=19 for circle point
 points(Plains_Mill.df$custom_taxachg, Plains_Mill.df$pctchg, col = "red",cex=3,pch=16) #pch=19 for circle point
 points(North_Anna_Piedmont.df$custom_taxachg, North_Anna_Piedmont.df$pctchg, col = "orange",cex=3,pch=16) #pch=19 for circle point
-points(North_Anna_Coastal_Plain.df$custom_taxachg, North_Anna_Coastal_Plain.df$pctchg, col = "forestgreen",cex=3,pch=16) #pch=19 for circle point
 points(North_Anna_Fall_Zone.df$custom_taxachg, North_Anna_Fall_Zone.df$pctchg, col = "purple",cex=3,pch=16) #pch=19 for circle point
 points(Craig.df$custom_taxachg, Craig.df$pctchg, col = "green",cex=3,pch=16) #pch=19 for circle point
 
@@ -514,7 +477,7 @@ points(Craig.df$custom_taxachg, Craig.df$pctchg, col = "green",cex=3,pch=16) #pc
 legend("topright",
        legend = plot_labels$ifim_site_name,
        pch=16,
-       col=c("blue","red","orange","forestgreen","purple","green"),
+       col=c("blue","red","orange","purple","green"),
        cex = 2)
 
 #------------------------------------------
@@ -531,15 +494,15 @@ dev.off()
 
 
 #------------------------------------------
-ifim_site <- c("Dunlap","Plains Mill","North Anna Piedmont","North Anna Fall Zone","North Anna Coastal Plain","Craig")
-export <- (rbind(Dunlap.df,Plains_Mill.df,North_Anna_Piedmont.df,North_Anna_Fall_Zone.df,North_Anna_Coastal_Plain.df,Craig.df))
+ifim_site <- c("Dunlap","Plains Mill","North Anna Piedmont","North Anna Fall Zone","Craig")
+export <- (rbind(Dunlap.df,Plains_Mill.df,North_Anna_Piedmont.df,North_Anna_Fall_Zone.df,Craig.df))
 colnames(export)[colnames(export)=="pctchg"] <- "hab_chg"
-export <- cbind(export,custom_tag = c("bpj_q50",huc8_tag,"bpj_530_icthy","bpj_530_icthy","bpj_530_icthy","bpj_530_icthy"))
-export <- cbind(export,custom_huc_unit = c("huc10","huc8","huc10","huc10","huc10","huc10"))
-export <- cbind(export,custom_huc = c(Dunlap.huc10.code,PlainsMill.huc8.code,NorthAnna.huc10.code,NorthAnna.huc10.code,NorthAnna.huc10.code,Craig.huc10.code))
-export <- cbind(export,huc8_taxachg = -c(Dunlap.huc8,PlainsMill.huc8,NorthAnnaPiedmont.huc8,NorthAnnaFallZone.huc8,NorthAnnaCoastalPlain.huc8,Craig.huc8))
+export <- cbind(export,custom_tag = c("bpj_q50",huc8_tag,"bpj_530_icthy","bpj_530_icthy","bpj_530_icthy"))
+export <- cbind(export,custom_huc_unit = c("huc10","huc8","huc10","huc10","huc10"))
+export <- cbind(export,custom_huc = c(Dunlap.huc10.code,PlainsMill.huc8.code,NorthAnna.huc10.code,NorthAnna.huc10.code,Craig.huc10.code))
+export <- cbind(export,huc8_taxachg = -c(Dunlap.huc8,PlainsMill.huc8,NorthAnnaPiedmont.huc8,NorthAnnaFallZone.huc8,Craig.huc8))
 export <- cbind(export,huc8_tag = huc8_tag)
-export <- cbind(export,huc8 = c(Dunlap.huc8.code,PlainsMill.huc8.code,NorthAnna.huc8.code,NorthAnna.huc8.code,NorthAnna.huc8.code,Craig.huc8.code))
+export <- cbind(export,huc8 = c(Dunlap.huc8.code,PlainsMill.huc8.code,NorthAnna.huc8.code,NorthAnna.huc8.code,Craig.huc8.code))
 
 export <- data.frame(pctchg,month,ifim_site, export[-1])
 
