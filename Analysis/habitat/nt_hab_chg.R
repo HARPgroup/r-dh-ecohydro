@@ -37,8 +37,8 @@ export.df <- data.frame(pctchg=as.Date(character()),
 #LOOP THRU PERCENT FLOW REDUCTION
 #flow_reductions <- c("10","20")
 #pctchg <- "10"
-flow.reduction <- c("10","20","30","40","50")
-#flow.reduction <- c("10")
+#flow.reduction <- c("10","20","30","40","50")
+flow.reduction <- c("10")
 
 #j <- 2
 for (j in 1:length(flow.reduction)) {
