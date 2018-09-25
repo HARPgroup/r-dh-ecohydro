@@ -45,34 +45,40 @@ if (fish.only == "yes") {
 }
 
 if (benth.only == "yes") {
-  all_sites1 <- all_sites[which(all_sites$metric=="alg_mid"),]        # Algae and Midge Guild
-  all_sites2 <- all_sites[which(all_sites$metric=="bd_high_grad"),]   # Benthos Diversity, high gradient
-  all_sites3 <- all_sites[which(all_sites$metric=="bd_low_grad"),]    # Benthos Diversity, low gradient
-  all_sites4 <- all_sites[which(all_sites$metric=="benth_mac"),]      # Benthic Macroinvertebrates
-  all_sites5 <- all_sites[which(all_sites$metric=="cf"),]             # Crayfish
-  all_sites6 <- all_sites[which(all_sites$metric=="e_comp"),]         # Eastern Elliptio mussel, Elliptio complanata
-  all_sites7 <- all_sites[which(all_sites$metric=="eph_mac"),]        # Mayfly
-  all_sites8 <- all_sites[which(all_sites$metric=="l_rad"),]          # Eastern lampmussel
-  all_sites9 <- all_sites[which(all_sites$metric=="plec_mac"),]       # Stonefly
-  all_sites10 <- all_sites[which(all_sites$metric=="pwb"),]            # Purple Wartyback mussel
-  all_sites11 <- all_sites[which(all_sites$metric=="sm_shal_slow"),]   # Spike Mussel, Shallow
-  all_sites12 <- all_sites[which(all_sites$metric=="sm_int"),]         # Spike Mussel, Intermediate
-  all_sites13 <- all_sites[which(all_sites$metric=="tric_mac"),]       # Caddisfly
+   all_sites1 <- all_sites[which(all_sites$metric=="alg_mid"),]        # Algae and Midge Guild
+   all_sites2 <- all_sites[which(all_sites$metric=="bd_high_grad"),]   # Benthos Diversity, high gradient
+   all_sites3 <- all_sites[which(all_sites$metric=="bd_low_grad"),]    # Benthos Diversity, low gradient
+   all_sites4 <- all_sites[which(all_sites$metric=="benth_mac"),]      # Benthic Macroinvertebrates
+   all_sites5 <- all_sites[which(all_sites$metric=="cf"),]             # Crayfish
+   all_sites6 <- all_sites[which(all_sites$metric=="e_comp"),]         # Eastern Elliptio mussel, Elliptio complanata
+   all_sites7 <- all_sites[which(all_sites$metric=="eph_mac"),]        # Mayfly
+   all_sites8 <- all_sites[which(all_sites$metric=="l_rad"),]          # Eastern lampmussel
+   all_sites9 <- all_sites[which(all_sites$metric=="plec_mac"),]       # Stonefly
+   all_sites10 <- all_sites[which(all_sites$metric=="pwb"),]            # Purple Wartyback mussel
+   all_sites11 <- all_sites[which(all_sites$metric=="sm_shal_slow"),]   # Spike Mussel, Shallow
+   all_sites12 <- all_sites[which(all_sites$metric=="sm_int"),]         # Spike Mussel, Intermediate
+   all_sites13 <- all_sites[which(all_sites$metric=="tric_mac"),]       # Caddisfly
+
   
-  all_sites <- rbind(#all_sites1, #exclude algae midge group
-                     all_sites2,
-                     all_sites3,
-                     all_sites4,
-                     all_sites5,
+   mussel_sites <- rbind(
                      all_sites6,
-                     all_sites7,
                      all_sites8,
-                     all_sites9,
                      all_sites10,
                      all_sites11,
-                     all_sites12,
-                     all_sites13)
-                  
+                     all_sites12)
+  
+  inverts_sites <- rbind(
+                    all_sites2,
+                    all_sites3,
+                    all_sites4,
+                    all_sites5,
+                    all_sites7,
+                    all_sites9,
+                    all_sites13) 
+  
+  algae_sites <- rbind(all_sites1)
+  
+  all_sites <-  algae_sites         
 }
 #-----------------------------------------------------------------------------------------------------
 #
@@ -328,6 +334,7 @@ for (r in 1:length(months)) {
           boxwex=0.04, #box width (was 0.04 when doing log, 25 for linear)
           log="x",
           ylim=c(-250,250), # FOR PLOTTING BENTHICS
+          #ylim=c(-60,60), # FOR PLOTTING BENTHICS
           xlim=c(100,12000), #with potomac
           par(mar=c(8,3,1,1),
               oma=c(3,5,0,0)),
@@ -346,6 +353,12 @@ for (r in 1:length(months)) {
             yaxt="n")  
   }
   
+  #rect(80,-65, 15000, 0, col= rgb(1,1,1,alpha=0.1), border = NA)
+  rect(80,-65, 15000, 0, col= adjustcolor('tomato',alpha=0.2))
+  rect(80,65, 15000, 0, col= adjustcolor('palegreen',alpha=0.2))
+  
+#  rect(80,-65, 15000, 0, col= rgb(1,0,0,alpha=0.1), border = NA)
+#  rect(80,65, 15000, 0, col= rgb(0,1,0,alpha=0.1), border = NA) 
   
   #without potomac
   #axis(1, at=c(100,200,300,400,500,600,700,800,900,1000,2000,3000,4000,5000), 
@@ -466,17 +479,19 @@ for (r in 1:length(months)) {
   #library('shape')
   #Arrows(round(exp((-b)/m),1)+(0.1*round(exp((-b)/m),1)),45,round(exp((-b)/m),1),45,arr.type="simple",lwd=2)
   
+ # annotate("rect", xmin = -Inf, xmax = Inf, ymin = 0, ymax = Inf, fill = "palegreen", alpha = 0.2) +
+ #   annotate("rect", xmin = -Inf, xmax = Inf, ymin = -Inf, ymax = 0, fill = "tomato", alpha = 0.2) +  
+    
+
   
   ## printing of the equation
   #text(x = 210, y = 45, labels = eq, cex=2)
   #text(x = 85, y = 52, labels = eq, cex=2, pos=4)
   
   
-  #abline(fit)
-  #lines(reg,type="o", lty=2, col="blue")
-  #segments(166, 0, 3000, 8.788643)
-  #segments(x1, y1, x2, y2,col='red',lwd=1)
+
   segments(x1, y1, x2, y2,col='black',lwd=5,lty=3)
+  #segments(x1, y1, round(exp((-b)/m),1), y2,col='black',lwd=5,lty=3) #use for northern hogsucker
   
   dev.off()
   

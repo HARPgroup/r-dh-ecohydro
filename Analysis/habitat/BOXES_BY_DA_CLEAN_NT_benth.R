@@ -6,10 +6,10 @@ basepath='C:/Users/nrf46657/Desktop/VAHydro Development/GitHub/r-dh-ecohydro/';
 source(paste(basepath,'config.local.private',sep='/'));
 
 #RETRIEVE HABITAT DATA
-pctchg <- "10"
+pctchg <- "40"
 tenth_percentile <- "no"
-fish.only <- "yes" #"yes" to plot for fish habitat metrics only 
-benth.only <- "no" 
+fish.only <- "no" #"yes" to plot for fish habitat metrics only 
+benth.only <- "yes" 
 single_metric <- "no" #"no" to plot for all metrics, otherwise specify metric of interest smb_adult, nh_adult etc.
 ##############################################################################################################
 # RETRIEVE DATA
@@ -45,34 +45,40 @@ if (fish.only == "yes") {
 }
 
 if (benth.only == "yes") {
-  all_sites1 <- all_sites[which(all_sites$metric=="alg_mid"),]        # Algae and Midge Guild
-  all_sites2 <- all_sites[which(all_sites$metric=="bd_high_grad"),]   # Benthos Diversity, high gradient
-  all_sites3 <- all_sites[which(all_sites$metric=="bd_low_grad"),]    # Benthos Diversity, low gradient
-  all_sites4 <- all_sites[which(all_sites$metric=="benth_mac"),]      # Benthic Macroinvertebrates
-  all_sites5 <- all_sites[which(all_sites$metric=="cf"),]             # Crayfish
-  all_sites6 <- all_sites[which(all_sites$metric=="e_comp"),]         # Eastern Elliptio mussel, Elliptio complanata
-  all_sites7 <- all_sites[which(all_sites$metric=="eph_mac"),]        # Mayfly
-  all_sites8 <- all_sites[which(all_sites$metric=="l_rad"),]          # Eastern lampmussel
-  all_sites9 <- all_sites[which(all_sites$metric=="plec_mac"),]       # Stonefly
-  all_sites10 <- all_sites[which(all_sites$metric=="pwb"),]            # Purple Wartyback mussel
-  all_sites11 <- all_sites[which(all_sites$metric=="sm_shal_slow"),]   # Spike Mussel, Shallow
-  all_sites12 <- all_sites[which(all_sites$metric=="sm_int"),]         # Spike Mussel, Intermediate
-  all_sites13 <- all_sites[which(all_sites$metric=="tric_mac"),]       # Caddisfly
+   all_sites1 <- all_sites[which(all_sites$metric=="alg_mid"),]        # Algae and Midge Guild
+   all_sites2 <- all_sites[which(all_sites$metric=="bd_high_grad"),]   # Benthos Diversity, high gradient
+   all_sites3 <- all_sites[which(all_sites$metric=="bd_low_grad"),]    # Benthos Diversity, low gradient
+   all_sites4 <- all_sites[which(all_sites$metric=="benth_mac"),]      # Benthic Macroinvertebrates
+   all_sites5 <- all_sites[which(all_sites$metric=="cf"),]             # Crayfish
+   all_sites6 <- all_sites[which(all_sites$metric=="e_comp"),]         # Eastern Elliptio mussel, Elliptio complanata
+   all_sites7 <- all_sites[which(all_sites$metric=="eph_mac"),]        # Mayfly
+   all_sites8 <- all_sites[which(all_sites$metric=="l_rad"),]          # Eastern lampmussel
+   all_sites9 <- all_sites[which(all_sites$metric=="plec_mac"),]       # Stonefly
+   all_sites10 <- all_sites[which(all_sites$metric=="pwb"),]            # Purple Wartyback mussel
+   all_sites11 <- all_sites[which(all_sites$metric=="sm_shal_slow"),]   # Spike Mussel, Shallow
+   all_sites12 <- all_sites[which(all_sites$metric=="sm_int"),]         # Spike Mussel, Intermediate
+   all_sites13 <- all_sites[which(all_sites$metric=="tric_mac"),]       # Caddisfly
+
   
-  all_sites <- rbind(#all_sites1, #exclude algae midge group
-                     all_sites2,
-                     all_sites3,
-                     all_sites4,
-                     all_sites5,
+   mussel_sites <- rbind(
                      all_sites6,
-                     all_sites7,
                      all_sites8,
-                     all_sites9,
                      all_sites10,
                      all_sites11,
-                     all_sites12,
-                     all_sites13)
-                  
+                     all_sites12)
+  
+  inverts_sites <- rbind(
+                    all_sites2,
+                    all_sites3,
+                    all_sites4,
+                    all_sites5,
+                    all_sites7,
+                    all_sites9,
+                    all_sites13) 
+  
+  algae_sites <- rbind(all_sites1)
+  
+  all_sites <-  algae_sites         
 }
 #-----------------------------------------------------------------------------------------------------
 #
@@ -328,6 +334,7 @@ for (r in 1:length(months)) {
           boxwex=0.04, #box width (was 0.04 when doing log, 25 for linear)
           log="x",
           ylim=c(-250,250), # FOR PLOTTING BENTHICS
+          #ylim=c(-60,60), # FOR PLOTTING BENTHICS
           xlim=c(100,12000), #with potomac
           par(mar=c(8,3,1,1),
               oma=c(3,5,0,0)),
