@@ -6,7 +6,7 @@ library(grid);
 library(httr);
 library(data.table);
 library(scales);
-library(smwrStats);
+#library(smwrStats);
 
 elf_quantreg <- function(
   inputs, data, x_metric_code, y_metric_code, ws_ftype_code, 
@@ -106,17 +106,17 @@ print(paste("Upper quantile has ", nrow(upper.quant), "values"));
             # 
 
           ##################################
-            #REG UPPER Diagnostics code
-            library(relimp, pos=28)
-            outlierTest(regupper)
-            qqPlot(regupper, simulate=TRUE, id.method="y", id.n=2)
-
-            oldpar <- par(oma=c(0,0,3,0), mfrow=c(2,2))
-            diagPlot <- plot(regupper)
-            par(oldpar)
-
-            ShapResult<- shapiro.test(residuals (regupper))
-            print(ShapResult)
+            # #REG UPPER Diagnostics code
+            # library(relimp, pos=28)
+            # outlierTest(regupper)
+            # qqPlot(regupper, simulate=TRUE, id.method="y", id.n=2)
+            # 
+            # oldpar <- par(oma=c(0,0,3,0), mfrow=c(2,2))
+            # diagPlot <- plot(regupper)
+            # par(oldpar)
+            # 
+            # ShapResult<- shapiro.test(residuals (regupper))
+            # print(ShapResult)
             ####################JLR###############
             
             
@@ -242,6 +242,18 @@ print (paste("Plotting ELF"));
               filename <- paste(adminid,"elf.png", sep="_")
               ggsave(file=filename, path = save_directory, width=8, height=6)
 
+              ###########################################################################################
+              ###########################################################################################
+              result <- base.map(geom, data, full_dataset, upper.quant,
+                                  yaxis_thresh, quantile,
+                                  plot_title, xaxis_title, yaxis_title,
+                                  EDAS_upper_legend,EDAS_lower_legend,Reg_upper_legend,Quantile_Legend)
+              
+              filename <- paste(adminid,"LOCATION_MAP.png", sep="_")
+              ggsave(file=filename, path = save_directory, width=9, height=6)
+              
+              ###########################################################################################
+              ###########################################################################################
               
       print (paste("Plotting Barplot"));
       print (paste("ELF Slope: ",ruslope,sep="")); 

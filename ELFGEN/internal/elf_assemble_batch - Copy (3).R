@@ -669,28 +669,7 @@ base.map <- function(geom, data, full_dataset, upper.quant,
 #  write.csv(RIVDF,paste(save_directory,"\\RIVDF.csv",sep=""))
   
   RIVDF <- read.table(file=paste(hydro_tools,"GIS_LAYERS","RIVDF.csv",sep="/"), header=TRUE, sep=",") #Load state geometries
-  
- # 
- # RIVDF <- unique(RIVDF[ , 3:4 ])
-  
-  #unique(RIVDF[ , 3:4 ])
-  
-  #nrow(unique(RIVDF[ , 3:4 ]))
 
-
-  ####   RIVDF_unique <-data.frame(X = rownames(unique(RIVDF[ , 3:4 ])),unique(RIVDF[ , 3:4 ]))
-  
-  ####   RIVDF_merge <- merge(RIVDF_unique, RIVDF, by = "X")
-  
-  
-  ####   RIVDF_merge_df <-data.frame(X=RIVDF_merge$X, 
-  ####              long=RIVDF_merge$long.x, 
-  ####              lat=RIVDF_merge$lat.x, 
-  ####              group=RIVDF_merge$group)
-  
-  
-  ####  RIVDF <- RIVDF_merge_df
-  
   # RIVDF <-data.frame(id=RIVDF$id,
   #            long=RIVDF$long,
   #            lat=RIVDF$lat,
@@ -716,22 +695,41 @@ base.map <- function(geom, data, full_dataset, upper.quant,
                       geom_polygon(data = DCDF, color="gray46", fill = "gray", lwd=0.5)+
                       geom_polygon(data = INDF, color="gray46", fill = "gray", lwd=0.5)+
                       geom_polygon(data = INDF, color="gray46", fill = "gray", lwd=0.5)+
+                      
+                      # ADD RIVERS ####################################################################
+                    #https://github.com/tidyverse/ggplot2/issues/2504
+                    
+                      #geom_line(data = RIVDF, color="blue", lwd=0.5)+
+                      #geom_point(data = RIVDF, color="blue", size=0.1)+
+                      #geom_path(data = RIVDF, color="blue", size=0.1)+
+                      #geom_point(aes(x = long, y = lat, group = id), data = RIVDF, color="blue", size=0.01)+
+                      
+                    
+                      #geom_path(data = RIVDF, color="blue", size=0.1)+
+                      #geom_path(data = unique(RIVDF), aes(x = long, y = lat), color="blue", size=0.1)+
+                      #geom_line(data = RIVDF, aes(x = long, y = lat, group = id), alpha = 0.2)+
+                      #geom_polygon(aes(x = long, y = lat, group = id), data = RIVDF, color="blue", size=0.1)+
+                    
+                    
+                       #RIVDF
+                       #RIVDF[!duplicated(RIVDF$long),]
+                    
+                    #library(sf)
+                    #test <- data.frame(RIVDF$long,RIVDF$lat)
+                    #unique(test)
+                    #st_cast(RIVDF, "LINESTRING") %>% st_geometry() %>% plot()
+                    
+                    geom_path(data = unique(RIVDF), aes(x = long, y = lat), color="blue", size=0.1)+
+                    
+                    #library(tidyverse)
+                    #library(sf)
+                    #library(maps)
+             #       geom_sf(data = RIVDF)+
 
+                      #################################################################################
                     
                       #Plot watershed outline
                       geom_polygon(data = watershedDF, color="khaki4", fill = "yellow",alpha = 0.25,lwd=0.5)+
-                      
-                      
-                      # ADD RIVERS ####################################################################
-                    #https://github.com/tidyverse/ggplot2/issues/2504+
-                    
-                    #geom_path(data = unique(RIVDF), aes(x = long, y = lat), color="blue", size=0.1)+
-                    
-                    #geom_path(data = RIVDF, aes(x = long, y = lat), color="blue", size=0.1)+
-                    geom_point(data = RIVDF, aes(x = long, y = lat), color="steelblue1", size=0.09)+
-                      
-                      #################################################################################
-                      
                       
                       #geom_point(aes(x = x, y = y, group = id), data = STATIONSDF, color="gray66", size = 0.025)+
                       #geom_point(aes(x = x, y = y, group = id), data = BLUSTATIONSDF, color="blue", size = 0.025)+

@@ -10,10 +10,6 @@ library(rgeos); #used for geospatial processing
 library(sp); #contains SpatialPolygonsDataFrame()
 library(ggsn); #used for adding scale bar and north arrow to map
 
-library(tidyverse)
-library(sf)
-library(maps)
-
 elf_run_method <- function( method, inputs, data, x_metric_code, y_metric_code, ws_ftype_code, 
                             Feature.Name_code, Hydroid_code, search_code, token, startdate, enddate, geom
 ) {
@@ -494,8 +490,7 @@ base.map <- function(geom, data, full_dataset, upper.quant,
   #                     y = c(35, 41))  
   extent <- data.frame(x = c(-85.5, -74.5), 
                        y = c(35, 41))  
-#    extent <- data.frame(x = c(-90, -60), 
-#                         y = c(20, 60))    
+  
   
   bb=readWKT(paste0("POLYGON((",extent$x[1]," ",extent$y[1],",",extent$x[2]," ",extent$y[1],",",extent$x[2]," ",extent$y[2],",",extent$x[1]," ",extent$y[2],",",extent$x[1]," ",extent$y[1],"))",sep=""))
   
@@ -669,35 +664,7 @@ base.map <- function(geom, data, full_dataset, upper.quant,
 #  write.csv(RIVDF,paste(save_directory,"\\RIVDF.csv",sep=""))
   
   RIVDF <- read.table(file=paste(hydro_tools,"GIS_LAYERS","RIVDF.csv",sep="/"), header=TRUE, sep=",") #Load state geometries
-  
- # 
- # RIVDF <- unique(RIVDF[ , 3:4 ])
-  
-  #unique(RIVDF[ , 3:4 ])
-  
-  #nrow(unique(RIVDF[ , 3:4 ]))
 
-
-  ####   RIVDF_unique <-data.frame(X = rownames(unique(RIVDF[ , 3:4 ])),unique(RIVDF[ , 3:4 ]))
-  
-  ####   RIVDF_merge <- merge(RIVDF_unique, RIVDF, by = "X")
-  
-  
-  ####   RIVDF_merge_df <-data.frame(X=RIVDF_merge$X, 
-  ####              long=RIVDF_merge$long.x, 
-  ####              lat=RIVDF_merge$lat.x, 
-  ####              group=RIVDF_merge$group)
-  
-  
-  ####  RIVDF <- RIVDF_merge_df
-  
-  # RIVDF <-data.frame(id=RIVDF$id,
-  #            long=RIVDF$long,
-  #            lat=RIVDF$lat,
-  #           #piece=RIVDF$piece,
-  #            group=RIVDF$group)#,
-  #            #X.id.=RIVDF$X.id.)
-  # RIVDF[!duplicated(RIVDF$LONG)]
   #########################################################
   
   map <- ggplotGrob(ggplot(data = VADF, aes(x=long, y=lat, group = group))+
@@ -716,22 +683,15 @@ base.map <- function(geom, data, full_dataset, upper.quant,
                       geom_polygon(data = DCDF, color="gray46", fill = "gray", lwd=0.5)+
                       geom_polygon(data = INDF, color="gray46", fill = "gray", lwd=0.5)+
                       geom_polygon(data = INDF, color="gray46", fill = "gray", lwd=0.5)+
-
-                    
+                      
+                      #geom_line(data = RIVDF, color="blue", lwd=0.5)+
+                      #geom_point(data = RIVDF, color="blue", size=0.1)+
+                      #geom_path(data = RIVDF, color="blue", size=0.1)+
+                      geom_point(aes(x = long, y = lat, group = id), data = RIVDF, color="blue", size=0.01)+
+                      #geom_line(aes(x = long, y = lat, group = id), data = RIVDF, color="blue", size=0.1)+
+                      
                       #Plot watershed outline
                       geom_polygon(data = watershedDF, color="khaki4", fill = "yellow",alpha = 0.25,lwd=0.5)+
-                      
-                      
-                      # ADD RIVERS ####################################################################
-                    #https://github.com/tidyverse/ggplot2/issues/2504+
-                    
-                    #geom_path(data = unique(RIVDF), aes(x = long, y = lat), color="blue", size=0.1)+
-                    
-                    #geom_path(data = RIVDF, aes(x = long, y = lat), color="blue", size=0.1)+
-                    geom_point(data = RIVDF, aes(x = long, y = lat), color="steelblue1", size=0.09)+
-                      
-                      #################################################################################
-                      
                       
                       #geom_point(aes(x = x, y = y, group = id), data = STATIONSDF, color="gray66", size = 0.025)+
                       #geom_point(aes(x = x, y = y, group = id), data = BLUSTATIONSDF, color="blue", size = 0.025)+
@@ -776,5 +736,54 @@ base.map <- function(geom, data, full_dataset, upper.quant,
   )
   
   result <- map
+  
+  # result <- ggplot(data, aes(x=x_value,y=y_value)) + ylim(0,yaxis_thresh) + 
+  #   geom_point(data = full_dataset,aes(colour="aliceblue")) +
+  #   geom_point(data = data,aes(colour="blue")) + 
+  #   stat_smooth(method = "lm",fullrange=FALSE,level = .95, data = upper.quant, aes(x=x_value,y=y_value,color = "red")) +
+  #   geom_point(data = upper.quant, aes(x=x_value,y=y_value,color = "black")) + 
+  #   geom_quantile(data = data, quantiles= quantile,show.legend = TRUE,aes(color="red")) + 
+  #   geom_smooth(data = data, method="lm",formula=y ~ x,show.legend = TRUE, aes(colour="yellow"),se=FALSE) + 
+  #   geom_smooth(data = upper.quant, formula = y ~ x, method = "lm", show.legend = TRUE, aes(x=x_value,y=y_value,color = "green"),se=FALSE) + 
+  #   
+  #   #add map to upper right of plot
+  #   annotation_custom(
+  #     grob = map,
+  #     xmin = 4.54,
+  #     xmax = 7.72,
+  #     ymin = yaxis_thresh-(0.1*yaxis_thresh),
+  #     ymax = yaxis_thresh+(0.3*yaxis_thresh)
+  #   )+
+  #   
+  #   ggtitle(plot_title) + 
+  #   theme(
+  #     plot.title = element_text(size = 12, face = "bold"),
+  #     axis.text = element_text(colour = "blue"),
+  #     panel.grid.minor.x = element_blank()
+  #   ) +
+  #   labs(x=xaxis_title,y=yaxis_title) + 
+  #   scale_x_log10(
+  #     limits = c(0.001,15000),
+  #     breaks = c(0.001,0.01,0.1,1.0,10,100,1000,10000),
+  #     labels =c("0.001","0.01","0.1","1.0","10","100","1,000","10,000")
+  #   ) + 
+  #   annotation_logticks(sides = "b")+
+  #   theme(legend.key=element_rect(fill='white')) +
+  #   #Add legend
+  #   scale_color_manual(
+  #     "Legend",
+  #     values=c("gray66","forestgreen","blue","orange","black","red"),
+  #     labels=c("Full Dataset",EDAS_upper_legend,EDAS_lower_legend,Reg_upper_legend,Quantile_Legend,"Regression (Data Subset)")
+  #   ) + 
+  #   guides(
+  #     colour = guide_legend(
+  #       override.aes = list(
+  #         size=c(1,1,1,1,1,1),
+  #         linetype=c(0,0,0,1,1,1), 
+  #         shape=c(16,16,16,NA,NA,NA)
+  #       ),
+  #       label.position = "right"
+  #     )
+  #   ); 
   return(result)
 }
