@@ -9,7 +9,8 @@ base_url <- datasite
 
 
 
-basepath='D:\\Jkrstolic\\R\\deqEcoflows\\GitHub\\r-dh-ecohydro\\';
+#basepath='D:\\Jkrstolic\\R\\deqEcoflows\\GitHub\\r-dh-ecohydro\\';
+basepath='C:\\Users\\nrf46657\\Desktop\\VAHydro Development\\GitHub\\r-dh-ecohydro\\'
 
 #----Change Basepath here to point to your global config file:
 
@@ -47,26 +48,26 @@ use_icthy_data <- 'NO' #Toggle "YES" to ulitize icthy dataset, otherwise "NO" to
 
 # Now add custom local settings here
 inputs$x_metric = c(
-  'nhdp_drainage_sqmi',
-  'erom_q0001e_mean',
-  'erom_q0001e_jan',
-  'erom_q0001e_feb',
-  'erom_q0001e_mar', 
-  'erom_q0001e_apr', 
-  'erom_q0001e_may',
-  'erom_q0001e_june',
-  'erom_q0001e_july',
-  'erom_q0001e_aug',
-  'erom_q0001e_sept',
-  'erom_q0001e_oct',
-  'erom_q0001e_nov',
-  'erom_q0001e_dec'
+  #'nhdp_drainage_sqmi',
+  'erom_q0001e_mean'#,
+  #'erom_q0001e_jan',
+  #'erom_q0001e_feb',
+  #'erom_q0001e_mar', 
+  #'erom_q0001e_apr', 
+  #'erom_q0001e_may',
+  #'erom_q0001e_june',
+  #'erom_q0001e_july',
+  #'erom_q0001e_aug',
+  #'erom_q0001e_sept',
+  #'erom_q0001e_oct',
+  #'erom_q0001e_nov',
+  #'erom_q0001e_dec'
 );
 
 inputs$y_metric = 'aqbio_nt_total';
 inputs$sampres = 'species';
-inputs$ws_ftype = c('nhd_huc10');
-inputs$target_hydrocode = '0208020112';
+inputs$ws_ftype = c('nhd_huc6'); #nhd_huc6
+inputs$target_hydrocode = '030102';# 030102, 060102, 020700
 
 inputs$quantile = .80;
 
@@ -77,7 +78,7 @@ inputs$send_to_rest = "NO";
 inputs$glo = 72;
 inputs$ghi = 530;
 inputs$method = "quantreg"; #quantreg, pwit, ymax, twopoint, pwit_RS
-inputs$dataset_tag = 'RegDiag_bpj-530';
+inputs$dataset_tag = 'bpj-huc6-rcc';
 
 inputs$token = token;
 
@@ -88,11 +89,11 @@ inputs$token = token;
 
 
 #   ** Use this if you want a batch list to be generated from the inputs array
-#batchlist = elf_assemble_batch(inputs) 
+batchlist = elf_assemble_batch(inputs) 
 #   ** or, Use this if you want to load the batch list from a file, with defaults from inputs()
 
 
-batchlist = read.csv(file=paste(fxn_locations,"HUC10_RegDiag.csv",sep="/"),header=TRUE)  #RCC_HUC8taxaloss.csv
+#batchlist = read.csv(file=paste(fxn_locations,"HUC10_RegDiag.csv",sep="/"),header=TRUE)  #RCC_HUC8taxaloss.csv
 
 
 

@@ -16,7 +16,8 @@ datasite <- "http://deq2.bse.vt.edu/d.dh"    #Specify the site of interest, eith
 #----------------------------------------------
 #----FOR RUNNING LOCALLY:
 # Only need to change 1 path here - set to wherever this code is located
-basepath='/var/www/R';
+#basepath='/var/www/R';
+basepath='C:/Users/nrf46657/Desktop/VAHydro Development/GitHub/hydro-tools/'
 
 # set your local directory paths in config.local.private located in filepath above
 # this file will NOT be sent to git, so it should persist
