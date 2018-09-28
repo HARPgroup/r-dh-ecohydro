@@ -489,7 +489,7 @@ base.map <- function(geom, data, full_dataset, upper.quant,
 ) {
   
   
-  # SPECIFY BOUNDING BOX: *should really calculate bb from the VADF shape, but for now hard code
+  # SPECIFY BOUNDING BOX: 
   #extent <- data.frame(x = c(-84, -75), 
   #                     y = c(35, 41))  
   extent <- data.frame(x = c(-85.5, -74.5), 
@@ -537,9 +537,10 @@ base.map <- function(geom, data, full_dataset, upper.quant,
   watershedPoints <- fortify(wsdataProjected, region = "id")
   watershedDF <- merge(watershedPoints, wsdataProjected@data, by = "id")
   
-  #LOAD STATE GEOMETRY
-  #STATES <- read.table(file=paste(fxn_locations,"STATES.tsv",sep=""), header=TRUE, sep="\t")
+  #LOAD STATE AND River GEOMETRY
   STATES <- read.table(file=paste(hydro_tools,"GIS_LAYERS","STATES.tsv",sep="\\"), header=TRUE, sep="\t") #Load state geometries
+  RIVDF <- read.table(file=paste(hydro_tools,"GIS_LAYERS","RIVDF.csv",sep="/"), header=TRUE, sep=",") #Load state geometries
+  
   
   VA <- STATES[which(STATES$state == "VA"),]
   VA_geom <- readWKT(VA$geom)
@@ -646,58 +647,6 @@ base.map <- function(geom, data, full_dataset, upper.quant,
   INDF <- merge(INPoints,  INProjected@data, by = "id")
   
   #########################################################
-#  Virginia_Rivers <- read.table(file=paste(hydro_tools,"GIS_LAYERS","Virginia_Rivers_Merge.tsv",sep="/"), header=TRUE, sep="\t") #Load state geometries
-  #print(head(Virginia_Rivers))
-  #print(head(STATIONSDF))
-#  Virginia_Rivers <- read.table(file=paste(hydro_tools,"GIS_LAYERS","VA_RIVERS_2_OCEAN.tsv",sep="/"), header=TRUE, sep="\t") #Load state geometries
-  
-  
-  
-#  RIV <- Virginia_Rivers[which(Virginia_Rivers$river == "ALL"),]
-#  RIV_geom <- readWKT(RIV$geom)
-#  RIV_geom_clip <- gIntersection(bb, RIV_geom)
-  #test <- st_combine(Virginia_Rivers)
-  
-  #RIVProjected <- SpatialPolygonsDataFrame(RIV_geom_clip,data.frame("id"), match.ID = TRUE)
-#  RIVProjected <- SpatialLinesDataFrame(RIV_geom_clip,data.frame("id"), match.ID = TRUE)
-#  RIVProjected@data$id <- rownames(RIVProjected@data)
-#  RIVPoRIVts <- fortify( RIVProjected, region = "id")
-#  RIVDF <- merge(RIVPoRIVts,  RIVProjected@data, by = "id")
-  #SpatialLines
-#  print(head(RIVDF))
-  #geom_path(data = sjer_roads_df, aes(x = long, y = lat, group = group)) +
-#  write.csv(RIVDF,paste(save_directory,"\\RIVDF.csv",sep=""))
-  
-  RIVDF <- read.table(file=paste(hydro_tools,"GIS_LAYERS","RIVDF.csv",sep="/"), header=TRUE, sep=",") #Load state geometries
-  
- # 
- # RIVDF <- unique(RIVDF[ , 3:4 ])
-  
-  #unique(RIVDF[ , 3:4 ])
-  
-  #nrow(unique(RIVDF[ , 3:4 ]))
-
-
-  ####   RIVDF_unique <-data.frame(X = rownames(unique(RIVDF[ , 3:4 ])),unique(RIVDF[ , 3:4 ]))
-  
-  ####   RIVDF_merge <- merge(RIVDF_unique, RIVDF, by = "X")
-  
-  
-  ####   RIVDF_merge_df <-data.frame(X=RIVDF_merge$X, 
-  ####              long=RIVDF_merge$long.x, 
-  ####              lat=RIVDF_merge$lat.x, 
-  ####              group=RIVDF_merge$group)
-  
-  
-  ####  RIVDF <- RIVDF_merge_df
-  
-  # RIVDF <-data.frame(id=RIVDF$id,
-  #            long=RIVDF$long,
-  #            lat=RIVDF$lat,
-  #           #piece=RIVDF$piece,
-  #            group=RIVDF$group)#,
-  #            #X.id.=RIVDF$X.id.)
-  # RIVDF[!duplicated(RIVDF$LONG)]
   #########################################################
   
   map <- ggplotGrob(ggplot(data = VADF, aes(x=long, y=lat, group = group))+
@@ -723,13 +672,7 @@ base.map <- function(geom, data, full_dataset, upper.quant,
                       
                       
                       # ADD RIVERS ####################################################################
-                    #https://github.com/tidyverse/ggplot2/issues/2504+
-                    
-                    #geom_path(data = unique(RIVDF), aes(x = long, y = lat), color="blue", size=0.1)+
-                    
-                    #geom_path(data = RIVDF, aes(x = long, y = lat), color="blue", size=0.1)+
-                    geom_point(data = RIVDF, aes(x = long, y = lat), color="steelblue1", size=0.09)+
-                      
+                      geom_point(data = RIVDF, aes(x = long, y = lat), color="steelblue1", size=0.09)+
                       #################################################################################
                       
                       
@@ -747,18 +690,11 @@ base.map <- function(geom, data, full_dataset, upper.quant,
                       
                       #ADD NORTH ARROW AND SCALE BAR
                       north(bbDF, location = 'topleft', symbol = 12, scale=0.1)+
-                      #scalebar(bbDF, dist = 100, dd2km = TRUE, model = 'WGS84',st.bottom=FALSE,st.size=1.5,st.dist=0.04)+ #text too small to read 
-                     # scalebar(bbDF, dist = 100, dd2km = TRUE, model = 'WGS84',st.bottom=TRUE,st.size=1.5,st.dist=0.04)+
-                      
                       scalebar(bbDF, location = 'bottomleft', dist = 100, dd2km = TRUE, model = 'WGS84',st.bottom=FALSE,st.size=3.5, 
                                anchor = c(
                                  x = (((extent$x[2] - extent$x[1])/2)+extent$x[1])-1.1,
                                  y = extent$y[1]+(extent$y[1])*0.001
                                ))+
-                      
-                      
-                      #scale_x_continuous(limits = c(-85, -74))+
-                      #scale_y_continuous(limits = c(35, 41))+
                       
                       scale_x_continuous(limits = c(extent$x[1], extent$x[2]))+
                       scale_y_continuous(limits = c(extent$y[1], extent$y[2]))+
