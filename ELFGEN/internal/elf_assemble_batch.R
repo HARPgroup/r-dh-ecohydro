@@ -539,8 +539,8 @@ base.map <- function(geom, data, full_dataset, upper.quant,
   
   #LOAD STATE AND River GEOMETRY
   STATES <- read.table(file=paste(hydro_tools,"GIS_LAYERS","STATES.tsv",sep="\\"), header=TRUE, sep="\t") #Load state geometries
-  RIVDF <- read.table(file=paste(hydro_tools,"GIS_LAYERS","RIVDF.csv",sep="/"), header=TRUE, sep=",") #Load state geometries
-  
+  RIVDF <- read.table(file=paste(hydro_tools,"GIS_LAYERS","RIVDF.csv",sep="/"), header=TRUE, sep=",") #Load river geometries
+  WBDF <- read.table(file=paste(hydro_tools,"GIS_LAYERS","WBDF.csv",sep="/"), header=TRUE, sep=",") #Load waterbody geometries
   
   VA <- STATES[which(STATES$state == "VA"),]
   VA_geom <- readWKT(VA$geom)
@@ -674,7 +674,9 @@ base.map <- function(geom, data, full_dataset, upper.quant,
                       # ADD RIVERS ####################################################################
                       geom_point(data = RIVDF, aes(x = long, y = lat), color="steelblue1", size=0.09)+
                       #################################################################################
-                      
+                      # ADD WATERBODIES ###############################################################
+                      geom_point(data = WBDF, aes(x = long, y = lat), color="steelblue1", size=0.09)+
+                      #################################################################################
                       
                       #geom_point(aes(x = x, y = y, group = id), data = STATIONSDF, color="gray66", size = 0.025)+
                       #geom_point(aes(x = x, y = y, group = id), data = BLUSTATIONSDF, color="blue", size = 0.025)+
