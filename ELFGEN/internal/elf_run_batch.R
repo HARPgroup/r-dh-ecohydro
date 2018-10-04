@@ -67,7 +67,7 @@ inputs$x_metric = c(
 inputs$y_metric = 'aqbio_nt_total';
 inputs$sampres = 'species';
 inputs$ws_ftype = c('nhd_huc6'); #nhd_huc6
-inputs$target_hydrocode = '030102';# 030102, 060102, 020700
+inputs$target_hydrocode = '060102';# 030102, 060102, 020700
 
 inputs$quantile = .80;
 
