@@ -10,9 +10,9 @@ pctchg <- "10"
 tenth_percentile <- "no"
 fish.only <- "yes" #"yes" to plot for fish habitat metrics only 
 benth.only <- "no" 
-single_metric <- "no" #"no" to plot for all metrics, otherwise specify metric of interest smb_adult, nh_adult etc.
+single_metric <- "smb_adult" #"no" to plot for all metrics, otherwise specify metric of interest smb_adult, nh_adult etc.
 
-group <- "above_500" #"above_500", "below_500", "none"
+group <- "none" #"above_500", "below_500", "none"
 
 ##############################################################################################################
 # RETRIEVE DATA

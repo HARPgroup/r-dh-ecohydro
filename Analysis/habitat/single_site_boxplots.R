@@ -47,9 +47,9 @@ ifim_sites <- c(397290,397291,397292,397293,
                 397286,397287,397288,397289,
                 397297,397298,397284,397285)
 
-#ifim_sites <- c(397290)
+ifim_sites <- c(397291)
 stat_method <- "median" #"mean" or " median"
-pctchg <- "5.0"
+pctchg <- "10"
 
 for (x in 1:length(ifim_sites)){
   ifim_featureid <- ifim_sites[x]
@@ -231,33 +231,42 @@ box_table <- box_table [-1,] #remove empty first row
   box_table[,3] <- as.numeric(as.character(box_table[,3]))
 
 ggplot(box_table, aes(flow,pctchg))+
-  geom_boxplot(fill='#A4A4A4', color="darkred")+
+  
+  annotate("rect", xmin = -Inf, xmax = Inf, ymin = 0, ymax = Inf, fill = "palegreen", alpha = 0.2) +
+  annotate("rect", xmin = -Inf, xmax = Inf, ymin = -Inf, ymax = 0, fill = "tomato", alpha = 0.2) + 
+  
+  #geom_boxplot(fill='#A4A4A4', color="darkred")+
+  geom_boxplot(fill='#A4A4A4', color="darkred", alpha = 0.5)+
   geom_text(aes(label=metric),hjust=0, vjust=0)+
   geom_hline(yintercept=0,col='#A4A4A4')+
-  labs(title = paste("Percent Habitat Change with ",pctchg,"% Flow Reduction (",stat_method," monthly)",sep=""),
-       subtitle = paste(ifim_site_name,":\nDrainage Area: ",ifim_da_sqmi," sqmi\nUSGS: ",gage," (",start_date," to ",end_date,")",sep=""))+
-
-  xlab("Flow (cfs)")+ 
-  ylab("Percent Habitat Change")+
-  scale_x_discrete(limit = c("MAF",month.abb))
-#scale_y_continuous(limits = c(-10, 100))
-
+ # labs(title = paste("Percent Habitat Change with ",pctchg,"% Flow Reduction (",stat_method," monthly)",sep=""),
+ #      subtitle = paste(ifim_site_name,":\nDrainage Area: ",ifim_da_sqmi," sqmi\nUSGS: ",gage," (",start_date," to ",end_date,")",sep=""))+
+  theme(axis.text=element_text(size=20))+
+  xlab("\nMonth")+ 
+  ylab("Percent Change\n")+
+  scale_x_discrete(limit = c("MAF",month.abb))+
+  scale_y_continuous(limits = c(-10, 40))+
+  theme(text = element_text(size=20))
 #filename <- paste(ifim_site_name,"10pct",stat_method,"boxplot.png", sep="_")
 #ggsave(file=filename, path = save_directory, width=14, height=8)
 
 
-table_export <- data.frame(ifim_site_name,ifim_da_sqmi,box_table)
+# table_export <- data.frame(ifim_site_name,ifim_da_sqmi,box_table)
+# 
+# output_dir <- paste(save_directory,"\\WUA-CSV",sep="")
+# dir.create(output_dir, showWarnings = FALSE) #creates output directory if doesn't exist 
+# output_dir <- paste(save_directory,"\\WUA-CSV\\",stat_method,sep="")
+# dir.create(output_dir, showWarnings = FALSE) #creates output sub-directory if doesn't exist 
+# 
+# write.csv(table_export, file = paste(output_dir,"\\",ifim_site_name,"_",pctchg,"pct_",stat_method,".csv",sep=""))
 
-output_dir <- paste(save_directory,"\\WUA-CSV",sep="")
-dir.create(output_dir, showWarnings = FALSE) #creates output directory if doesn't exist 
-output_dir <- paste(save_directory,"\\WUA-CSV\\",stat_method,sep="")
-dir.create(output_dir, showWarnings = FALSE) #creates output sub-directory if doesn't exist 
 
-write.csv(table_export, file = paste(output_dir,"\\",ifim_site_name,"_",pctchg,"pct_",stat_method,".csv",sep=""))
+#filename <- paste(ifim_site_name,pctchg,"pct",stat_method,"boxplot.png", sep="_")
+#ggsave(file=filename, path = output_dir, width=14, height=8)
 
 
 filename <- paste(ifim_site_name,pctchg,"pct",stat_method,"boxplot.png", sep="_")
-ggsave(file=filename, path = output_dir, width=14, height=8)
+ggsave(file=filename, path = save_directory, width=14, height=8)
 }
 
 #-------------------------------------------------------------------------------------------------
