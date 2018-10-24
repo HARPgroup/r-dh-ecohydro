@@ -6,11 +6,12 @@ basepath='C:/Users/nrf46657/Desktop/VAHydro Development/GitHub/r-dh-ecohydro/';
 source(paste(basepath,'config.local.private',sep='/'));
 
 #RETRIEVE HABITAT DATA
-pctchg <- "40"
-tenth_percentile <- "yes"
+pctchg <- "10"
+tenth_percentile <- "no"
 fish.only <- "yes" #"yes" to plot for fish habitat metrics only 
 benth.only <- "no" 
 single_metric <- "no" #"no" to plot for all metrics, otherwise specify metric of interest smb_adult, nh_adult etc.
+benth.custom <- "no" #mussel_sites, inverts_sites, algae_sites, algae_inverts_sites
 ##############################################################################################################
 # RETRIEVE DATA
 nt_hab_chg <- read.csv(paste(basepath,"Analysis/habitat/nt_&_hab_change/nt_hab_chg_all_months.csv",sep=""))
@@ -59,20 +60,58 @@ if (benth.only == "yes") {
   all_sites12 <- all_sites[which(all_sites$metric=="sm_int"),]         # Spike Mussel, Intermediate
   all_sites13 <- all_sites[which(all_sites$metric=="tric_mac"),]       # Caddisfly
   
-  all_sites <- rbind(#all_sites1, #exclude algae midge group
-                     all_sites2,
-                     all_sites3,
-                     all_sites4,
-                     all_sites5,
-                     all_sites6,
-                     all_sites7,
-                     all_sites8,
-                     all_sites9,
-                     all_sites10,
-                     all_sites11,
-                     all_sites12,
-                     all_sites13)
-                  
+  # all_sites <- rbind(#all_sites1, #exclude algae midge group
+  #                    all_sites2,
+  #                    all_sites3,
+  #                    all_sites4,
+  #                    all_sites5,
+  #                    all_sites6,
+  #                    all_sites7,
+  #                    all_sites8,
+  #                    all_sites9,
+  #                    all_sites10,
+  #                    all_sites11,
+  #                    all_sites12,
+  #                    all_sites13)
+  mussel_sites <- rbind(
+    all_sites6,
+    all_sites8,
+    all_sites10,
+    all_sites11,
+    all_sites12)
+  
+  inverts_sites <- rbind(
+    all_sites2,
+    all_sites3,
+    all_sites4,
+    all_sites5,
+    all_sites7,
+    all_sites9,
+    all_sites13)
+ 
+  algae_inverts_sites <- rbind(
+    all_sites1,
+    all_sites2,
+    all_sites3,
+    all_sites4,
+    all_sites5,
+    all_sites7,
+    all_sites9,
+    all_sites13)
+   
+  algae_sites <- rbind(all_sites1)
+  
+  all_sites <-  algae_sites         
+  if (benth.custom == "mussel_sites") {
+      all_sites <-  mussel_sites 
+  } else if (benth.custom == "inverts_sites") {
+      all_sites <-  inverts_sites 
+  } else if (benth.custom == "algae_sites"){     
+      all_sites <-  algae_sites 
+  } else if (benth.custom == "algae_inverts_sites"){  
+      all_sites <-  algae_inverts_sites
+  }
+         
 }
 #-----------------------------------------------------------------------------------------------------
 #
@@ -157,6 +196,7 @@ colnames(MAF_all_sites_medians)[1] <- "ifim_site_name"
 
 plot_labels <- data.frame(ifim_site_name=ascending_MAF_all_sites$ifim_site_name,
                           ifim_da_sqmi=ascending_MAF_all_sites$ifim_da_sqmi,
+                          ifim_maf_cfs=ascending_MAF_all_sites$ifim_maf_cfs,
                           #pctchg=-33)
                           pctchg=-63)
 
@@ -229,7 +269,62 @@ for (r in 1:length(months)) {
   if (month == "Nov"){month_data <- Nov_all_sites}
   if (month == "Dec"){month_data <- Dec_all_sites}
   
+  ################################################################################
+  # month_data
+  # df <- transform(month_data, c= ifelse(ifim_site_name='Above Harvell Dam '))
+  # 
+  # month_data_maf <- month_data
+  # 
+  # which((month_data_maf$ifim_site_name == "Above Harvell Dam"))
+  # 
+  # 
+  # month_data_maf$ifim_maf_cfs <- 1389.192	
+  # 
+  # 
+  # month_data_maf[1,]$ifim_site_name
+  ################################################################################  
+  # CONSTANT LOSERS
+  ################################################################################
+ # month_data[1,]
+  
+ # site_mo <- month_data[which((month_data$ifim_site_name== 'Above Harvell Dam')),]
+  
+  #max(month_data[which((month_data$ifim_site_name== 'Above Harvell Dam')),]$pctchg)
+  
+ # site_mo_order <- site_mo[order(site_mo$pctchg),] 
+  
+  
+  #which(npk$yield == max(npk$yield))
+  
+  
+#########  if (fish.only == "yes") {
+#########    plot_name_1 <- paste(month,"_Above_Harvell_Dam_",stat,"_FISH",sep="") 
+#########  } else {
+#########    plot_name_1 <- paste(month,"_Above_Harvell_Dam_",stat,sep="") 
+#########  }
+  
+  #png(filename=paste(save_directory,"\\",plot_name_1,"_",pctchg,".png",sep=""),
+#########library('ggplot2')
+      #plt <- ggplot(site_mo_order, aes(x=ifim_site_name, y=pctchg))+
+  
+      #site_mo_order <- month_data[order(month_data$ifim_maf_cfs),] 
+  
+      plt <- ggplot(month_data, aes(x=ifim_site_name, y=pctchg))+
+            geom_boxplot(fill='#A4A4A4', color="darkred")+
+            geom_text(aes(label=metric),hjust=0, vjust=0)+
+      
+      annotate("rect", xmin = -Inf, xmax = Inf, ymin = 0, ymax = Inf, fill = "palegreen", alpha = 0.2) +
+      annotate("rect", xmin = -Inf, xmax = Inf, ymin = -Inf, ymax = 0, fill = "tomato", alpha = 0.2) + 
+        
+        
+      theme(axis.title.x=element_blank())
+      
+      
+      plot_name_1 <- paste(month,"_site_labels_","median","_FISH",sep="") 
+      ggsave(file=paste(plot_name_1,'.png',sep=''), path = save_directory, width=25, height=5)
 
+  ################################################################################
+  ################################################################################
   write.csv(month_data,paste(save_directory,"\\",month,"_site_pctchg.csv",sep=""))
   
   
@@ -237,10 +332,12 @@ for (r in 1:length(months)) {
   
   
   month_data_medians <- aggregate(list(pctchg = month_data$pctchg), 
-                                  list(ifim_da_sqmi = month_data$ifim_da_sqmi), 
+                                  #list(ifim_da_sqmi = month_data$ifim_da_sqmi), 
+                                  list(ifim_maf_cfs = month_data$ifim_maf_cfs), 
                                   stat)
   
-  fit <- lm(month_data_medians$pctchg~log(month_data_medians$ifim_da_sqmi))
+  #fit <- lm(month_data_medians$pctchg~log(month_data_medians$ifim_da_sqmi))
+  fit <- lm(month_data_medians$pctchg~log(month_data_medians$ifim_maf_cfs))
   b <- as.numeric(fit[1]$coefficients[1])
   m <- as.numeric(fit[1]$coefficients[2])
   
@@ -248,7 +345,8 @@ for (r in 1:length(months)) {
   if (length(which(all_sites$ifim_site_name=="T11&12")) > 1){
     x2 <- 12500  
   } else {
-    x2 <- 4000 
+    #x2 <- 4000 
+    x2 <- 5700 
     #x2 <- round(exp((-b)/m),1) #only used for the nh_adult
   }
   
@@ -257,11 +355,35 @@ for (r in 1:length(months)) {
   if (benth.only == "yes") {
   x1 <- 375
   } else {
-  x1 <- 150 
+  #x1 <- 150 
+  x1 <- 180
   }
   y1 <- m*log(x1)+b
   
   
+  #############################################################
+  #custom benthic groupings 
+  if (benth.custom == "mussel_sites") {
+    x2 <- 4000 
+    y2 <- m*log(x2)+b
+    x1 <- 375
+    y1 <- m*log(x1)+b
+  } else if (benth.custom == "inverts_sites") {
+    x2 <- 4000
+    y2 <- m*log(x2)+b
+    x1 <- 375
+    y1 <- m*log(x1)+b
+  } else if (benth.custom == "algae_sites"){
+    x2 <- 800 
+    y2 <- m*log(x2)+b
+    x1 <- 310
+    y1 <- m*log(x1)+b
+  }
+  #############################################################
+    
+    
+    
+    
   #reg <- data.frame(x=c(0,4000),y=c(b,y2))
   
   #(0-b)/m
@@ -311,6 +433,14 @@ for (r in 1:length(months)) {
   NorthAnnaCoastalPlain.da <- plot_labels[which((plot_labels$ifim_site_name == "North Anna Coastal Plain")),]$ifim_da_sqmi
   Craig.da <- plot_labels[which((plot_labels$ifim_site_name == "Craig")),]$ifim_da_sqmi
   
+  #RETRIEVE SITE MAFs
+  Dunlap.maf <- plot_labels[which((plot_labels$ifim_site_name == "Dunlap")),]$ifim_maf_cfs
+  PlainsMill.maf <- plot_labels[which((plot_labels$ifim_site_name == "Plains Mill")),]$ifim_maf_cfs
+  NorthAnnaPiedmont.maf <- plot_labels[which((plot_labels$ifim_site_name == "North Anna Piedmont")),]$ifim_maf_cfs
+  NorthAnnaFallZone.maf <- plot_labels[which((plot_labels$ifim_site_name == "North Anna Fall Zone")),]$ifim_maf_cfs
+  NorthAnnaCoastalPlain.maf <- plot_labels[which((plot_labels$ifim_site_name == "North Anna Coastal Plain")),]$ifim_maf_cfs
+  Craig.maf <- plot_labels[which((plot_labels$ifim_site_name == "Craig")),]$ifim_maf_cfs
+  
   
   
   # tiff not supported by google docs  
@@ -322,9 +452,13 @@ for (r in 1:length(months)) {
       width = 1500, 
       height = 750)
 
+ # print(month_data)
+  
   if (benth.only == "yes") {  
-  boxplot(month_data$pctchg ~ month_data$ifim_da_sqmi, 
-          at = sort(unique(month_data$ifim_da_sqmi)), 
+  boxplot(#month_data$pctchg ~ month_data$ifim_da_sqmi, 
+          #at = sort(unique(month_data$ifim_da_sqmi)), 
+          month_data$pctchg ~ month_data$ifim_maf_cfs, 
+          at = sort(unique(month_data$ifim_maf_cfs)), 
           boxwex=0.04, #box width (was 0.04 when doing log, 25 for linear)
           log="x",
           ylim=c(-250,250), # FOR PLOTTING BENTHICS
@@ -334,8 +468,10 @@ for (r in 1:length(months)) {
           xaxt="n",
           yaxt="n")
   } else {
-    boxplot(month_data$pctchg ~ month_data$ifim_da_sqmi, 
-            at = sort(unique(month_data$ifim_da_sqmi)), 
+    boxplot(#month_data$pctchg ~ month_data$ifim_da_sqmi, 
+            #at = sort(unique(month_data$ifim_da_sqmi)), 
+            month_data$pctchg ~ month_data$ifim_maf_cfs, 
+            at = sort(unique(month_data$ifim_maf_cfs)), 
             boxwex=0.04, #box width (was 0.04 when doing log, 25 for linear)
             log="x",
             ylim=c(-60,60),
@@ -371,29 +507,40 @@ for (r in 1:length(months)) {
   
   #mtext(text="              Percent Habitat Change\n",side=2,line=0,outer=TRUE,cex=2.5)
   mtext(text="              Percent Change\n",side=2,line=0,outer=TRUE,cex=2.5)
-  mtext(text="Drainage Area (sqmi)",side=1,line=0,outer=TRUE,cex=2.5)
+ # mtext(text="Drainage Area (sqmi)",side=1,line=0,outer=TRUE,cex=2.5)
+  mtext(text="Mean Annual Flow (cfs)",side=1,line=0,outer=TRUE,cex=2.5)
   
   #par(oma=c(2,2,2,2))
   
   
-  
+
   # axis(1,cex.axis=2)
   #xaxt="n")
   
-  #text(plot_labels$ifim_da_sqmi, 
-  #      plot_labels$pctchg, 
+   # text(plot_labels$ifim_da_sqmi, 
+   #       plot_labels$pctchg, 
+   #       plot_labels$ifim_site_name, 
+   #       cex=1.0, #site label size (was 1.2 when doing log, 1.0 for linear)
+   #       pos=4, 
+   #       col="black",
+   #       srt=90)
+   # 
+  #Site names for benthics
+  # text(plot_labels$ifim_da_sqmi, 
+  #      -250, 
   #      plot_labels$ifim_site_name, 
   #      cex=1.0, #site label size (was 1.2 when doing log, 1.0 for linear)
   #      pos=4, 
   #      col="black",
   #      srt=90)
-  
+  # 
   
   abline(a=0,b=0)
   #points(month_data_medians$ifim_da_sqmi, month_data_medians$pctchg, col = "black",cex=5,pch="-") #pch=19 for circle point
   
   # USE BELOW FOR SINGLE METRICS TRIANGLES 
-  points(month_data_medians$ifim_da_sqmi, month_data_medians$pctchg, col = "black",cex=3,pch=17) #pch=19 for circle point
+  #points(month_data_medians$ifim_da_sqmi, month_data_medians$pctchg, col = "black",cex=3,pch=17) #pch=19 for circle point
+  points(month_data_medians$ifim_maf_cfs, month_data_medians$pctchg, col = "black",cex=3,pch=17) #pch=19 for circle point
   
   
   # ADD NT POINTS TO PLOT
@@ -407,12 +554,19 @@ for (r in 1:length(months)) {
   if (single_metric == "no") {
   if (tenth_percentile != "yes") {
     if (benth.only != "yes") {
-    points(Dunlap.da, Dunlap_nt_chg, col = "red",cex=3,pch=18) 
-    points(PlainsMill.da, PlainsMill_nt_chg, col = "red",cex=3,pch=18) 
-    points(NorthAnnaPiedmont.da, NorthAnnaPiedmont_nt_chg, col = "red",cex=3,pch=18) 
-    points(NorthAnnaFallZone.da, NorthAnnaFallZone_nt_chg, col = "red",cex=3,pch=18) 
-    points(NorthAnnaCoastalPlain.da, NorthAnnaCoastalPlain_nt_chg, col = "red",cex=3,pch=18) 
-    points(Craig.da, Craig_nt_chg, col = "red",cex=3,pch=18) 
+    # points(Dunlap.da, Dunlap_nt_chg, col = "red",cex=3,pch=18) 
+    # points(PlainsMill.da, PlainsMill_nt_chg, col = "red",cex=3,pch=18) 
+    # points(NorthAnnaPiedmont.da, NorthAnnaPiedmont_nt_chg, col = "red",cex=3,pch=18) 
+    # points(NorthAnnaFallZone.da, NorthAnnaFallZone_nt_chg, col = "red",cex=3,pch=18) 
+    # points(NorthAnnaCoastalPlain.da, NorthAnnaCoastalPlain_nt_chg, col = "red",cex=3,pch=18) 
+    # points(Craig.da, Craig_nt_chg, col = "red",cex=3,pch=18) 
+    
+    points(Dunlap.maf, Dunlap_nt_chg, col = "red",cex=3,pch=18) 
+    points(PlainsMill.maf, PlainsMill_nt_chg, col = "red",cex=3,pch=18) 
+    points(NorthAnnaPiedmont.maf, NorthAnnaPiedmont_nt_chg, col = "red",cex=3,pch=18) 
+    points(NorthAnnaFallZone.maf, NorthAnnaFallZone_nt_chg, col = "red",cex=3,pch=18) 
+    points(NorthAnnaCoastalPlain.maf, NorthAnnaCoastalPlain_nt_chg, col = "red",cex=3,pch=18) 
+    points(Craig.maf, Craig_nt_chg, col = "red",cex=3,pch=18) 
     }
   }
   }
@@ -459,9 +613,12 @@ for (r in 1:length(months)) {
   eq <- paste("Regression Equation:\n","y = ",round(m,2)," ln(x) ",round(b,2),
               "\ny = 0 @ ",round(exp((-b)/m),1)," (sqmi)",sep="")
   
+  
+  
   #Add Loss Threshold Line and Label
+  if (benth.custom != "algae_inverts_sites") {
   abline(v=round(exp((-b)/m),1),lty=1,lwd=2)
- 
+  }
   
 if (tenth_percentile == "yes") {  
   
@@ -476,9 +633,19 @@ if (tenth_percentile == "yes") {
 } else {  
   
   if (benth.only == "yes") {
-    text(x = round(exp((-b)/m),1), y = 200, labels = "    Habitat Breakpoint", pos=4, cex=1.8, font=3)
-    Arrows(round(exp((-b)/m),1)+(0.1*round(exp((-b)/m),1)),200,round(exp((-b)/m),1),200,arr.type="simple",lwd=2)
-    text(x = 85, y = 220, labels = eq, cex=2, pos=4)
+    
+    if (benth.custom == "mussel_sites") {
+      text(x = 85, y = 220, labels = eq, cex=2, pos=4)
+      
+    } else if (benth.custom == "algae_inverts_sites"){
+      text(x = 85, y = 220, labels = eq, cex=2, pos=4)
+    } else {
+      text(x = round(exp((-b)/m),1), y = 200, labels = "    Habitat Breakpoint", pos=4, cex=1.8, font=3)
+      Arrows(round(exp((-b)/m),1)+(0.1*round(exp((-b)/m),1)),200,round(exp((-b)/m),1),200,arr.type="simple",lwd=2)
+      text(x = 85, y = 220, labels = eq, cex=2, pos=4) 
+    }
+    
+    
   } else {
     text(x = round(exp((-b)/m),1), y = 45, labels = "    Habitat Breakpoint", pos=4, cex=1.8, font=3) 
     Arrows(round(exp((-b)/m),1)+(0.1*round(exp((-b)/m),1)),45,round(exp((-b)/m),1),45,arr.type="simple",lwd=2)

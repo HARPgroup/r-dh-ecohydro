@@ -8,11 +8,15 @@ source(paste(basepath,'config.local.private',sep='/'));
 #RETRIEVE HABITAT DATA
 pctchg <- "10"
 tenth_percentile <- "no"
-fish.only <- "yes" #"yes" to plot for fish habitat metrics only 
-benth.only <- "no" 
-single_metric <- "smb_adult" #"no" to plot for all metrics, otherwise specify metric of interest smb_adult, nh_adult etc.
+fish.only <- "no" #"yes" to plot for fish habitat metrics only 
+benth.only <- "yes" 
+single_metric <- "no" #"no" to plot for all metrics, otherwise specify metric of interest smb_adult, nh_adult etc.
 
-group <- "below_500" #"above_500", "below_500", "none"
+group <- "above_500" #"above_500", "below_500", "none"
+
+benth.custom <- "algae_sites" #mussel_sites, inverts_sites, algae_sites, algae_inverts_sites
+
+43560/86400
 
 ##############################################################################################################
 # RETRIEVE DATA
@@ -77,11 +81,31 @@ if (benth.only == "yes") {
     all_sites5,
     all_sites7,
     all_sites9,
-    all_sites13) 
+    all_sites13)
+  
+  algae_inverts_sites <- rbind(
+    all_sites1,
+    all_sites2,
+    all_sites3,
+    all_sites4,
+    all_sites5,
+    all_sites7,
+    all_sites9,
+    all_sites13)
   
   algae_sites <- rbind(all_sites1)
   
   all_sites <-  algae_sites         
+  if (benth.custom == "mussel_sites") {
+    all_sites <-  mussel_sites 
+  } else if (benth.custom == "inverts_sites") {
+    all_sites <-  inverts_sites 
+  } else if (benth.custom == "algae_sites"){     
+    all_sites <-  algae_sites 
+  } else if (benth.custom == "algae_inverts_sites"){  
+    all_sites <-  algae_inverts_sites
+  }
+  
 }
 
 #-----------------------------------------------------------------------------------------------------
@@ -112,6 +136,19 @@ if (group != "none") {
 # #convert table values to numeric before plotting 
 #   box_table[,3] <- as.numeric(as.character(box_table[,3]))
 
+
+if (benth.custom == "mussel_sites") {
+  plot_label <-  "Mussel Sites"
+} else if (benth.custom == "inverts_sites") {
+  plot_label <-  "Benthic Macroinvertebrate Sites"
+} else if (benth.custom == "algae_sites"){     
+  plot_label <-  "Algae/Midge Sites"
+} else if (benth.custom == "algae_inverts_sites"){  
+  plot_label <-  "Benthic Macroinvertebrate + Algae/Midge Sites"
+} else {
+  plot_label <-  "Fish Sites"
+}
+
 ggplot(all_sites, aes(flow,pctchg))+
 
   annotate("rect", xmin = -Inf, xmax = Inf, ymin = 0, ymax = Inf, fill = "palegreen", alpha = 0.2) +
@@ -123,6 +160,7 @@ ggplot(all_sites, aes(flow,pctchg))+
 #  labs(title = paste("Percent Habitat Change with ",pctchg,"% Flow Reduction (",stat_method," monthly)",sep=""),
 #       subtitle = paste(ifim_site_name,":\nDrainage Area: ",ifim_da_sqmi," sqmi\nUSGS: ",gage," (",start_date," to ",end_date,")",sep=""))+
   
+  labs(title = paste(plot_label))+
 
   xlab("Month")+ 
   ylab("Percent Change")+
@@ -132,7 +170,7 @@ ggplot(all_sites, aes(flow,pctchg))+
   #scale_y_continuous(limits = c(-40, 40))
 
 
-filename <- paste(group,pctchg,"pct","boxplot.png", sep="_")
+filename <- paste(benth.custom,group,pctchg,"pct","boxplot.png", sep="_")
 ggsave(file=filename, path = save_directory, width=14, height=8)
 
 
