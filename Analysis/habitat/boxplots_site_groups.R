@@ -6,13 +6,13 @@ basepath='C:/Users/nrf46657/Desktop/VAHydro Development/GitHub/r-dh-ecohydro/';
 source(paste(basepath,'config.local.private',sep='/'));
 
 #RETRIEVE HABITAT DATA
-pctchg <- "10"
+pctchg <- "20"
 tenth_percentile <- "no"
 fish.only <- "yes" #"yes" to plot for fish habitat metrics only 
 benth.only <- "no" 
-single_metric <- "smb_adult" #"no" to plot for all metrics, otherwise specify metric of interest smb_adult, nh_adult etc.
+single_metric <- "no" #"no" to plot for all metrics, otherwise specify metric of interest smb_adult, nh_adult etc.
 
-group <- "below_500" #"above_500", "below_500", "none"
+group <- "above_500" #"above_500", "below_500", "none"
 
 ##############################################################################################################
 # RETRIEVE DATA
