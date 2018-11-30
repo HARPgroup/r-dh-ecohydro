@@ -1,0 +1,26 @@
+IHA-package             Indicators of Hydrologic Alteration
+annual.extrema          Internal functions in IHA
+bullrun                 Bull Run river flow data
+change.rate             Calculate change rate for a vector
+flow.duration           Plot a flow duration curve
+group1                  Magnitude of monthly water conditions
+group2                  Calculates the group2 IHA statistics
+group2Funs              Calculates group2 statistics from a matrix of
+                        rolling means
+group3                  Calculate the group 3 IHA parameters.
+group4                  Calculate the group 4 IHA parameters.
+group5                  Calculate the group 5 IHA parameters.
+plot.group1             Plot group1 statistics
+plotDischarge           Plot discharge
+plotGroup1              Plot group1 statistics
+read.flow               Reads a rdb formatted data file from the USGS
+                        web site or from a file.
+runmean.iha             Calculate rolling means for group2 statistics
+water.month             Extract the month of the water year from a date
+                        or time object.
+water.year              Return a string giving the water year for a
+                        date
+which.min.zoo           Calculate the date of a extreme value for a zoo
+                        series
+yday2                   Calculate the day of the year as TNC does in
+                        their IHA software
