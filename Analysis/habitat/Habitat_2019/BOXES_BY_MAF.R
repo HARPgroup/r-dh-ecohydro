@@ -29,7 +29,7 @@ if (tenth_percentile == "yes") {
 all_sites <- rm.benth(all_sites)
 
 months <- c("MAF","Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec")
-#r<-1
+#r<-9
 for (r in 1:length(months)) {
   month <- months[r]
 
