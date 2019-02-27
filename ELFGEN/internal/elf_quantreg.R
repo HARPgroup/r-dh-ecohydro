@@ -244,13 +244,13 @@ print (paste("Plotting ELF"));
 
               ###########################################################################################
               ###########################################################################################
-              result <- base.map(geom, data, full_dataset, upper.quant,
-                                  yaxis_thresh, quantile,
-                                  plot_title, xaxis_title, yaxis_title,
-                                  EDAS_upper_legend,EDAS_lower_legend,Reg_upper_legend,Quantile_Legend)
-              
-              filename <- paste(adminid,"LOCATION_MAP.png", sep="_")
-              ggsave(file=filename, path = save_directory, width=9, height=6)
+              # result <- base.map(geom, data, full_dataset, upper.quant,
+              #                     yaxis_thresh, quantile,
+              #                     plot_title, xaxis_title, yaxis_title,
+              #                     EDAS_upper_legend,EDAS_lower_legend,Reg_upper_legend,Quantile_Legend)
+              # 
+              # filename <- paste(adminid,"LOCATION_MAP.png", sep="_")
+              # ggsave(file=filename, path = save_directory, width=9, height=6)
               
               ###########################################################################################
               ###########################################################################################
@@ -262,22 +262,22 @@ print (paste("Plotting ELF"));
         if (ruint >= 0){
           
           #slope barplot  
-          pct_inputs<- list(ruslope = ruslope, 
-                            ruint = ruint,
-                            biometric_title = biometric_title, 
-                            flow_title = flow_title,
-                            Feature.Name = Feature.Name,
-                            pct_chg = pct_chg,
-                            startdate = startdate,
-                            sampres =  sampres,
-                            enddate = enddate,
-                            x_metric = x_metric,  #aded by jen
-                            y_metric = y_metric,  #added by Jen
-                            search_code = search_code) #added by Jen
-          elf_pct_chg (pct_inputs)
-          
-          filename <- paste(adminid,"pctchg.png", sep="_")
-          ggsave(file=filename, path = save_directory, width=8, height=5)
+          # pct_inputs<- list(ruslope = ruslope, 
+          #                   ruint = ruint,
+          #                   biometric_title = biometric_title, 
+          #                   flow_title = flow_title,
+          #                   Feature.Name = Feature.Name,
+          #                   pct_chg = pct_chg,
+          #                   startdate = startdate,
+          #                   sampres =  sampres,
+          #                   enddate = enddate,
+          #                   x_metric = x_metric,  #aded by jen
+          #                   y_metric = y_metric,  #added by Jen
+          #                   search_code = search_code) #added by Jen
+          # elf_pct_chg (pct_inputs)
+          # 
+          # filename <- paste(adminid,"pctchg.png", sep="_")
+          # ggsave(file=filename, path = save_directory, width=8, height=5)
         } else {
           print (paste("Y-Intercept is negative, not generating barplot"));        
         }  
