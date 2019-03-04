@@ -8,10 +8,16 @@ output: word_document
 options(timeout=1024);
 library('gdata')
 library('pander')
-source("/var/www/R/config.local.private");
+
+library(data.table);
+library(scales);
+require ("data.table")
+
+source("D:/Jkrstolic/R/deqEcoflows/GitHub/r-dh-ecohydro/config.local.private");
+base_directory='D:/Jkrstolic/R/deqEcoflows/GitHub/r-dh-ecohydro/';
 source(paste(base_directory,"Analysis/query_elf_statistics.R", sep = "/")); 
 source(paste(base_directory,"Analysis/plot_elf_statistics.R", sep = "/")); 
-save_directory = paste(file_directory,"/",sep='');
+#save_directory = paste(file_directory,"/",sep='');
 
 # vars
 yvar = 'aqbio_nt_cypr_native';#aqbio_nt_total, aqbio_nt_cent, aqbio_nt_darter, aqbio_nt_benins, aqbio_nt_minnow, aqbio_nt_cypr_native
@@ -38,6 +44,11 @@ huc6_xvar_data = subset(huc6_xvar_data, out_m > mmin)
 huc6_xvar_data = subset(huc6_xvar_data, out_rsq_adj > Rmin)
 huc6_xvar_data = subset(huc6_xvar_data, out_p <= pmin)
 
+ss6 <- elf_quantile_table(data = huc6_xvar_data)
+huc6_xvar_data = subset(huc6_xvar_data, in_xvar == xvar)
+huc6_xvar_data$resolution = 'huc6'
+alldata = huc6_xvar_data
+
 huc8_rawdata = 
   fn_dh_elfstats ( ftype = 'fe_elf', 
     site = base_url, analysis_timespan = "full", yvar = yvar,
@@ -50,6 +61,10 @@ huc8_xvar_data = subset(huc8_xvar_data, out_m > mmin)
 huc8_xvar_data = subset(huc8_xvar_data, out_rsq_adj > Rmin)
 huc8_xvar_data = subset(huc8_xvar_data, out_p <= pmin)
 
+ss8 <- elf_quantile_table(data = huc8_xvar_data)
+huc8_xvar_data = subset(huc8_xvar_data, in_xvar == xvar)
+huc8_xvar_data$resolution = 'huc8'
+alldata <- rbind(alldata, huc8_xvar_data)
 #huc8_anova_data = huc8_rawdata;
 #huc8_anova_data = subset(huc8_anova_data, out_m > mmin)
 #huc8_anova_data = subset(huc8_anova_data, out_rsq_adj > Rmin)
@@ -68,6 +83,15 @@ huc10_xvar_data = subset(huc10_xvar_data, in_xvar == xvar)
 huc10_xvar_data = subset(huc10_xvar_data, out_m > mmin)
 huc10_xvar_data = subset(huc10_xvar_data, out_rsq_adj > Rmin)
 huc10_xvar_data = subset(huc10_xvar_data, out_p <= pmin)
+
+ss10 <- elf_quantile_table(data = huc10_xvar_data)
+huc10_xvar_data = subset(huc10_xvar_data, in_xvar == xvar)
+huc10_xvar_data$resolution = 'huc10'
+alldata <- rbind(alldata, huc10_xvar_data)
+data.table.hucinfo <- data.table(alldata)
+#data.table.hucinfo<- rbind(alldata, huc10_xvar_data)
+write.csv(data.table.hucinfo, file = paste(save_directory, "HUC6_8_10_", yvar, ".csv", sep=""), row.names = FALSE, quote = FALSE)
+
 
 #ecoiii_rawdata = 
 #  fn_dh_elfstats ( ftype = 'fe_quantreg',

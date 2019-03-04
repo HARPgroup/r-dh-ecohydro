@@ -40,7 +40,7 @@ dataframe <- fn_dh_elfstats(feature_ftype = 'nhd_huc8', stat_quantreg_ghi=530, y
 # EXAMPLE FOR RETRIEVING DATASETS BY dataset_tag
 #dataframe <- fn_dh_elfstats(feature_ftype = 'nhd_huc6', yvar = 'aqbio_nt_total', sampres = 'species', dataset_tag = 'test_tag_1')
 
-dataframe <- fn_dh_elfstats(dataset_tag = 'bpj-huc6bp-rcc')
+dataframe <- fn_dh_elfstats(dataset_tag = 'Icthy_HUC6')
 
 #*****************************************************
 #*****************************************************

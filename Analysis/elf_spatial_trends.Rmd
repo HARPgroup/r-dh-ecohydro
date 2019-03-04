@@ -8,10 +8,15 @@ output: word_document
 options(timeout=1024);
 library('gdata')
 library('pander')
-source("/var/www/R/config.local.private");
+library(data.table);
+library(scales);
+require ("data.table")
+
+source("D:/Jkrstolic/R/deqEcoflows/GitHub/r-dh-ecohydro/config.local.private");
+base_directory='D:/Jkrstolic/R/deqEcoflows/GitHub/r-dh-ecohydro/';
 source(paste(base_directory,"Analysis/query_elf_statistics.R", sep = "/")); 
 source(paste(base_directory,"Analysis/plot_elf_statistics.R", sep = "/")); 
-save_directory = paste(file_directory,"/",sep='');
+#save_directory = paste(file_directory,"/",sep='');
 
 # vars
 yvar = 'aqbio_nt_total';#aqbio_nt_total, aqbio_nt_cent, aqbio_nt_darter, aqbio_nt_benins, aqbio_nt_minnow, aqbio_nt_cypr_native
@@ -25,6 +30,7 @@ mmin <- 0
 # Get the BPJ auto-determined PWIT left side regression
 # HUC8_quantregwHuc6bp
 # Huc6 customGhiGlo
+
 huc6_rawdata = 
   fn_dh_elfstats ( ftype = 'fe_elf', 
   site = base_url, analysis_timespan = "full", yvar = yvar,
@@ -77,6 +83,11 @@ ss10 <- elf_quantile_table(data = huc10_xvar_data)
 huc10_xvar_data = subset(huc10_xvar_data, in_xvar == xvar)
 huc10_xvar_data$resolution = 'huc10'
 alldata <- rbind(alldata, huc10_xvar_data)
+data.table.hucinfo <- data.table(alldata)
+#data.table.hucinfo<- rbind(alldata, huc10_xvar_data)
+write.csv(data.table.hucinfo, file = paste(save_directory, "HUC6_8_10_NTTotal.csv", sep=""), row.names = FALSE, quote = FALSE)
+
+
 
 #ecoiii_rawdata = 
 #  fn_dh_elfstats ( ftype = 'fe_quantreg',

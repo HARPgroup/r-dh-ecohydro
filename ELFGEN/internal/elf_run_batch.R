@@ -43,7 +43,8 @@ source(paste(fxn_locations,"elf_store_data.R", sep = ""));
 source(paste(basepath,"Analysis/query_elf_statistics.R", sep = "/")); 
 #####
 
-use_icthy_data <- 'NO' #Toggle "YES" to ulitize icthy dataset, otherwise "NO" to use EDAS 
+use_icthy_data <- 'YES' #Toggle "YES" to ulitize icthy dataset, otherwise "NO" to use EDAS 
+
 
 # Now add custom local settings here
 inputs$x_metric = c(
@@ -65,19 +66,19 @@ inputs$x_metric = c(
 
 inputs$y_metric = 'aqbio_nt_total';
 inputs$sampres = 'species';
-inputs$ws_ftype = c('nhd_huc10');
-inputs$target_hydrocode = '0208020112';
+inputs$ws_ftype = c('nhd_huc6');
+inputs$target_hydrocode = '020802';
 
-inputs$quantile = .80;
+inputs$quantile = .90;
 
-inputs$send_to_rest = "NO";
+inputs$send_to_rest = "YES";
 
 
 
 inputs$glo = 72;
 inputs$ghi = 530;
 inputs$method = "quantreg"; #quantreg, pwit, ymax, twopoint, pwit_RS
-inputs$dataset_tag = 'RegDiag_bpj-530';
+inputs$dataset_tag = 'Icthy_HUC6';
 
 inputs$token = token;
 
@@ -92,7 +93,7 @@ inputs$token = token;
 #   ** or, Use this if you want to load the batch list from a file, with defaults from inputs()
 
 
-batchlist = read.csv(file=paste(fxn_locations,"HUC10_RegDiag.csv",sep="/"),header=TRUE)  #RCC_HUC8taxaloss.csv
+batchlist = read.csv(file=paste(fxn_locations,"Huc6_batchMAFIcthyQuantReg.csv",sep="/"),header=TRUE)  #RCC_HUC8taxaloss.csv
 
 
 
@@ -127,6 +128,7 @@ for (row in batch_start:batch_end) {
   
   # get the raw data
   if (use_icthy_data == 'YES') {
+      #vahydro_fe_data_icthy <- read.csv(paste(fxn_locations,"IcthymapsVA_region_NT_TotalComID_MAF_summarized2.csv",sep="/"),header=TRUE)
       mydata <- vahydro_fe_data_icthy(
         Watershed_Hydrocode = tin$target_hydrocode, x_metric_code = tin$x_metric, 
         y_metric_code = tin$y_metric, bundle = tin$bundle,  
