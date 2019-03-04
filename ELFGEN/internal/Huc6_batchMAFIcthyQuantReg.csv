@@ -1,0 +1,9 @@
+ghi,target_hydrocode,method,dataset_tag,x_metric,ws_ftype
+348.3,50500,quantreg,Icthy_HUC6,erom_q0001e_mean,nhd_huc6
+775.9,60101,quantreg,Icthy_HUC6,erom_q0001e_mean,nhd_huc6
+577,60102,quantreg,Icthy_HUC6,erom_q0001e_mean,nhd_huc6
+306.8,20700,quantreg,Icthy_HUC6,erom_q0001e_mean,nhd_huc6
+348.4,20801,quantreg,Icthy_HUC6,erom_q0001e_mean,nhd_huc6
+389.3,20802,quantreg,Icthy_HUC6,erom_q0001e_mean,nhd_huc6
+384.7,30101,quantreg,Icthy_HUC6,erom_q0001e_mean,nhd_huc6
+408,30102,quantreg,Icthy_HUC6,erom_q0001e_mean,nhd_huc6

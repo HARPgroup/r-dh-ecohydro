@@ -6,7 +6,7 @@ library(grid);
 library(httr);
 library(data.table);
 library(scales);
-library(smwrStats);
+#library(smwrStats);
 
 elf_quantreg <- function(
   inputs, data, x_metric_code, y_metric_code, ws_ftype_code, 
@@ -108,7 +108,11 @@ print(paste("Upper quantile has ", nrow(upper.quant), "values"));
           ##################################
             # #REG UPPER Diagnostics code
             # library(relimp, pos=28)
+<<<<<<< HEAD
             # #outlierTest(regupper)
+=======
+            # outlierTest(regupper)
+>>>>>>> 98f7dbd29d27fc428f7ad7b2b54150ab9d5e13c9
             # qqPlot(regupper, simulate=TRUE, id.method="y", id.n=2)
             # 
             # oldpar <- par(oma=c(0,0,3,0), mfrow=c(2,2))
@@ -117,7 +121,11 @@ print(paste("Upper quantile has ", nrow(upper.quant), "values"));
             # 
             # ShapResult<- shapiro.test(residuals (regupper))
             # print(ShapResult)
+<<<<<<< HEAD
             # ####################JLR###############
+=======
+            ####################JLR###############
+>>>>>>> 98f7dbd29d27fc428f7ad7b2b54150ab9d5e13c9
             
             
             #If statement needed in case slope is "NA"
@@ -242,6 +250,18 @@ print (paste("Plotting ELF"));
               filename <- paste(adminid,"elf.png", sep="_")
               ggsave(file=filename, path = save_directory, width=8, height=6)
 
+              ###########################################################################################
+              ###########################################################################################
+              # result <- base.map(geom, data, full_dataset, upper.quant,
+              #                     yaxis_thresh, quantile,
+              #                     plot_title, xaxis_title, yaxis_title,
+              #                     EDAS_upper_legend,EDAS_lower_legend,Reg_upper_legend,Quantile_Legend)
+              # 
+              # filename <- paste(adminid,"LOCATION_MAP.png", sep="_")
+              # ggsave(file=filename, path = save_directory, width=9, height=6)
+              
+              ###########################################################################################
+              ###########################################################################################
               
       print (paste("Plotting Barplot"));
       print (paste("ELF Slope: ",ruslope,sep="")); 
@@ -250,22 +270,22 @@ print (paste("Plotting ELF"));
         if (ruint >= 0){
           
           #slope barplot  
-          pct_inputs<- list(ruslope = ruslope, 
-                            ruint = ruint,
-                            biometric_title = biometric_title, 
-                            flow_title = flow_title,
-                            Feature.Name = Feature.Name,
-                            pct_chg = pct_chg,
-                            startdate = startdate,
-                            sampres =  sampres,
-                            enddate = enddate,
-                            x_metric = x_metric,  #aded by jen
-                            y_metric = y_metric,  #added by Jen
-                            search_code = search_code) #added by Jen
-          elf_pct_chg (pct_inputs)
-          
-          filename <- paste(adminid,"pctchg.png", sep="_")
-          ggsave(file=filename, path = save_directory, width=8, height=5)
+          # pct_inputs<- list(ruslope = ruslope, 
+          #                   ruint = ruint,
+          #                   biometric_title = biometric_title, 
+          #                   flow_title = flow_title,
+          #                   Feature.Name = Feature.Name,
+          #                   pct_chg = pct_chg,
+          #                   startdate = startdate,
+          #                   sampres =  sampres,
+          #                   enddate = enddate,
+          #                   x_metric = x_metric,  #aded by jen
+          #                   y_metric = y_metric,  #added by Jen
+          #                   search_code = search_code) #added by Jen
+          # elf_pct_chg (pct_inputs)
+          # 
+          # filename <- paste(adminid,"pctchg.png", sep="_")
+          # ggsave(file=filename, path = save_directory, width=8, height=5)
         } else {
           print (paste("Y-Intercept is negative, not generating barplot"));        
         }  
