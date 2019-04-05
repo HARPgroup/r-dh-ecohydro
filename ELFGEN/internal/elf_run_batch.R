@@ -9,8 +9,8 @@ base_url <- datasite
 
 
 
-#basepath='D:\\Jkrstolic\\R\\deqEcoflows\\GitHub\\r-dh-ecohydro\\';
-basepath='C:\\Users\\nrf46657\\Desktop\\VAHydro Development\\GitHub\\r-dh-ecohydro\\'
+basepath='D:\\Jkrstolic\\R\\deqEcoflows\\GitHub\\r-dh-ecohydro\\';
+#basepath='C:\\Users\\nrf46657\\Desktop\\VAHydro Development\\GitHub\\r-dh-ecohydro\\'
 
 #----Change Basepath here to point to your global config file:
 
@@ -44,56 +44,44 @@ source(paste(fxn_locations,"elf_store_data.R", sep = ""));
 source(paste(basepath,"Analysis/query_elf_statistics.R", sep = "/")); 
 #####
 
-use_icthy_data <- 'YES' #Toggle "YES" to ulitize icthy dataset, otherwise "NO" to use EDAS 
-<<<<<<< HEAD
-
-=======
->>>>>>> 98f7dbd29d27fc428f7ad7b2b54150ab9d5e13c9
+use_icthy_data <- 'NO' #Toggle "YES" to ulitize icthy dataset, otherwise "NO" to use EDAS 
 
 # Now add custom local settings here
 inputs$x_metric = c(
-  #'nhdp_drainage_sqmi',
-  #'erom_q0001e_mean',
-  'erom_q0001e_jan',
-  'erom_q0001e_feb',
-  'erom_q0001e_mar', 
-  'erom_q0001e_apr', 
-  'erom_q0001e_may',
-  'erom_q0001e_june',
+  'nhdp_drainage_sqmi',
+  'erom_q0001e_mean',
+  # 'erom_q0001e_jan',
+  # 'erom_q0001e_feb',
+  # 'erom_q0001e_mar', 
+  # 'erom_q0001e_apr', 
+  # 'erom_q0001e_may',
+  # 'erom_q0001e_june',
   #'erom_q0001e_july',
   #'erom_q0001e_aug',
   #'erom_q0001e_sept',
-  'erom_q0001e_oct',
-  'erom_q0001e_nov',
-  'erom_q0001e_dec'
+  # 'erom_q0001e_oct',
+  # 'erom_q0001e_nov',
+  # 'erom_q0001e_dec'
 );
 
 inputs$y_metric = 'aqbio_nt_total';
 inputs$sampres = 'species';
-<<<<<<< HEAD
+
 inputs$ws_ftype = c('nhd_huc6');
 inputs$target_hydrocode = '020802';
-=======
-inputs$ws_ftype = c('nhd_huc10'); #nhd_huc6, nhd_huc10
-inputs$target_hydrocode = '0208020112';# 030102, 060102, 020700
->>>>>>> 98f7dbd29d27fc428f7ad7b2b54150ab9d5e13c9
 
-inputs$quantile = .90;
+inputs$quantile = .80;
 
 inputs$send_to_rest = "YES";
-
-
 
 inputs$glo = 0;
 inputs$ghi = 530;
 inputs$method = "quantreg"; #quantreg, pwit, ymax, twopoint, pwit_RS
-<<<<<<< HEAD
-inputs$dataset_tag = 'Icthy_HUC6';
-=======
-inputs$dataset_tag = 'bpj-530-icthy';
->>>>>>> 98f7dbd29d27fc428f7ad7b2b54150ab9d5e13c9
+
+inputs$dataset_tag = 'Benthic_HWI_Statewide';
 
 inputs$token = token;
+
 
 #------------------------------------------------------------------------------------------------
 # 1. Get data list - expects header line format with at least target_hydrocode
@@ -105,14 +93,7 @@ inputs$token = token;
 batchlist = elf_assemble_batch(inputs) 
 #   ** or, Use this if you want to load the batch list from a file, with defaults from inputs()
 
-
-<<<<<<< HEAD
-batchlist = read.csv(file=paste(fxn_locations,"Huc6_batchMAFIcthyQuantReg.csv",sep="/"),header=TRUE)  #RCC_HUC8taxaloss.csv
-=======
-#batchlist = read.csv(file=paste(fxn_locations,"HUC10_RegDiag.csv",sep="/"),header=TRUE)  #RCC_HUC8taxaloss.csv
->>>>>>> 98f7dbd29d27fc428f7ad7b2b54150ab9d5e13c9
-
-
+batchlist = read.csv(file=paste(fxn_locations,"Benthic_Statewide_HWI.csv",sep="/"),header=TRUE)  #RCC_HUC8taxaloss.csv
 
 # 2. check for x_metric in batch list, if not there we merge from inputs$x_metric
 bnames = colnames(batchlist)
