@@ -9,8 +9,8 @@ base_url <- datasite
 
 
 
-#basepath='D:\\Jkrstolic\\R\\deqEcoflows\\GitHub\\r-dh-ecohydro\\';
-basepath='C:\\Users\\nrf46657\\Desktop\\VAHydro Development\\GitHub\\r-dh-ecohydro\\'
+basepath='D:\\Jkrstolic\\R\\deqEcoflows\\GitHub\\r-dh-ecohydro\\r-dh-ecohydro\\';
+#basepath='C:\\Users\\nrf46657\\Desktop\\VAHydro Development\\GitHub\\r-dh-ecohydro\\'
 
 #----Change Basepath here to point to your global config file:
 
@@ -48,26 +48,26 @@ use_icthy_data <- 'YES' #Toggle "YES" to ulitize icthy dataset, otherwise "NO" t
 
 # Now add custom local settings here
 inputs$x_metric = c(
-  #'nhdp_drainage_sqmi',
-  #'erom_q0001e_mean',
-  'erom_q0001e_jan',
-  'erom_q0001e_feb',
-  'erom_q0001e_mar', 
-  'erom_q0001e_apr', 
-  'erom_q0001e_may',
-  'erom_q0001e_june',
+  'nhdp_drainage_sqmi',
+  'erom_q0001e_mean',
+  # 'erom_q0001e_jan',
+  # 'erom_q0001e_feb',
+  # 'erom_q0001e_mar', 
+  # 'erom_q0001e_apr', 
+  # 'erom_q0001e_may',
+  # 'erom_q0001e_june',
   #'erom_q0001e_july',
   #'erom_q0001e_aug',
   #'erom_q0001e_sept',
-  'erom_q0001e_oct',
-  'erom_q0001e_nov',
-  'erom_q0001e_dec'
+  # 'erom_q0001e_oct',
+  # 'erom_q0001e_nov',
+  # 'erom_q0001e_dec'
 );
 
-inputs$y_metric = 'aqbio_nt_total';
-inputs$sampres = 'species';
-inputs$ws_ftype = c('nhd_huc10'); #nhd_huc6, nhd_huc10
-inputs$target_hydrocode = '0208020112';# 030102, 060102, 020700
+inputs$y_metric = 'aqbio_benthic_nt_total'; #aqbio_nt_total
+inputs$sampres = 'maj_fam_gen_spec'; #species
+inputs$ws_ftype = c('hwi_region'); #nhd_huc6, nhd_huc10
+inputs$target_hydrocode = 'ohio_river_basin_nhdplus';# 030102, 060102, 020700, 0208020112
 
 inputs$quantile = .80;
 
@@ -77,8 +77,8 @@ inputs$send_to_rest = "YES";
 
 inputs$glo = 0;
 inputs$ghi = 530;
-inputs$method = "quantreg"; #quantreg, pwit, ymax, twopoint, pwit_RS
-inputs$dataset_tag = 'bpj-530-icthy';
+inputs$method = "PWIT"; #quantreg, pwit, ymax, twopoint, pwit_RS
+inputs$dataset_tag = 'BenthicPWIT_5-21-2019';
 
 inputs$token = token;
 
@@ -89,11 +89,11 @@ inputs$token = token;
 
 
 #   ** Use this if you want a batch list to be generated from the inputs array
-batchlist = elf_assemble_batch(inputs) 
+#batchlist = elf_assemble_batch(inputs) 
 #   ** or, Use this if you want to load the batch list from a file, with defaults from inputs()
 
 
-#batchlist = read.csv(file=paste(fxn_locations,"HUC10_RegDiag.csv",sep="/"),header=TRUE)  #RCC_HUC8taxaloss.csv
+batchlist = read.csv(file=paste(fxn_locations,"Benthic_Statewide_HWI.csv",sep="/"),header=TRUE)  #RCC_HUC8taxaloss.csv HUC10_RegDiag.csv
 
 
 

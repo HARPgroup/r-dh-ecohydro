@@ -1,0 +1,5 @@
+method,dataset_tag,x_metric,y_metric,target_hydrocode,ghi,glo,ws_ftype,sampres,bundle
+pwit,benthic-pwit,erom_q0001e_mean,aqbio_benthic_nt_total,ohio_river_basin_nhdplus,500,50,hwi_region,maj_fam_gen_spec,ecoregion
+pwit,benthic-pwit,nhdp_drainage_sqmi,aqbio_benthic_nt_total,atl_non_coastal_plain_usgs,500,50,hwi_region,maj_fam_gen_spec,ecoregion
+pwit,benthic-pwit,nhdp_drainage_sqmi,aqbio_benthic_nt_total,atl_coastal_plain_usgs,500,50,hwi_region,maj_fam_gen_spec,ecoregion
+pwit,benthic-pwit,nhdp_drainage_sqmi,aqbio_benthic_nt_total,usa_state_virginia,500,50,state,maj_fam_gen_spec,landunit

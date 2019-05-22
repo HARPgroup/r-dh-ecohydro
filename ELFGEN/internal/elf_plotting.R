@@ -66,7 +66,7 @@ my.plot <- function() {
     scale_x_log10(
       limits = c(0.001,15000),
       breaks = trans_breaks("log10", function(x) {10^x}),
-      labels = trans_format("log10", math_format(10^.x))
+      labels = trans_format("log10", math_format(10.^x)) 
     ) + 
     annotation_logticks(sides = "b")+
     theme(legend.key=element_rect(fill='white')) +
