@@ -108,7 +108,11 @@ print(paste("Upper quantile has ", nrow(upper.quant), "values"));
           ##################################
             # #REG UPPER Diagnostics code
             # library(relimp, pos=28)
+<<<<<<< HEAD
+            # #outlierTest(regupper)
+=======
             # outlierTest(regupper)
+>>>>>>> 98f7dbd29d27fc428f7ad7b2b54150ab9d5e13c9
             # qqPlot(regupper, simulate=TRUE, id.method="y", id.n=2)
             # 
             # oldpar <- par(oma=c(0,0,3,0), mfrow=c(2,2))
@@ -117,7 +121,11 @@ print(paste("Upper quantile has ", nrow(upper.quant), "values"));
             # 
             # ShapResult<- shapiro.test(residuals (regupper))
             # print(ShapResult)
+<<<<<<< HEAD
+            # ####################JLR###############
+=======
             ####################JLR###############
+>>>>>>> 98f7dbd29d27fc428f7ad7b2b54150ab9d5e13c9
             
             
             #If statement needed in case slope is "NA"

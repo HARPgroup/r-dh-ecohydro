@@ -8,8 +8,8 @@ datasite <- "http://deq2.bse.vt.edu/d.dh" # where to get the raw data to analyze
 base_url <- datasite
 
 
-
 basepath='D:\\Jkrstolic\\R\\deqEcoflows\\GitHub\\r-dh-ecohydro\\r-dh-ecohydro\\';
+
 #basepath='C:\\Users\\nrf46657\\Desktop\\VAHydro Development\\GitHub\\r-dh-ecohydro\\'
 
 #----Change Basepath here to point to your global config file:
@@ -44,12 +44,12 @@ source(paste(fxn_locations,"elf_store_data.R", sep = ""));
 source(paste(basepath,"Analysis/query_elf_statistics.R", sep = "/")); 
 #####
 
-use_icthy_data <- 'YES' #Toggle "YES" to ulitize icthy dataset, otherwise "NO" to use EDAS 
+use_icthy_data <- 'NO' #Toggle "YES" to ulitize icthy dataset, otherwise "NO" to use EDAS 
 
 # Now add custom local settings here
 inputs$x_metric = c(
   'nhdp_drainage_sqmi',
-  'erom_q0001e_mean',
+  'erom_q0001e_mean'
   # 'erom_q0001e_jan',
   # 'erom_q0001e_feb',
   # 'erom_q0001e_mar', 
@@ -69,18 +69,20 @@ inputs$sampres = 'maj_fam_gen_spec'; #species
 inputs$ws_ftype = c('hwi_region'); #nhd_huc6, nhd_huc10
 inputs$target_hydrocode = 'ohio_river_basin_nhdplus';# 030102, 060102, 020700, 0208020112
 
+
 inputs$quantile = .80;
 
 inputs$send_to_rest = "YES";
 
-
-
 inputs$glo = 0;
 inputs$ghi = 530;
+
 inputs$method = "PWIT"; #quantreg, pwit, ymax, twopoint, pwit_RS
-inputs$dataset_tag = 'BenthicPWIT_5-21-2019';
+
+inputs$dataset_tag = 'Benthic_HWI_Statewide';
 
 inputs$token = token;
+
 
 #------------------------------------------------------------------------------------------------
 # 1. Get data list - expects header line format with at least target_hydrocode
@@ -94,8 +96,6 @@ inputs$token = token;
 
 
 batchlist = read.csv(file=paste(fxn_locations,"Benthic_Statewide_HWI.csv",sep="/"),header=TRUE)  #RCC_HUC8taxaloss.csv HUC10_RegDiag.csv
-
-
 
 # 2. check for x_metric in batch list, if not there we merge from inputs$x_metric
 bnames = colnames(batchlist)
@@ -128,6 +128,7 @@ for (row in batch_start:batch_end) {
   
   # get the raw data
   if (use_icthy_data == 'YES') {
+      #vahydro_fe_data_icthy <- read.csv(paste(fxn_locations,"IcthymapsVA_region_NT_TotalComID_MAF_summarized2.csv",sep="/"),header=TRUE)
       mydata <- vahydro_fe_data_icthy(
         Watershed_Hydrocode = tin$target_hydrocode, x_metric_code = tin$x_metric, 
         y_metric_code = tin$y_metric, bundle = tin$bundle,  

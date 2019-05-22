@@ -22,6 +22,7 @@ library(grid);
 library(httr);
 library(data.table);
 library(scales);
+library(car);
 require ("data.table")
 library(relimp, pos=28)
 #grab unique list of HUCs or regions from the column of interest, or insert a list.. 
@@ -192,6 +193,26 @@ for (A in RegionsList) {
    inflm.ELF <- influence.measures(regupper)
    which(apply(inflm.ELF$is.inf, 1, any))   #identifies the points that are influence points
    summary(inflm.ELF) # only these
+   
+   
+   avPlots(regupper, terms=~., intercept=FALSE, layout=NULL, ask, main, ...)
+   
+   avp(...)
+   
+   avPlot(regupper, ...)
+   
+   ## added variable plots 
+   avPlots(regupper, ~ log(upper.quant$x_value), ellipse=TRUE) # av Plot, adjusting for others
+   AVconfInt <- predict(regupper, data = upper.quant, interval="confidence")
+   avPlot(regupper, log(upper.quant$x_value),
+          id=TRUE, col = carPalette()[1], col.lines = carPalette()[2],
+          xlab, ylab, pch = 1, lwd = 2, 
+          main=paste("Added-Variable Plot:", log(upper.quant$x_value)),
+          grid=TRUE,
+          ellipse=TRUE,
+          marginal.scale=FALSE)
+   
+   
   ###
    
    #save the regression parameters to a data frame and ultimately to a csv file.

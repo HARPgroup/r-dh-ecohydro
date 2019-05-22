@@ -15,19 +15,19 @@ require ("data.table")
 
 remove(list=ls())
 graphics.off() 
-setwd("D:\\Jkrstolic\\R\\deqEcoflows\\Habitat\\TaxaLoss_PI_PressHUC8\\IFIM_explorations")
+setwd("D:\\Jkrstolic\\R\\deqEcoflows\\Habitat\\TaxaLoss_PI_PressHUC8\\RapidanCaseStudy")
 
 # table with monthly, mean annual flow, DA regression stats for any HUC8s of interest.  In this case all IFIM sites.  
 #needs a flow input, here I used MAF for the IFIM site to represent stream size.  
 #This data file only includes HUC8 with IFIM.  
-Input_reg_stats = read.csv(file="IFIMSITES_HUC8530BPJMonthly_RegressionStats.csv",header=TRUE) 
+Input_reg_stats = read.csv(file="RapidanHUC8_inputFile_bpj-huc6bp-rcc.csv",header=TRUE) #IFIMSITES_HUC8_bpj-huc6_bp_rccMonthly_RegressionStats.csv
 data.table.reg_stats <- data.table(Input_reg_stats)
 run.date         <- format(Sys.Date(),"%Y%m%d")
 
 
 #User Inputs _____________________________________________
 inputs <- list(
-  Huc8 <- data.table.reg_stats$IFIM.study.HUC8,   #designate the column containing huc8 records 
+  Huc8 <- data.table.reg_stats$HUC8,   #designate the column containing huc8 records $IFIM.study.HUC8
   numbHuc <- length(Huc8), #Variables needed for calculations
   xvar       <- data.table.reg_stats$in_xvar,
   MAF  <- data.table.reg_stats$MAF, #mean annual flow of IFIM site representing stream size
@@ -54,5 +54,5 @@ for (J in 1:numbHuc) {
 
    
   #Save to a file
-  write.csv(data.table.reg_stats, file = paste("IFIM_TaxaLossMonthlyresults",".", run.date,".csv", sep=""), row.names = F, quote = FALSE)
+  write.csv(data.table.reg_stats, file = paste("HUC8_RapidanHUC8TaxaLoss_bpj-huc6bp-rcc",".", run.date,".csv", sep=""), row.names = F, quote = FALSE)
   
