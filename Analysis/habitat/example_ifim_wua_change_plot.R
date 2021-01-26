@@ -86,8 +86,9 @@ ts1$thisdate <- as.character(as.Date(index(model_flows)))
 names(ts1) <- c('Date', 'Flow')
 
 ts1$Flow <- (as.numeric(ts1$Flow)*gage_factor) 
-ifim_wua_change_plot(ts1, ts2, WUA.df, 0.1)
-ifim_wua_change_plot(ts1, ts2, WUA.df, 0.05)
-
+ifim_plot10 <- ifim_wua_change_plot(ts1, ts2, WUA.df, 0.1)
+ifim_plot10 + ylim(c(-50,50))
+ifim_plot05 <- ifim_wua_change_plot(ts1, ts2, WUA.df, 0.05)
+ifim_plot05 + ylim(c(-50,50))
 
 
