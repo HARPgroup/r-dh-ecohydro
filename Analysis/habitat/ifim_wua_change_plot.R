@@ -215,7 +215,7 @@ ifim_wua_change_plot <- function(
   #convert table values to numeric before plotting 
   box_table[,3] <- as.numeric(as.character(box_table[,3]))
   
-  ggplot(box_table, aes(flow,pctchg))+
+  ifim_plot <- ggplot(box_table, aes(flow,pctchg))+
     geom_boxplot(fill='#A4A4A4', color="darkred")+
  #   geom_text(aes(label=metric),hjust=0, vjust=0)+
     geom_hline(yintercept=0,col='#A4A4A4')+
@@ -226,6 +226,7 @@ ifim_wua_change_plot <- function(
     ylab("Percent Habitat Change")+
     scale_x_discrete(limit = c("MAF",month.abb))
   #scale_y_continuous(limits = c(-10, 100))
+  return(ifim_plot)
 }
 
 
