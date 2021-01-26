@@ -5,8 +5,11 @@ ifim_wua_change_plot <- function(
   #-------------------------------------------------------------------------------------------------
   q1 <- mean(as.numeric(ts1$Flow))
   q2 <- mean(as.numeric(ts2$Flow))
-  pctchg <- round( 100.0*(q2 - q1)/q1,1)
-  targets <- rownames(wua_table[-1])
+  pctchg <- round( 100.0*(q2 - q1)/q1,1 )
+  # Assumes that  
+  # Original:
+  # targets <- colnames(WUA.df[-1])
+  targets <- colnames(wua_table)[-1]
   wua_ts1 <- wua.at.q_fxn(ts1)
   wua_ts1 <- data.frame(ts1,wua_ts1)
   wua_ts1 <- wua_ts1[,-1] #remove Date which can break wua_chg calc
