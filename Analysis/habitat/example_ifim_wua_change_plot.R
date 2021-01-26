@@ -15,12 +15,12 @@ elid <- om_get_model_elementid(base_url, wshed_model$pid)
 # This is goofed up.  The jsonlite returns a transpoed matrix
 # the rjson returns the right matrix orientation but the first row 
 # is turned into column names instead of a row.  How to sort this out?
-ifim_dataframe <- vahydro_prop_matrix(ifim_featureid, 'dh_feature','ifim_habitat_table')
-ifim_model <- om_get_model(base_url, ifim_featureid, 'dh_feature', 'vahydro-1.0', 'any')
-ifim_model_wua <- om_get_prop(base_url, ifim_model$pid, 'dh_properties', 'wua')
+#ifim_dataframe <- vahydro_prop_matrix(ifim_featureid, 'dh_feature','ifim_habitat_table')
+#ifim_model <- om_get_model(base_url, ifim_featureid, 'dh_feature', 'vahydro-1.0', 'any')
+#ifim_model_wua <- om_get_prop(base_url, ifim_model$pid, 'dh_properties', 'wua')
 # Alt - get from property, this *should* work, but does not...
-iWUA.df <-jsonlite::unserializeJSON(ifim_model_wua$field_dh_matrix)
-colnames(iWUA.df[-1])
+#iWUA.df <-jsonlite::unserializeJSON(ifim_model_wua$field_dh_matrix)
+#colnames(iWUA.df[-1])
 #WUA.df <- t(jsonlite::unserializeJSON(ifim_dataframe$field_dh_matrix))
 # get wua from feature
 ifim_dataframe <- vahydro_prop_matrix(ifim_featureid, 'dh_feature','ifim_habitat_table')
@@ -78,7 +78,8 @@ ts2$Flow <- (as.numeric(ts2$Flow)*gage_factor)
 # Plot difference between runid 1 and runid 2
 ifim_wua_change_plot(ts1, ts2, WUA.df, 0.1)
 # Plot difference between runid 1 and runid 2
-ifim_wua_change_plot(ts1, ts2, WUA.df, 0.05)
+ifim_plot05 <- ifim_wua_change_plot(ts1, ts2, WUA.df, 0.05)
+ifim_plot05 + ylim(c(-50,50))
 
 # now take ts2 Qbaseline compared to ts2 Qout
 ts1 <- as.data.frame(model_flows[,c('thisdate', 'Qbaseline')])
@@ -86,9 +87,21 @@ ts1$thisdate <- as.character(as.Date(index(model_flows)))
 names(ts1) <- c('Date', 'Flow')
 
 ts1$Flow <- (as.numeric(ts1$Flow)*gage_factor) 
-ifim_plot10 <- ifim_wua_change_plot(ts1, ts2, WUA.df, 0.1)
-ifim_plot10 + ylim(c(-50,50))
 ifim_plot05 <- ifim_wua_change_plot(ts1, ts2, WUA.df, 0.05)
 ifim_plot05 + ylim(c(-50,50))
+ifim_plot10 <- ifim_wua_change_plot(ts1, ts2, WUA.df, 0.1)
+ifim_plot10 + ylim(c(-50,50))
+ifim_plot10 <- ifim_wua_change_plot(ts1, ts2, WUA.df, 0.2)
+ifim_plot10 + ylim(c(-50,50))
+
+
+
+model_flows <- om_get_rundata(elid, 17) # tbd this should come from IFIM model
+ts3 <- as.data.frame(model_flows[,c('thisdate', 'Qout')])
+ts3$thisdate <- as.character(as.Date(index(model_flows))) 
+ts1cc <- sqldf("select * from ts1 where Date <= '2000-09-30' ")
+names(ts3) <- c('Date', 'Flow')
+ifim_plot10cc <- ifim_wua_change_plot(ts1cc, ts3, WUA.df, 0.1)
+ifim_plot10cc + ylim(c(-50,50))
 
 
