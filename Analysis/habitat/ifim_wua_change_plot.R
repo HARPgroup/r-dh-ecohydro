@@ -1,11 +1,15 @@
 ifim_wua_change_plot <- function(
-  ts1, ts2, wua_table, q_pctile = 0.1, stat_method = 'median'
+  ts1, ts2, wua_table, q_pctile = 0.1, stat_method = 'median',ifim_da_sqmi,
+  runid_a = "",
+  metric_a = "",
+  runid_b = "",
+  metric_b = ""
 )  {
   q_pctilef <- 100.0 * q_pctile
   #-------------------------------------------------------------------------------------------------
   q1 <- mean(as.numeric(ts1$Flow))
   q2 <- mean(as.numeric(ts2$Flow))
-  pctchg <- round( 100.0*(q2 - q1)/q1,1 )
+  pctchg <- round( 100.0*(q2 - q1)/q1,1)
   # Assumes that  
   # Original:
   # targets <- colnames(WUA.df[-1])
@@ -215,14 +219,17 @@ ifim_wua_change_plot <- function(
   #convert table values to numeric before plotting 
   box_table[,3] <- as.numeric(as.character(box_table[,3]))
   
+  plot_title <- paste("Habitat Change: (Run",runid_a," ",metric_a,") vs. (Run",runid_b," ",metric_b,")",sep="")
+  sub_title <- paste("Mean Flow Change = ",pctchg,"%","; Flows <= ",q_pctilef," Percentile","\n","IFIM Site: ",ifim_site_name,"; Drainage Area: ",round(ifim_da_sqmi,1)," sqmi\nTimespan: (",start_date," to ",end_date,")",sep="")
+  
   ifim_plot <- ggplot(box_table, aes(flow,pctchg))+
     geom_boxplot(fill='#A4A4A4', color="darkred")+
  #   geom_text(aes(label=metric),hjust=0, vjust=0)+
     geom_hline(yintercept=0,col='#A4A4A4')+
-    labs(title = paste("Habitat Change w/",pctchg,"% Flow", "<= ", q_pctilef, " nonex",sep=""),
-       subtitle = paste(ifim_site_name,":\nDrainage Area: ",ifim_da_sqmi," sqmi\nUSGS: ",gage," (",start_date," to ",end_date,")",sep=""))+
+    labs(title = plot_title,
+         subtitle = sub_title)+
     
-    xlab("Flow (cfs)")+ 
+    xlab("Month")+ 
     ylab("Percent Habitat Change")+
     scale_x_discrete(limit = c("MAF",month.abb))
   #scale_y_continuous(limits = c(-10, 100))
