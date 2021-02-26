@@ -7,22 +7,38 @@ output: word_document
 rm(list = ls())  #clear variables
 options(timeout=240); # set timeout to twice default level to avoid abort due to high traffic
 
+# #----------------------------------------------
+# site <- "http://deq1.bse.vt.edu/d.dh"    #Specify the site of interest, either d.bet OR d.dh
+# #----------------------------------------------
+# 
+# #----FOR RUNNING LOCALLY:
+# basepath='C:/Users/nrf46657/Desktop/VAHydro Development/GitHub/r-dh-ecohydro/';
+# source(paste(basepath,'config.local.private',sep='/'));
+# 
+# #Load Functions               
+# source(paste(fxn_locations,"elf_retrieve_data.R", sep = ""));  #loads function used to retrieve F:E data from VAHydro
+# source(paste(habitat_files,'hab_ts_functions.R',sep='/')) #loads habtat timeseries functions
+# source(paste(hydro_tools,"VAHydro-2.0/rest_functions.R", sep = "/")); 
+# rest_uname = FALSE;
+# rest_pw = FALSE;
+# source(paste(hydro_tools,"auth.private", sep = "/"));#load rest username and password, contained in auth.private file
+# token <- rest_token(site, token, rest_uname, rest_pw);
+
 #----------------------------------------------
-site <- "http://deq1.bse.vt.edu/d.dh"    #Specify the site of interest, either d.bet OR d.dh
+site <- "http://deq2.bse.vt.edu/d.dh"    #Specify the site of interest, either d.bet OR d.dh
 #----------------------------------------------
 
 #----FOR RUNNING LOCALLY:
-basepath='C:/Users/nrf46657/Desktop/VAHydro Development/GitHub/r-dh-ecohydro/';
-source(paste(basepath,'config.local.private',sep='/'));
 
-#Load Functions               
-source(paste(fxn_locations,"elf_retrieve_data.R", sep = ""));  #loads function used to retrieve F:E data from VAHydro
-source(paste(habitat_files,'hab_ts_functions.R',sep='/')) #loads habtat timeseries functions
+
+basepath='/var/www/R';
+source(paste(basepath,'config.local.private',sep='/'));
+source(paste("C:/Users/jklei/Desktop/GitHub/r-dh-ecohydro/Analysis/habitat/hab_ts_functions.R", sep = "/"));       
+
 source(paste(hydro_tools,"VAHydro-2.0/rest_functions.R", sep = "/")); 
-rest_uname = FALSE;
-rest_pw = FALSE;
-source(paste(hydro_tools,"auth.private", sep = "/"));#load rest username and password, contained in auth.private file
-token <- rest_token(site, token, rest_uname, rest_pw);
+source(paste(basepath,"auth.private", sep = "/"));#load rest username and password, contained in auth.private file
+token <- rest_token (base_url, token, rest_uname = rest_uname, rest_pw = rest_pw) #token needed for REST
+save_directory <- "C:\\Users\\jklei\\Desktop\\GitHub\\plots"
 
 #_________________________________________________________
 # PROJECT               SITE HYDROIDS
@@ -44,7 +60,10 @@ ifim_featureid <- 397299
 #ifim_featureid <-397295
 
 
-ifim_dataframe <- vahydro_prop_matrix(ifim_featureid,'ifim_habitat_table')
+#ifim_dataframe <- vahydro_prop_matrix(ifim_featureid,'ifim_habitat_table')
+ifim_dataframe <- vahydro_prop_matrix(featureid = ifim_featureid,
+                                      entity_type = 'dh_feature',
+                                      varkey = 'ifim_habitat_table')
 WUA.df <- ifim_dataframe
 targets <- colnames(WUA.df[-1])
 
@@ -195,6 +214,9 @@ pander(ifim_metrics)
 ```{r ELF PLOT, fig.width=10, fig.height=8, echo=FALSE, message=FALSE, warning=FALSE,results='hide'}
 #retrieve txt file of ifim sites and corresponding ELF regions data
 datasite <- "http://deq2.bse.vt.edu/d.dh" # where to get the raw data to analyze
+
+habitat_files <- "C:/Users/jklei/Desktop/GitHub/r-dh-ecohydro/Analysis/habitat"
+
 ifim_sites_df <- read.table(paste(habitat_files,'ifim_sites_df.txt',sep='/'), header=TRUE)
 site_row <- ifim_sites_df [which(ifim_sites_df$site == ifim_featureid),]
 

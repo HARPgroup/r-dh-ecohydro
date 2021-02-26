@@ -2,26 +2,34 @@ rm(list = ls())  #clear variables
 options(timeout=240); # set timeout to twice default level to avoid abort due to high traffic
 
 #----------------------------------------------
-site <- "http://deq1.bse.vt.edu/d.dh"    #Specify the site of interest, either d.bet OR d.dh
+site <- "http://deq2.bse.vt.edu/d.dh"    #Specify the site of interest, either d.bet OR d.dh
 #----------------------------------------------
 
 #----FOR RUNNING LOCALLY:
 
 
-#basepath='/var/www/R';
-basepath='D:/Jkrstolic/R/deqEcoflows/GitHub/r-dh-ecohydro';
+basepath='/var/www/R';
+#basepath='D:/Jkrstolic/R/deqEcoflows/GitHub/r-dh-ecohydro';
 
 
 source(paste(basepath,'config.local.private',sep='/'));
 
 #Load Functions               
-source(paste(fxn_locations,"elf_retrieve_data.R", sep = ""));  #loads function used to retrieve F:E data from VAHydro
-source(paste(habitat_files,'hab_ts_functions.R',sep='/')) #loads habtat timeseries functions
-source(paste(hydro_tools,"VAHydro-2.0/rest_functions.R", sep = "/"));       #loads file containing function that retrieves REST token
-rest_uname = FALSE;
-rest_pw = FALSE;
-source(paste(hydro_tools,"auth.private", sep = "/"));#load rest username and password, contained in auth.private file
-token <- rest_token(site, token, rest_uname, rest_pw);
+###source(paste(fxn_locations,"elf_retrieve_data.R", sep = ""));  #loads function used to retrieve F:E data from VAHydro
+###source(paste(habitat_files,'hab_ts_functions.R',sep='/')) #loads habtat timeseries functions
+source(paste("C:/Users/jklei/Desktop/GitHub/r-dh-ecohydro/Analysis/habitat/hab_ts_functions.R", sep = "/"));       #loads file containing function that retrieves REST token
+# rest_uname = FALSE;
+# rest_pw = FALSE;
+# source(paste(hydro_tools,"auth.private", sep = "/"));#load rest username and password, contained in auth.private file
+# token <- rest_token(site, token, rest_uname, rest_pw);
+
+
+# load libraries
+source(paste(hydro_tools,"VAHydro-2.0/rest_functions.R", sep = "/")); 
+source(paste(basepath,"auth.private", sep = "/"));#load rest username and password, contained in auth.private file
+token <- rest_token (base_url, token, rest_uname = rest_uname, rest_pw = rest_pw) #token needed for REST
+# site <- base_url
+save_directory <- "C:/Users/jklei/Desktop/GitHub/plots"
 
 #_________________________________________________________
 # PROJECT               SITE HYDROIDS
@@ -39,21 +47,26 @@ token <- rest_token(site, token, rest_uname, rest_pw);
 #===============================================================
 # BEGIN RETRIEVE IFIM DATA
 #===============================================================
-ifim_sites <- c(397290,397291,397292,397293,
-                397294,397299,397300,397301,
-                397302,397303,397304,397305,
-                397282,397283,397295,397296,
-                397286,397287,397288,397289,
-                397297,397298,397284,397285)
+# ifim_sites <- c(397290,397291,397292,397293,
+#                 397294,397299,397300,397301,
+#                 397302,397303,397304,397305,
+#                 397282,397283,397295,397296,
+#                 397286,397287,397288,397289,
+#                 397297,397298,397284,397285)
 
-#ifim_sites <- c(397290)
+# Potomac Sites              
+ifim_sites <- c(397295,397296)
+
 stat_method <- "median" #"mean" or " median"
-pctchg <- "5.0"
+pctchg <- "10.0"
 
+x <- 1
 for (x in 1:length(ifim_sites)){
   ifim_featureid <- ifim_sites[x]
 
-ifim_dataframe <- vahydro_prop_matrix(ifim_featureid,'ifim_habitat_table')
+ifim_dataframe <- vahydro_prop_matrix(featureid = ifim_featureid,
+                                      entity_type = 'dh_feature',
+                                      varkey = 'ifim_habitat_table')
 WUA.df <- ifim_dataframe
 targets <- colnames(WUA.df[-1])
 
