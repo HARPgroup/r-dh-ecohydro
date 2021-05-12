@@ -7,10 +7,17 @@ source(paste(basepath,'config.R',sep='/'))
 source(paste(github_location,'r-dh-ecohydro/Analysis/habitat','ifim_wua_change_plot.R',sep='/'))
 source(paste(github_location,'r-dh-ecohydro/Analysis/habitat','hab_ts_functions.R',sep='/'))
 
+library("hydrotools")
+
 ifim_featureid <- 397295 # Potomac 8&9
 wshed_featureid <- 68346
+# Current Method - see TBD below for new Rom method
 wshed_model <- om_get_model(base_url, wshed_featureid, 'dh_feature', 'vahydro-1.0', 'any')
 elid <- om_get_model_elementid(base_url, wshed_model$pid) 
+# TBD: Rom method 
+# ds <- RomDataSource$new("http://deq2.bse.vt.edu/d.dh")
+# ds$get_token()
+# wshed_model = wshed_model <- fn_om_get_model(ds, wshed_featureid, 'dh_feature', 'vahydro-1.0', 'any')
 
 # This is goofed up.  The jsonlite returns a transpoed matrix
 # the rjson returns the right matrix orientation but the first row 
@@ -26,6 +33,7 @@ elid <- om_get_model_elementid(base_url, wshed_model$pid)
 ifim_dataframe <- vahydro_prop_matrix(ifim_featureid, 'dh_feature','ifim_habitat_table')
 #WUA.df <- ifim_dataframe
 WUA.df <- t(ifim_dataframe)
+wd <- as.data.frame(WUA.df)
 
 targets <- colnames(WUA.df)[-1]
 
@@ -89,10 +97,19 @@ names(ts1) <- c('Date', 'Flow')
 ts1$Flow <- (as.numeric(ts1$Flow)*gage_factor) 
 ifim_plot05 <- ifim_wua_change_plot(ts1, ts2, WUA.df, 0.05)
 ifim_plot05 + ylim(c(-50,50))
+ifim_plot805 <- ifim_wua_change_plot(ts1, ts2, WUA.df, c(0,805))
+ifim_plot805 + ylim(c(-50,50))
+ifim_plot1400 <- ifim_wua_change_plot(ts1, ts2, WUA.df, c(0,1400))
+ifim_plot1400 + ylim(c(-50,50))
+ifim_plot1400
+
+ifim_plotGT1400 <- ifim_wua_change_plot(ts1, ts2, WUA.df, c(1400,100000))
+ifim_plotGT1400 + ylim(c(-50,50))
+
 ifim_plot10 <- ifim_wua_change_plot(ts1, ts2, WUA.df, 0.1)
 ifim_plot10 + ylim(c(-50,50))
-ifim_plot10 <- ifim_wua_change_plot(ts1, ts2, WUA.df, 0.2)
-ifim_plot10 + ylim(c(-50,50))
+ifim_plot20 <- ifim_wua_change_plot(ts1, ts2, WUA.df, 0.2)
+ifim_plot20 + ylim(c(-50,50))
 
 
 
@@ -103,5 +120,25 @@ ts1cc <- sqldf("select * from ts1 where Date <= '2000-09-30' ")
 names(ts3) <- c('Date', 'Flow')
 ifim_plot10cc <- ifim_wua_change_plot(ts1cc, ts3, WUA.df, 0.1)
 ifim_plot10cc + ylim(c(-50,50))
+ifim_plot5cc <- ifim_wua_change_plot(ts1cc, ts3, WUA.df, 0.05)
+ifim_plot5cc + ylim(c(-50,50))
+
+tsa <- ts2
+tsa$Flow[which(tsa$Flow > 1400)] <- tsa$Flow[which(tsa$Flow > 1400)] - 2.5 * 1.547
+ifim_plota <- ifim_wua_change_plot(ts1, tsa, WUA.df, 0.1)
+ifim_plota + ylim(c(-50,50))
+ipad <- ifim_plota$data
+sqldf("select * from ipad where flow = 'Aug'")
+ipa24 <- ifim_plot10$data
+aug24 <- sqldf("select * from ipa24 where flow = 'Aug'")
 
 
+tsa29 <- ts2
+tsa29$Flow[which(tsa$Flow > 1400)] <- tsa29$Flow[which(tsa29$Flow > 1400)] - 2.9 * 1.547
+ifim_plota29 <- ifim_wua_change_plot(ts1, tsa29, WUA.df, 0.1)
+ifim_plota29 + ylim(c(-50,50))
+ipa29 <- ifim_plota29$data
+aug29 <- sqldf("select * from ipa29 where flow = 'Aug'")
+
+quantile(aug24$pctchg)
+quantile(aug29$pctchg)

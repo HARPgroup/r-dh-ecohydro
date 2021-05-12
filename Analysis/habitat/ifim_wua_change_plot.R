@@ -43,70 +43,75 @@ ifim_wua_change_plot <- function(
   #-------------------------------------------------------------------------------------------------
   start_date <- min(as.Date(wua_chg$Date))
   end_date <- max(as.Date(wua_chg$Date))
-  
+  if (length(q_pctile) == 2) {
+    q_lo <- q_pctile[1]
+    q_hi <- q_pctile[2]
+    wua_chg <- sqldf( paste("select * from wua_chg where Flow > ", q_lo, "and Flow <=", q_hi))
+  }
   Jan_data <- wua_chg[which(wua_chg$month == "Jan"),]
-  Jan_data_percentile <- as.numeric(quantile(Jan_data$Flow, probs = c(q_pctile)))
-  Jan_data <- Jan_data[which(as.numeric(Jan_data$Flow) <= Jan_data_percentile),]
-  #Jan_data <- Jan_data[,-2]
-  
   Feb_data <- wua_chg[which(wua_chg$month == "Feb"),]
-  Feb_data_percentile <- as.numeric(quantile(Feb_data$Flow, probs = c(q_pctile)))
-  Feb_data <- Feb_data[which(Feb_data$Flow <= Feb_data_percentile),]
-  #Feb_data <- Feb_data[,-2]
-
   Mar_data <- wua_chg[which(wua_chg$month == "Mar"),]
-  Mar_data_percentile <- as.numeric(quantile(Mar_data$Flow, probs = c(q_pctile)))
-  Mar_data <- Mar_data[which(Mar_data$Flow <= Mar_data_percentile),]
-  #Mar_data <- Mar_data[,-2]
-  
   Apr_data <- wua_chg[which(wua_chg$month == "Apr"),]
-  Apr_data_percentile <- as.numeric(quantile(Apr_data$Flow, probs = c(q_pctile)))
-  Apr_data <- Apr_data[which(Apr_data$Flow <= Apr_data_percentile),]
-  #Apr_data <- Apr_data[,-2]
-  
   May_data <- wua_chg[which(wua_chg$month == "May"),]
-  May_data_percentile <- as.numeric(quantile(May_data$Flow, probs = c(q_pctile)))
-  May_data <- May_data[which(May_data$Flow <= May_data_percentile),]
-  #May_data <- May_data[,-2]
-  
   Jun_data <- wua_chg[which(wua_chg$month == "Jun"),]
-  Jun_data_percentile <- as.numeric(quantile(Jun_data$Flow, probs = c(q_pctile)))
-  Jun_data <- Jun_data[which(Jun_data$Flow <= Jun_data_percentile),]
-  #Jun_data <- Jun_data[,-2]
-  
   Jul_data <- wua_chg[which(wua_chg$month == "Jul"),]
-  Jul_data_percentile <- as.numeric(quantile(Jul_data$Flow, probs = c(q_pctile)))
-  Jul_data <- Jul_data[which(Jul_data$Flow <= Jul_data_percentile),]
-  #Jul_data <- Jul_data[,-2]
-  
   Aug_data <- wua_chg[which(wua_chg$month == "Aug"),]
-  Aug_data_percentile <- as.numeric(quantile(Aug_data$Flow, probs = c(q_pctile)))
-  Aug_data <- Aug_data[which(Aug_data$Flow <= Aug_data_percentile),]
-  #Aug_data <- Aug_data[,-2]
-  
   Sep_data <- wua_chg[which(wua_chg$month == "Sep"),]
-  Sep_data_percentile <- as.numeric(quantile(Sep_data$Flow, probs = c(q_pctile)))
-  Sep_data <- Sep_data[which(Sep_data$Flow <= Sep_data_percentile),]
-  #Sep_data <- Sep_data[,-2]
-  
   Oct_data <- wua_chg[which(wua_chg$month == "Oct"),]
-  Oct_data_percentile <- as.numeric(quantile(Oct_data$Flow, probs = c(q_pctile)))
-  Oct_data <- Oct_data[which(Oct_data$Flow <= Oct_data_percentile),]
-  #oct_data <- Oct_data[,-2]
-  
   Nov_data <- wua_chg[which(wua_chg$month == "Nov"),]
-  Nov_data_percentile <- as.numeric(quantile(Nov_data$Flow, probs = c(q_pctile)))
-  Nov_data <- Nov_data[which(Nov_data$Flow <= Nov_data_percentile),]
-  #Nov_data <- Nov_data[,-2]
-  
   Dec_data <- wua_chg[which(wua_chg$month == "Dec"),]
-  Dec_data_percentile <- as.numeric(quantile(Dec_data$Flow, probs = c(q_pctile)))
-  Dec_data <- Dec_data[which(Dec_data$Flow <= Dec_data_percentile),]
-  #Dec_data <- Dec_data[,-2]
-  
   MAF_data <- wua_chg
-  MAF_data_percentile <- as.numeric(quantile(MAF_data$Flow, probs = c(q_pctile)))
-  MAF_data <- MAF_data[which(MAF_data$Flow <= MAF_data_percentile),]
+  if (length(q_pctile) == 1) {
+    #Jan_data <- Jan_data[,-2]
+    Jan_data_percentile <- as.numeric(quantile(Jan_data$Flow, probs = c(q_pctile)))
+    Jan_data <- Jan_data[which(as.numeric(Jan_data$Flow) <= Jan_data_percentile),]
+    #Feb_data <- Feb_data[,-2]
+    Feb_data_percentile <- as.numeric(quantile(Feb_data$Flow, probs = c(q_pctile)))
+    Feb_data <- Feb_data[which(Feb_data$Flow <= Feb_data_percentile),]
+  
+    Mar_data_percentile <- as.numeric(quantile(Mar_data$Flow, probs = c(q_pctile)))
+    Mar_data <- Mar_data[which(Mar_data$Flow <= Mar_data_percentile),]
+    #Mar_data <- Mar_data[,-2]
+    
+    Apr_data_percentile <- as.numeric(quantile(Apr_data$Flow, probs = c(q_pctile)))
+    Apr_data <- Apr_data[which(Apr_data$Flow <= Apr_data_percentile),]
+    #Apr_data <- Apr_data[,-2]
+    
+    May_data_percentile <- as.numeric(quantile(May_data$Flow, probs = c(q_pctile)))
+    May_data <- May_data[which(May_data$Flow <= May_data_percentile),]
+    #May_data <- May_data[,-2]
+    
+    Jun_data_percentile <- as.numeric(quantile(Jun_data$Flow, probs = c(q_pctile)))
+    Jun_data <- Jun_data[which(Jun_data$Flow <= Jun_data_percentile),]
+    #Jun_data <- Jun_data[,-2]
+    
+    Jul_data_percentile <- as.numeric(quantile(Jul_data$Flow, probs = c(q_pctile)))
+    Jul_data <- Jul_data[which(Jul_data$Flow <= Jul_data_percentile),]
+    #Jul_data <- Jul_data[,-2]
+    
+    Aug_data_percentile <- as.numeric(quantile(Aug_data$Flow, probs = c(q_pctile)))
+    Aug_data <- Aug_data[which(Aug_data$Flow <= Aug_data_percentile),]
+    #Aug_data <- Aug_data[,-2]
+    
+    Sep_data_percentile <- as.numeric(quantile(Sep_data$Flow, probs = c(q_pctile)))
+    Sep_data <- Sep_data[which(Sep_data$Flow <= Sep_data_percentile),]
+    #Sep_data <- Sep_data[,-2]
+    
+    Oct_data_percentile <- as.numeric(quantile(Oct_data$Flow, probs = c(q_pctile)))
+    Oct_data <- Oct_data[which(Oct_data$Flow <= Oct_data_percentile),]
+    #oct_data <- Oct_data[,-2]
+    
+    Nov_data_percentile <- as.numeric(quantile(Nov_data$Flow, probs = c(q_pctile)))
+    Nov_data <- Nov_data[which(Nov_data$Flow <= Nov_data_percentile),]
+    #Nov_data <- Nov_data[,-2]
+    
+    Dec_data_percentile <- as.numeric(quantile(Dec_data$Flow, probs = c(q_pctile)))
+    Dec_data <- Dec_data[which(Dec_data$Flow <= Dec_data_percentile),]
+    #Dec_data <- Dec_data[,-2]
+    
+    MAF_data_percentile <- as.numeric(quantile(MAF_data$Flow, probs = c(q_pctile)))
+    MAF_data <- MAF_data[which(MAF_data$Flow <= MAF_data_percentile),]
+  }
   
   #wua_chg <- wua_chg [,-2]  
   
@@ -177,6 +182,7 @@ ifim_wua_change_plot <- function(
     #col_all = col_all[,!(names(col_all) %in% "month")] #remove month col
     #col_all <- col_all[,!(names(col_all) %in% "Date")] #remove month col
     #-------------------------------------------------------------------------------------------------
+    message(paste("assembling box ", L))
     box_table_i <- data.frame(metric = targets,
                               flow = names(dfList[L]),
                               pctchg = as.numeric(col_all[1,]),
