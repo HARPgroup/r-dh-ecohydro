@@ -27,7 +27,8 @@ ifim_wua_change_plot <- function(
   wua_chg <- (wua_chg)*-1
   Date <- ts1$Date
   Flow <- as.numeric(ts1$Flow)
-  wua_chg <- data.frame(Date,Flow,wua_chg, stringsAsFactors=FALSE)
+  Flow2 <- as.numeric(ts2$Flow)
+  wua_chg <- data.frame(Date,Flow, Flow2,wua_chg, stringsAsFactors=FALSE)
   #negative means habitat loss
   
   #-------------------------------------------------------------------------------------------------
@@ -112,6 +113,12 @@ ifim_wua_change_plot <- function(
   MAF_data_percentile <- as.numeric(quantile(MAF_data$Flow, probs = c(q_pctile)))
   MAF_data <- MAF_data[which(MAF_data$Flow <= MAF_data_percentile),]
   
+  all_pctile_data <- rbind(
+    Jan_data, Feb_data, Mar_data, Apr_data, May_data, Jun_data,
+    Jul_data, Aug_data, Sep_data, Oct_data, Nov_data, Dec_data
+  )
+  # what is flow change only when Q is below the input %ile?
+  flow_change_pctile <- round(100.0*(mean(all_pctile_data$Flow2) - mean(all_pctile_data$Flow))/mean(all_pctile_data$Flow),1)
   #wua_chg <- wua_chg [,-2]  
   
   dfList <- list(MAF = MAF_data, #wua_chg
@@ -170,6 +177,7 @@ ifim_wua_change_plot <- function(
     }
     col_all <-col_all[,-1] #remove empty col
     col_all <- col_all[,!(names(col_all) %in% "Flow")] # remove Flow column
+    col_all <- col_all[,!(names(col_all) %in% "Flow2")] # remove Flow column
     col_all <- col_all[,!(names(col_all) %in% "Date")] # remove Date column
     
     
@@ -220,7 +228,7 @@ ifim_wua_change_plot <- function(
   box_table[,3] <- as.numeric(as.character(box_table[,3]))
   
   plot_title <- paste("Habitat Change: (Run",runid_a," ",metric_a,") vs. (Run",runid_b," ",metric_b,")",sep="")
-  sub_title <- paste("Mean Flow Change = ",pctchg,"%","; Flows <= ",q_pctilef," Percentile","\n","IFIM Site: ",ifim_site_name,"; Drainage Area: ",round(ifim_da_sqmi,1)," sqmi\nTimespan: (",start_date," to ",end_date,")",sep="")
+  sub_title <- paste("Mean Flow Change = ",pctchg,"%", "; Q change =", flow_change_pctile, "% when "," Flows <= ",q_pctilef," %ile","\n","IFIM Site: ",ifim_site_name,"; Drainage Area: ",round(ifim_da_sqmi,1)," sqmi\nTimespan: (",start_date," to ",end_date,")",sep="")
   
   ifim_plot <- ggplot(box_table, aes(flow,pctchg))+
     geom_boxplot(fill='#A4A4A4', color="darkred")+
@@ -233,6 +241,7 @@ ifim_wua_change_plot <- function(
     ylab("Percent Habitat Change")+
     scale_x_discrete(limit = c("MAF",month.abb))
   #scale_y_continuous(limits = c(-10, 100))
+  ifim_plot$all_pctile_data <- all_pctile_data
   return(ifim_plot)
 }
 
