@@ -14,7 +14,7 @@ source(paste(base_directory,"Analysis/plot_elf_statistics.R", sep = "/"));
 
 bundle <- 'watershed'; # ecoregion, landunit, watershed
 ftype <- 'nhd_huc10'; # ecoregion_iii, nhd_huc6, nhd_huc8, nhd_huc10
-metric <- 'aqbio_nt_minnow'; # aqbio_nt_total, aqbio_nt_cent, aqbio_nt_darter, aqbio_nt_benins
+metric <- 'nt_cypr_native'; # aqbio_nt_total, aqbio_nt_cent, aqbio_nt_darter, aqbio_nt_benins
 q_ftype <- "fe_elf";
 dataset_tag = 'bpj-530'; # bpj-530, bpj-rcc, 'HUC8_quantregwHuc6bp' (huc 6)
 analysis_timespan = "full";
@@ -72,10 +72,8 @@ ymin = 0.0; # restrain plot
 labeltext = paste('( p<', pmax, 'R>', Rmin,' )',sep='')
 plot_monthly(data, labeltext, ymetric = metric, xmetric = 'out_rsq_adj', ymin=ymin);
 mmax = ceiling(max(data$out_m))
-labeltext = paste('( p<', pmax, 'R>', Rmin,' )',sep='')
-moplot <- plot_monthly(data, labeltext, ymetric = metric, xmetric = 'out_m', ymin=0, ymax=mmax);
-moplot$ylab <- "Slope(m) of f(DA,Qmean,Qjan,...)"
-moplot
+plot_monthly(data, labeltext, ymetric = metric, xmetric = 'out_m', ymin=0, ymax=mmax);
+
   # add to summary table
   
 mmx = 'tbd'; # max of medians should go here to find month with highest median
