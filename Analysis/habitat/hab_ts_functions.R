@@ -50,64 +50,65 @@ flow.ts.range_fxn <- function(f,timespan){
 
 }
 wua.at.q_fxn <- function(flow.ts.range, wua_table){
-q <- as.numeric(flow.ts.range[,2]) #extract just the flows from flow time series
+  q <- as.numeric(flow.ts.range[,2]) #extract just the flows from flow time series
 
-targets <- colnames(wua_table)[-1]
-### Extract all WUA values for a SERIES of flows
-# Initialize results matrix
-wua.at.q <- matrix(0, nrow=length(q), ncol=length(targets))
-rownames(wua.at.q) <- q
-colnames(wua.at.q) <- targets
+  targets <- colnames(wua_table)[-1]
+  ### Extract all WUA values for a SERIES of flows
+  # Initialize results matrix
+  wua.at.q <- matrix(0, nrow=length(q), ncol=length(targets))
+  rownames(wua.at.q) <- q
+  colnames(wua.at.q) <- targets
 
-for (i in 1:length(q)) {
-  currentq <- q[i] #keep track of what flow the loop is on
+  for (i in 1:length(q)) {
+    currentq <- q[i] #keep track of what flow the loop is on
 
-  # Check if currentq is NA
-  if (is.na(currentq) == "TRUE") {
-    wua.at.q[i,] <- NA
-    next
-  }
+    # Check if currentq is NA
+    if (is.na(currentq) == "TRUE") {
+      wua.at.q[i,] <- NA
+      next
+    }
 
-  # Check if currentq is beyond range of WUA table
-  min.q <- min(wua_table[,1])
-  max.q <- max(wua_table[,1])
-  if (currentq < min.q) {
-    wua.at.q[i,] <- NA
-    next
-  } else if (currentq > max.q) {
-    wua.at.q[i,] <- NA
-    next
-  }
+    # Check if currentq is beyond range of WUA table
+    min.q <- min(wua_table[,1])
+    max.q <- max(wua_table[,1])
+    if (currentq < min.q) {
+      wua.at.q[i,] <- NA
+      next
+    } else if (currentq > max.q) {
+      wua.at.q[i,] <- NA
+      next
+    }
 
-  rowkey <- which.min(abs(as.numeric(wua_table[,1]) - currentq)) #find flow closest to desired q
+    rowkey <- which.min(abs(as.numeric(wua_table[,1]) - currentq)) #find flow closest to desired q
 
-  # Determine the given flows (and row indices) that bound the desired flow
-  if ((as.numeric(wua_table[rowkey,1]) - currentq) > 0) {
-    uplim.key <- which.min(abs(as.numeric(wua_table[,1]) - currentq))
-    lowlim.key <- uplim.key - 1
-  } else if ((as.numeric(wua_table[rowkey,1]) - currentq) < 0) {
-    lowlim.key <- which.min(abs(as.numeric(wua_table[,1]) - currentq))
-    uplim.key <- lowlim.key + 1
-  } else if ((as.numeric(wua_table[rowkey,1]) - currentq) == 0) {
-    lowlim.key <- which.min(abs(as.numeric(wua_table[,1]) - currentq))
-    uplim.key <- which.min(abs(as.numeric(wua_table[,1]) - currentq))
-  }
+    # Determine the given flows (and row indices) that bound the desired flow
+    if ((as.numeric(wua_table[rowkey,1]) - currentq) > 0) {
+      uplim.key <- which.min(abs(as.numeric(wua_table[,1]) - currentq))
+      lowlim.key <- uplim.key - 1
+    } else if ((as.numeric(wua_table[rowkey,1]) - currentq) < 0) {
+      lowlim.key <- which.min(abs(as.numeric(wua_table[,1]) - currentq))
+      uplim.key <- lowlim.key + 1
+    } else if ((as.numeric(wua_table[rowkey,1]) - currentq) == 0) {
+      lowlim.key <- which.min(abs(as.numeric(wua_table[,1]) - currentq))
+      uplim.key <- which.min(abs(as.numeric(wua_table[,1]) - currentq))
+    }
 
-  # Interpolate (linear) btwn WUA values for bounding flows
-  for (j in 1:length(targets)) {
-    if (lowlim.key == uplim.key) {
-      wua.at.q[i,j] <- wua_table[lowlim.key, j+1]
-    } else {
-      #linear interpolation: Yq = Ylow + ((Yup-Ylow)*(Xq-Xlow)/(Xup-Xlow))
-      Xup <- wua_table[uplim.key, 1]
-      Yup <- wua_table[uplim.key, j+1]
-      Xlow <- wua_table[lowlim.key, 1]
-      Ylow <- wua_table[lowlim.key, j+1]
-      wua.at.q[i,j] <- Ylow + ((Yup-Ylow)*(currentq-Xlow)/(Xup-Xlow))
+    # Interpolate (linear) btwn WUA values for bounding flows
+    for (j in 1:length(targets)) {
+      if (lowlim.key == uplim.key) {
+        wua.at.q[i,j] <- wua_table[lowlim.key, j+1]
+      } else {
+        #linear interpolation: Yq = Ylow + ((Yup-Ylow)*(Xq-Xlow)/(Xup-Xlow))
+        Xup <- wua_table[uplim.key, 1]
+        Yup <- wua_table[uplim.key, j+1]
+        Xlow <- wua_table[lowlim.key, 1]
+        Ylow <- wua_table[lowlim.key, j+1]
+        wua.at.q[i,j] <- Ylow + ((Yup-Ylow)*(currentq-Xlow)/(Xup-Xlow))
+      }
     }
   }
-}
-wua.at.q <- wua.at.q
+  wua.at.q <- wua.at.q
+  return(wua.at.q)
 }
 hab_ts_plot_fxn <- function(flow.ts.range,wua.at.q,filename,ifim_site_name){
 
@@ -185,6 +186,8 @@ plot(flow.ts.range[,1], rownames(wua.at.q), type="n", axes=FALSE,
 dev.off()
 
 }
+
+
 hab_ts_plot_single_fxn <- function(flow.ts.range,wua.at.q,filename,ifim_site_name,ifim_metric){
 
   wua.at.q <- data.frame(wua.at.q[,ifim_metric])
